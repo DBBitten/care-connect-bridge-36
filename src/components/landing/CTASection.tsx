@@ -1,0 +1,45 @@
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Heart, Users } from "lucide-react";
+
+export function CTASection() {
+  return (
+    <section className="py-20 hero-gradient relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 w-64 h-64 bg-primary-foreground/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary-foreground/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
+            Comece hoje mesmo
+          </h2>
+          <p className="text-lg md:text-xl text-primary-foreground/80 mb-10">
+            Seja você alguém que busca cuidado ou quer cuidar, 
+            o ElderCare é o lugar certo para você.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="xl" variant="hero-outline" asChild>
+              <Link to="/cadastro?tipo=necessitado">
+                <Users className="w-5 h-5" />
+                Preciso de um cuidador
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </Button>
+            <Button 
+              size="xl" 
+              className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-lg" 
+              asChild
+            >
+              <Link to="/cadastro?tipo=cuidador">
+                <Heart className="w-5 h-5" />
+                Quero ser cuidador
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

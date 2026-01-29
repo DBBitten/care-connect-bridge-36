@@ -1,0 +1,75 @@
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Heart, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, User, Shield } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const navItems = [
+  { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
+  { icon: Users, label: "Usuários", href: "/admin/usuarios" },
+  { icon: Calendar, label: "Atendimentos", href: "/admin/atendimentos" },
+  { icon: Star, label: "Avaliações", href: "/admin/avaliacoes" },
+  { icon: Settings, label: "Configurações", href: "/admin/configuracoes" },
+];
+
+export function AdminSidebar() {
+  const location = useLocation();
+
+  return (
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-foreground flex flex-col">
+      {/* Logo */}
+      <div className="p-6 border-b border-foreground/20">
+        <Link to="/admin" className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+            <Heart className="w-5 h-5 text-primary-foreground" />
+          </div>
+          <div>
+            <span className="text-xl font-bold text-background">ElderCare</span>
+            <p className="text-xs text-background/60">Admin</p>
+          </div>
+        </Link>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-1">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              to={item.href}
+              className={cn(
+                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
+                isActive
+                  ? "bg-primary text-primary-foreground"
+                  : "text-background/70 hover:bg-background/10 hover:text-background"
+              )}
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="font-medium">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* User section */}
+      <div className="p-4 border-t border-foreground/20">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-background/10 mb-2">
+          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+            <Shield className="w-5 h-5 text-primary-foreground" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-background truncate">Administrador</p>
+            <p className="text-xs text-background/60">admin@eldercare.com</p>
+          </div>
+        </div>
+        <Link
+          to="/login"
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-background/70 hover:bg-destructive/20 hover:text-destructive transition-colors"
+        >
+          <LogOut className="w-5 h-5" />
+          <span className="font-medium">Sair</span>
+        </Link>
+      </div>
+    </aside>
+  );
+}
