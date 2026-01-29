@@ -23,12 +23,12 @@ export function Navbar() {
             <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
               Início
             </Link>
-            <Link to="/como-funciona" className="text-muted-foreground hover:text-foreground transition-colors">
+            <a href="/#como-funciona" className="text-muted-foreground hover:text-foreground transition-colors">
               Como Funciona
-            </Link>
-            <Link to="/sobre" className="text-muted-foreground hover:text-foreground transition-colors">
+            </a>
+            <a href="/#sobre" className="text-muted-foreground hover:text-foreground transition-colors">
               Sobre
-            </Link>
+            </a>
           </div>
 
           {/* Auth Buttons */}
@@ -62,20 +62,20 @@ export function Navbar() {
             >
               Início
             </Link>
-            <Link
-              to="/como-funciona"
+            <a
+              href="/#como-funciona"
               className="block text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
               Como Funciona
-            </Link>
-            <Link
-              to="/sobre"
+            </a>
+            <a
+              href="/#sobre"
               className="block text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
               Sobre
-            </Link>
+            </a>
             <div className="flex gap-3 pt-4 border-t border-border">
               <Button variant="outline" className="flex-1" asChild>
                 <Link to="/login" onClick={() => setIsOpen(false)}>Entrar</Link>
