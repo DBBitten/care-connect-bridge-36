@@ -20,9 +20,9 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
+            <a href="/" className="text-muted-foreground hover:text-foreground transition-colors">
               Início
-            </Link>
+            </a>
             <a href="/#como-funciona" className="text-muted-foreground hover:text-foreground transition-colors">
               Como Funciona
             </a>
@@ -55,13 +55,13 @@ export function Navbar() {
       {isOpen && (
         <div className="md:hidden bg-background border-b border-border animate-fade-in">
           <div className="container mx-auto px-4 py-4 space-y-4">
-            <Link
-              to="/"
+            <a
+              href="/"
               className="block text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
               Início
-            </Link>
+            </a>
             <a
               href="/#como-funciona"
               className="block text-muted-foreground hover:text-foreground transition-colors py-2"
