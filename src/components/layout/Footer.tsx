@@ -25,9 +25,9 @@ export function Footer() {
             <h4 className="font-semibold mb-4">Plataforma</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/como-funciona" className="text-background/70 hover:text-background transition-colors">
+                <a href="/#como-funciona" className="text-background/70 hover:text-background transition-colors">
                   Como Funciona
-                </Link>
+                </a>
               </li>
               <li>
                 <Link to="/buscar-cuidadores" className="text-background/70 hover:text-background transition-colors">
@@ -47,9 +47,9 @@ export function Footer() {
             <h4 className="font-semibold mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/sobre" className="text-background/70 hover:text-background transition-colors">
+                <a href="/#sobre" className="text-background/70 hover:text-background transition-colors">
                   Sobre
-                </Link>
+                </a>
               </li>
               <li>
                 <Link to="/termos" className="text-background/70 hover:text-background transition-colors">
