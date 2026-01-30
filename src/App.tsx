@@ -17,6 +17,13 @@ import ReviewPage from "./pages/ReviewPage";
 import CaregiverDashboard from "./pages/caregiver/CaregiverDashboard";
 import CaregiverTraining from "./pages/caregiver/CaregiverTraining";
 
+// Client Pages
+import ClientDashboard from "./pages/client/ClientDashboard";
+import ClientProfile from "./pages/client/ClientProfile";
+import ClientPayments from "./pages/client/ClientPayments";
+import ClientCalendar from "./pages/client/ClientCalendar";
+import ClientReviews from "./pages/client/ClientReviews";
+
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 
@@ -43,6 +50,13 @@ const App = () => (
           {/* Caregiver Routes */}
           <Route path="/cuidador/dashboard" element={<CaregiverDashboard />} />
           <Route path="/cuidador/formacao" element={<CaregiverTraining />} />
+          
+          {/* Client Routes */}
+          <Route path="/cliente/dashboard" element={<ClientDashboard />} />
+          <Route path="/cliente/perfil" element={<ClientProfile />} />
+          <Route path="/cliente/pagamentos" element={<ClientPayments />} />
+          <Route path="/cliente/agenda" element={<ClientCalendar />} />
+          <Route path="/cliente/avaliacoes" element={<ClientReviews />} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboard />} />
