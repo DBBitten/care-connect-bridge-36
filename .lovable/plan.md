@@ -1,68 +1,112 @@
 
-## Corrigir Links de Navegacao com Ancoras
+## Corrigir Redirecionamento de Login e Adicionar Botao "Meu Painel" na Navbar
 
 ### Resumo
-Vou implementar navegacao por ancoras para os links "Como Funciona" e "Sobre", fazendo com que eles rolem suavemente para as secoes correspondentes na pagina inicial.
+Vou corrigir o redirecionamento apos login para usuarios do tipo "necessitado" e implementar um estado de autenticacao simulado que mostrara o botao "Meu Painel" na Navbar quando o usuario estiver logado.
 
 ---
 
+### Problema Atual
+
+1. **LoginPage.tsx (linha 35)**: Usuarios do tipo "necessitado" sao redirecionados para `/buscar-cuidadores` em vez de `/cliente/dashboard`
+2. **Navbar.tsx**: Sempre mostra botoes "Entrar" e "Cadastrar", mesmo apos o login
+
+---
+
+### Solucao Proposta
+
+#### 1. Criar um Contexto de Autenticacao Simulado
+
+Criar um novo arquivo `src/contexts/AuthContext.tsx` para gerenciar o estado de autenticacao em toda a aplicacao:
+
+```text
++---------------------+
+|   AuthContext       |
++---------------------+
+| - user              |
+| - userType          |
+| - isAuthenticated   |
+| - login()           |
+| - logout()          |
++---------------------+
+```
+
+O contexto armazenara:
+- `user`: dados do usuario (email)
+- `userType`: tipo do usuario ("cuidador" | "necessitado")
+- `isAuthenticated`: boolean indicando se esta logado
+- `login()`: funcao para fazer login
+- `logout()`: funcao para fazer logout
+
+#### 2. Modificar LoginPage.tsx
+
+- Importar e usar o contexto de autenticacao
+- Corrigir o redirecionamento da linha 35 para `/cliente/dashboard`
+- Chamar a funcao `login()` do contexto antes de redirecionar
+
+#### 3. Modificar Navbar.tsx
+
+- Importar e usar o contexto de autenticacao
+- Renderizar condicionalmente:
+  - **Se logado**: Mostrar botao "Meu Painel" (link para dashboard correspondente) e botao "Sair"
+  - **Se nao logado**: Mostrar botoes "Entrar" e "Cadastrar" (comportamento atual)
+
+#### 4. Envolver a Aplicacao com o Provider
+
+- Modificar `App.tsx` para incluir o `AuthProvider` envolvendo todas as rotas
+
+---
+
+### Arquivos a Criar
+
+| Arquivo | Descricao |
+|---------|-----------|
+| `src/contexts/AuthContext.tsx` | Contexto de autenticacao com estado e funcoes |
+
 ### Arquivos a Modificar
 
-#### 1. HowItWorksSection.tsx
-Adicionar `id="como-funciona"` na tag `<section>` para permitir navegacao por ancora.
-
-#### 2. TrustSection.tsx
-Adicionar `id="sobre"` na tag `<section>` para usar como destino do link "Sobre".
-
-#### 3. Navbar.tsx
-Alterar os links de navegacao:
-- "Como Funciona": trocar `<Link to="/como-funciona">` por `<a href="/#como-funciona">`
-- "Sobre": trocar `<Link to="/sobre">` por `<a href="/#sobre">`
-
-Isso se aplica tanto ao menu desktop (linhas 26-31) quanto ao menu mobile (linhas 65-78).
-
-#### 4. Footer.tsx
-Alterar os links:
-- "Como Funciona" (linha 28): trocar para `<a href="/#como-funciona">`
-- "Sobre" (linha 50): trocar para `<a href="/#sobre">`
+| Arquivo | Alteracoes |
+|---------|------------|
+| `src/pages/LoginPage.tsx` | Usar contexto, corrigir redirecionamento para `/cliente/dashboard` |
+| `src/components/layout/Navbar.tsx` | Adicionar logica condicional para mostrar "Meu Painel" e "Sair" |
+| `src/App.tsx` | Envolver rotas com `AuthProvider` |
 
 ---
 
 ### Detalhes Tecnicos
 
-**Por que usar `<a>` ao inves de `<Link>`?**
+**AuthContext.tsx - Estrutura:**
+```tsx
+interface AuthContextType {
+  user: { email: string } | null;
+  userType: "cuidador" | "necessitado" | null;
+  isAuthenticated: boolean;
+  login: (email: string, userType: "cuidador" | "necessitado") => void;
+  logout: () => void;
+}
+```
 
-O componente `<Link>` do React Router intercepta cliques e faz navegacao via JavaScript, mas nao processa hashes para rolagem automaticamente. Usar tags `<a>` nativas permite que o navegador:
-1. Navegue para a pagina inicial (`/`)
-2. Role automaticamente para o elemento com o `id` correspondente
+**Navbar.tsx - Logica Condicional:**
+```tsx
+// Se autenticado:
+// - Mostrar "Meu Painel" -> link para /cuidador/dashboard ou /cliente/dashboard
+// - Mostrar "Sair" -> chama logout() e redireciona para /
 
-**Comportamento esperado:**
-- Se o usuario esta em outra pagina (ex: `/login`), clicar em "Como Funciona" vai para a pagina inicial e rola ate a secao
-- Se ja esta na pagina inicial, rola diretamente para a secao
-- O scroll acontece suavemente gracas ao CSS `scroll-behavior: smooth` que ja pode estar configurado
+// Se nao autenticado:
+// - Mostrar "Entrar" e "Cadastrar" (atual)
+```
+
+**Persistencia:**
+O estado de autenticacao sera armazenado em `localStorage` para persistir entre recarregamentos da pagina, simulando uma sessao real.
 
 ---
 
-### Alteracoes por Arquivo
+### Comportamento Esperado
 
-**HowItWorksSection.tsx** - Linha 23:
-```tsx
-// De:
-<section className="py-20 bg-background">
-
-// Para:
-<section id="como-funciona" className="py-20 bg-background">
-```
-
-**TrustSection.tsx** - Linha 39:
-```tsx
-// De:
-<section className="py-20 trust-gradient">
-
-// Para:
-<section id="sobre" className="py-20 trust-gradient">
-```
-
-**Navbar.tsx** - Links desktop e mobile serao alterados de `<Link>` para `<a>` com os hrefs corretos.
-
-**Footer.tsx** - Links de "Como Funciona" e "Sobre" serao alterados de `<Link>` para `<a>`.
+1. Usuario acessa `/login`
+2. Seleciona "Preciso de cuidador" (necessitado)
+3. Preenche email e senha, clica em "Entrar"
+4. Sistema redireciona para `/cliente/dashboard`
+5. Navbar agora mostra "Meu Painel" e "Sair" em vez de "Entrar" e "Cadastrar"
+6. Clicar em "Meu Painel" leva ao dashboard correspondente
+7. Clicar em "Sair" desloga e volta para a pagina inicial
