@@ -1,10 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, Menu, X } from "lucide-react";
+import { Heart, Menu, X, LogOut, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, userType, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const dashboardPath = userType === "cuidador" ? "/cuidador/dashboard" : "/cliente/dashboard";
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+    setIsOpen(false);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -33,12 +44,29 @@ export function Navbar() {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" asChild>
-              <Link to="/login">Entrar</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/cadastro">Cadastrar</Link>
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to={dashboardPath} className="flex items-center gap-2">
+                    <LayoutDashboard className="w-4 h-4" />
+                    Meu Painel
+                  </Link>
+                </Button>
+                <Button variant="outline" onClick={handleLogout} className="flex items-center gap-2">
+                  <LogOut className="w-4 h-4" />
+                  Sair
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Entrar</Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/cadastro">Cadastrar</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -77,12 +105,29 @@ export function Navbar() {
               Sobre
             </a>
             <div className="flex gap-3 pt-4 border-t border-border">
-              <Button variant="outline" className="flex-1" asChild>
-                <Link to="/login" onClick={() => setIsOpen(false)}>Entrar</Link>
-              </Button>
-              <Button className="flex-1" asChild>
-                <Link to="/cadastro" onClick={() => setIsOpen(false)}>Cadastrar</Link>
-              </Button>
+              {isAuthenticated ? (
+                <>
+                  <Button variant="outline" className="flex-1" asChild>
+                    <Link to={dashboardPath} onClick={() => setIsOpen(false)}>
+                      <LayoutDashboard className="w-4 h-4" />
+                      Meu Painel
+                    </Link>
+                  </Button>
+                  <Button variant="outline" className="flex-1 flex items-center justify-center gap-2" onClick={handleLogout}>
+                    <LogOut className="w-4 h-4" />
+                    Sair
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" className="flex-1" asChild>
+                    <Link to="/login" onClick={() => setIsOpen(false)}>Entrar</Link>
+                  </Button>
+                  <Button className="flex-1" asChild>
+                    <Link to="/cadastro" onClick={() => setIsOpen(false)}>Cadastrar</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
