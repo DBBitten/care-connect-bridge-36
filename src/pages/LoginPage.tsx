@@ -6,12 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Heart, ArrowLeft, Users, UserCheck, Mail, Lock } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 type UserType = "cuidador" | "necessitado";
 
 const LoginPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { login } = useAuth();
   const initialType = searchParams.get("tipo") as UserType | null;
   
   const [userType, setUserType] = useState<UserType | null>(initialType);
@@ -26,13 +28,16 @@ const LoginPage = () => {
     // Simulate login
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
+    // Call login from context
+    login(email, userType!);
+    
     toast.success("Login realizado com sucesso!");
     
     // Redirect based on user type
     if (userType === "cuidador") {
       navigate("/cuidador/dashboard");
     } else {
-      navigate("/buscar-cuidadores");
+      navigate("/cliente/dashboard");
     }
     
     setIsLoading(false);

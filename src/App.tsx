@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -33,39 +34,41 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/cadastro" element={<RegisterPage />} />
-          <Route path="/buscar-cuidadores" element={<SearchCaregivers />} />
-          <Route path="/cuidador/:id" element={<CaregiverProfile />} />
-          <Route path="/agendar/:id" element={<BookingPage />} />
-          <Route path="/avaliar/:id" element={<ReviewPage />} />
-          
-          {/* Caregiver Routes */}
-          <Route path="/cuidador/dashboard" element={<CaregiverDashboard />} />
-          <Route path="/cuidador/formacao" element={<CaregiverTraining />} />
-          
-          {/* Client Routes */}
-          <Route path="/cliente/dashboard" element={<ClientDashboard />} />
-          <Route path="/cliente/perfil" element={<ClientProfile />} />
-          <Route path="/cliente/pagamentos" element={<ClientPayments />} />
-          <Route path="/cliente/agenda" element={<ClientCalendar />} />
-          <Route path="/cliente/avaliacoes" element={<ClientReviews />} />
-          
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminDashboard />} />
-          
-          {/* Catch-all */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/cadastro" element={<RegisterPage />} />
+            <Route path="/buscar-cuidadores" element={<SearchCaregivers />} />
+            <Route path="/cuidador/:id" element={<CaregiverProfile />} />
+            <Route path="/agendar/:id" element={<BookingPage />} />
+            <Route path="/avaliar/:id" element={<ReviewPage />} />
+            
+            {/* Caregiver Routes */}
+            <Route path="/cuidador/dashboard" element={<CaregiverDashboard />} />
+            <Route path="/cuidador/formacao" element={<CaregiverTraining />} />
+            
+            {/* Client Routes */}
+            <Route path="/cliente/dashboard" element={<ClientDashboard />} />
+            <Route path="/cliente/perfil" element={<ClientProfile />} />
+            <Route path="/cliente/pagamentos" element={<ClientPayments />} />
+            <Route path="/cliente/agenda" element={<ClientCalendar />} />
+            <Route path="/cliente/avaliacoes" element={<ClientReviews />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminDashboard />} />
+            
+            {/* Catch-all */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
