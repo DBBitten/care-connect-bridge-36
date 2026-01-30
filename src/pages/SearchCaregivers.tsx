@@ -71,8 +71,8 @@ const SearchCaregivers = () => {
 
   const filteredCaregivers = caregivers.filter((caregiver) => {
     const matchesSearch = caregiver.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesLocation = !locationFilter || caregiver.location.includes(locationFilter);
-    const matchesAvailability = !availabilityFilter || caregiver.availability.toLowerCase().includes(availabilityFilter.toLowerCase());
+    const matchesLocation = !locationFilter || locationFilter === "all" || caregiver.location.includes(locationFilter);
+    const matchesAvailability = !availabilityFilter || availabilityFilter === "all" || caregiver.availability.toLowerCase().includes(availabilityFilter.toLowerCase());
     return matchesSearch && matchesLocation && matchesAvailability;
   });
 
@@ -111,7 +111,7 @@ const SearchCaregivers = () => {
                     <SelectValue placeholder="Localização" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todas</SelectItem>
+                    <SelectItem value="all">Todas</SelectItem>
                     <SelectItem value="São Paulo">São Paulo - SP</SelectItem>
                     <SelectItem value="Santo André">Santo André - SP</SelectItem>
                     <SelectItem value="Campinas">Campinas - SP</SelectItem>
@@ -123,7 +123,7 @@ const SearchCaregivers = () => {
                     <SelectValue placeholder="Disponibilidade" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Qualquer</SelectItem>
+                    <SelectItem value="all">Qualquer</SelectItem>
                     <SelectItem value="manhã">Manhã</SelectItem>
                     <SelectItem value="tarde">Tarde</SelectItem>
                     <SelectItem value="noite">Noite</SelectItem>
