@@ -5,9 +5,13 @@ import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Clock, CreditCard, ShieldCheck, CheckCircle } from "lucide-react";
+import { ArrowLeft, Clock, CreditCard, ShieldCheck, CheckCircle, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { useLegal } from "@/contexts/LegalContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Mock caregiver data
 const caregiver = {
@@ -19,10 +23,14 @@ const caregiver = {
 const BookingPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { hasAccepted, acceptDocument } = useLegal();
+  
   const [date, setDate] = useState<Date | undefined>();
   const [startTime, setStartTime] = useState("");
   const [duration, setDuration] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [acceptedRules, setAcceptedRules] = useState(hasAccepted('MARKETPLACE_RULES'));
 
   const totalValue = duration ? parseInt(duration) * caregiver.hourlyRate : 0;
 
@@ -30,6 +38,16 @@ const BookingPage = () => {
     if (!date || !startTime || !duration) {
       toast.error("Por favor, preencha todos os campos");
       return;
+    }
+
+    if (!acceptedRules) {
+      toast.error("Você precisa aceitar as Regras do Marketplace");
+      return;
+    }
+
+    // Record acceptance if not already recorded
+    if (!hasAccepted('MARKETPLACE_RULES')) {
+      acceptDocument('MARKETPLACE_RULES');
     }
 
     setIsLoading(true);
@@ -197,11 +215,42 @@ const BookingPage = () => {
                   </div>
                 </div>
 
+                {/* Marketplace Rules Acceptance */}
+                <Card className="border-primary/20 bg-primary/5">
+                  <CardContent className="p-4">
+                    <h4 className="font-semibold text-foreground mb-3">Regras do Atendimento</h4>
+                    <ul className="text-sm text-muted-foreground space-y-1 mb-4">
+                      <li>• Cancelamentos com menos de 24h podem ter cobrança</li>
+                      <li>• Pagamentos são processados pela plataforma</li>
+                      <li>• Não é permitido negociar fora do ElderCare</li>
+                    </ul>
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        id="accept-rules"
+                        checked={acceptedRules}
+                        onCheckedChange={(checked) => setAcceptedRules(checked as boolean)}
+                      />
+                      <Label htmlFor="accept-rules" className="text-sm cursor-pointer">
+                        Li e aceito as{' '}
+                        <Link
+                          to="/regras"
+                          target="_blank"
+                          className="text-primary hover:underline inline-flex items-center gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Regras do Marketplace
+                          <ExternalLink className="w-3 h-3" />
+                        </Link>
+                      </Label>
+                    </div>
+                  </CardContent>
+                </Card>
+
                 <Button
                   className="w-full"
                   size="lg"
                   onClick={handleBooking}
-                  disabled={!date || !startTime || !duration || isLoading}
+                  disabled={!date || !startTime || !duration || !acceptedRules || isLoading}
                 >
                   {isLoading ? "Processando..." : `Confirmar e pagar R$ ${totalValue.toFixed(2)}`}
                 </Button>

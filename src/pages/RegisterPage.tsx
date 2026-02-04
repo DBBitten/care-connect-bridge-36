@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,19 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Heart, ArrowLeft, Users, UserCheck, Mail, Lock, User, Phone, MapPin, Calendar, FileText } from "lucide-react";
+import { Heart, ArrowLeft, Users, UserCheck, Mail, Lock, User, Phone, MapPin, Calendar, FileText, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { useLegal } from "@/contexts/LegalContext";
 
 type UserType = "cuidador" | "necessitado";
 
 const RegisterPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const { acceptDocument, acceptMultipleDocuments } = useLegal();
   const initialType = searchParams.get("tipo") as UserType | null;
   
   const [userType, setUserType] = useState<UserType | null>(initialType);
   const [isLoading, setIsLoading] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [acceptPrivacy, setAcceptPrivacy] = useState(false);
 
   // Form fields
   const [formData, setFormData] = useState({
@@ -45,8 +50,8 @@ const RegisterPage = () => {
       return;
     }
 
-    if (!acceptTerms) {
-      toast.error("Você precisa aceitar os termos de uso");
+    if (!acceptTerms || !acceptPrivacy) {
+      toast.error("Você precisa aceitar os termos de uso e política de privacidade");
       return;
     }
 
@@ -54,6 +59,12 @@ const RegisterPage = () => {
 
     // Simulate registration
     await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // Record acceptance of legal documents
+    acceptMultipleDocuments(['TERMS_OF_USE', 'PRIVACY_POLICY']);
+
+    // Log in the user
+    login(formData.email, userType!);
 
     toast.success("Cadastro realizado com sucesso!");
     
@@ -332,25 +343,39 @@ const RegisterPage = () => {
               </div>
 
               {/* Terms */}
-              <div className="flex items-start gap-2 pt-2">
-                <Checkbox
-                  id="terms"
-                  checked={acceptTerms}
-                  onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
-                />
-                <label htmlFor="terms" className="text-sm text-muted-foreground leading-tight">
-                  Eu li e aceito os{" "}
-                  <Link to="/termos" className="text-primary hover:underline">
-                    Termos de Uso
-                  </Link>{" "}
-                  e a{" "}
-                  <Link to="/privacidade" className="text-primary hover:underline">
-                    Política de Privacidade
-                  </Link>
-                </label>
+              <div className="space-y-3 pt-2">
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id="terms"
+                    checked={acceptTerms}
+                    onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
+                  />
+                  <label htmlFor="terms" className="text-sm text-muted-foreground leading-tight">
+                    Li e aceito os{" "}
+                    <Link to="/termos" target="_blank" className="text-primary hover:underline inline-flex items-center gap-1">
+                      Termos de Uso
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                  </label>
+                </div>
+                
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id="privacy"
+                    checked={acceptPrivacy}
+                    onCheckedChange={(checked) => setAcceptPrivacy(checked as boolean)}
+                  />
+                  <label htmlFor="privacy" className="text-sm text-muted-foreground leading-tight">
+                    Li e aceito a{" "}
+                    <Link to="/privacidade" target="_blank" className="text-primary hover:underline inline-flex items-center gap-1">
+                      Política de Privacidade
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                  </label>
+                </div>
               </div>
 
-              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+              <Button type="submit" className="w-full" size="lg" disabled={isLoading || !acceptTerms || !acceptPrivacy}>
                 {isLoading ? "Cadastrando..." : "Criar conta"}
               </Button>
             </form>

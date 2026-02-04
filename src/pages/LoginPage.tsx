@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,19 +7,24 @@ import { Label } from "@/components/ui/label";
 import { Heart, ArrowLeft, Users, UserCheck, Mail, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLegal } from "@/contexts/LegalContext";
+import { LegalAcceptanceModal } from "@/components/legal/LegalAcceptanceModal";
 
 type UserType = "cuidador" | "necessitado";
 
 const LoginPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, userType: currentUserType } = useAuth();
+  const { hasPendingInitialAcceptance } = useLegal();
   const initialType = searchParams.get("tipo") as UserType | null;
   
   const [userType, setUserType] = useState<UserType | null>(initialType);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showLegalModal, setShowLegalModal] = useState(false);
+  const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,14 +38,32 @@ const LoginPage = () => {
     
     toast.success("Login realizado com sucesso!");
     
-    // Redirect based on user type
-    if (userType === "cuidador") {
-      navigate("/cuidador/dashboard");
-    } else {
-      navigate("/cliente/dashboard");
-    }
-    
+    // Check if user needs to accept terms
+    const redirectPath = userType === "cuidador" ? "/cuidador/dashboard" : "/cliente/dashboard";
+    setPendingRedirect(redirectPath);
     setIsLoading(false);
+    
+    // Will check for pending acceptance in useEffect
+  };
+
+  // Check for pending legal acceptance after login
+  useEffect(() => {
+    if (isAuthenticated && pendingRedirect) {
+      if (hasPendingInitialAcceptance()) {
+        setShowLegalModal(true);
+      } else {
+        navigate(pendingRedirect);
+        setPendingRedirect(null);
+      }
+    }
+  }, [isAuthenticated, pendingRedirect, hasPendingInitialAcceptance, navigate]);
+
+  const handleLegalAccepted = () => {
+    setShowLegalModal(false);
+    if (pendingRedirect) {
+      navigate(pendingRedirect);
+      setPendingRedirect(null);
+    }
   };
 
   if (!userType) {
@@ -180,6 +203,15 @@ const LoginPage = () => {
             </p>
           </CardContent>
         </Card>
+        
+        {/* Legal Acceptance Modal */}
+        <LegalAcceptanceModal
+          open={showLegalModal}
+          onAccepted={handleLegalAccepted}
+          title="Termos de Uso"
+          description="Para continuar usando o ElderCare, aceite nossos termos."
+          requiredDocuments={['TERMS_OF_USE', 'PRIVACY_POLICY']}
+        />
       </div>
     </div>
   );
