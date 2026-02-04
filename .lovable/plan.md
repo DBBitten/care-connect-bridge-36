@@ -1,9 +1,9 @@
 
-## Modulo KYC para Cuidadores - ElderCare
+## Modulo Completo de Termos e Regras - ElderCare
 
 ### Resumo Executivo
 
-Este plano detalha a implementacao de um modulo de verificacao de identidade (KYC) para cuidadores na plataforma ElderCare. O sistema sera semi-manual, onde cuidadores enviam documentos e administradores revisam e aprovam/reprovam as submissoes.
+Este plano detalha a implementacao de um modulo completo de Termos e Regras para a plataforma ElderCare, incluindo documentos legais versionados, aceite obrigatorio com trilha de auditoria, paginas publicas acessiveis via rodape e bloqueios de fluxo quando aceite pendente.
 
 ---
 
@@ -11,207 +11,235 @@ Este plano detalha a implementacao de um modulo de verificacao de identidade (KY
 
 ```text
 +------------------+     +------------------+     +------------------+
-|    Cuidador      |     |     Sistema      |     |      Admin       |
+|    Usuario       |     |     Sistema      |     |      Admin       |
 +------------------+     +------------------+     +------------------+
          |                       |                        |
-         | Preenche dados        |                        |
-         | Upload documentos     |                        |
+         | Cadastro/Login        |                        |
          +---------------------->|                        |
-         |                       | Armazena no banco      |
-         |                       | Status: SUBMITTED      |
-         |                       +----------------------->|
-         |                       |                        | Revisa
-         |                       |                        | Aprova/Reprova
-         |                       |<-----------------------+
-         | Recebe notificacao    |                        |
-         | Status atualizado     |                        |
+         |                       | Modal aceite inicial   |
+         |<----------------------+                        |
+         | Aceita termos         |                        |
+         +---------------------->|                        |
+         |                       | Registra acceptance    |
+         |                       | com versao/IP/UA       |
+         |                       |                        |
+         | Cuidador: KYC         |                        |
+         +---------------------->|                        |
+         |                       | Exige aceite termo     |
+         |                       | cuidador + regras      |
          |<----------------------+                        |
          |                       |                        |
+         |                       |                        | Publica nova versao
+         |                       |<-----------------------+
+         |                       | Flag reaceite          |
+         | Proximo acesso        |                        |
+         +---------------------->|                        |
+         |                       | Exige novo aceite      |
+         |<----------------------+                        |
 ```
 
 ---
 
 ### Parte 1: Modelo de Dados
 
-Como nao ha Supabase configurado, implementaremos com dados mockados em contextos React, preparados para integracao futura.
-
-#### 1.1 Tipos TypeScript (src/types/kyc.ts)
+#### 1.1 Tipos TypeScript (src/types/legal.ts)
 
 | Tipo | Campos |
 |------|--------|
-| KycStatus | NOT_STARTED, IN_PROGRESS, SUBMITTED, APPROVED, REJECTED, NEEDS_MORE_INFO |
-| KycDocumentType | ID_FRONT, ID_BACK, SELFIE, PROOF_OF_ADDRESS, CRIMINAL_RECORD_FEDERAL, CRIMINAL_RECORD_STATE |
-| CaregiverProfile | userId, cpf, birthDate, city, state, addressLine, createdAt |
-| KycSubmission | id, userId, status, submittedAt, reviewedAt, reviewerId, rejectionReason, notes, version, pendingItems |
-| KycDocument | id, submissionId, type, fileName, fileUrl, uploadedAt, verifiedFlag, adminComment |
-| AuditLogEntry | id, actorUserId, action, entityType, entityId, metadata, createdAt |
+| LegalDocumentKey | TERMS_OF_USE, PRIVACY_POLICY, CAREGIVER_LIABILITY_TERM, MARKETPLACE_RULES |
+| LegalDocument | id, key, title, version, content (markdown), isActive, createdAt, createdBy |
+| LegalAcceptance | id, userId, documentKey, documentVersion, acceptedAt, ipAddress, userAgent, metadata, createdAt |
+| LegalAuditAction | LEGAL_DOC_CREATED, LEGAL_DOC_PUBLISHED, USER_ACCEPTED_LEGAL_DOC |
 
-#### 1.2 Contexto KYC (src/contexts/KycContext.tsx)
+#### 1.2 Contexto Legal (src/contexts/LegalContext.tsx)
 
 Gerenciara:
-- Estado da submissao atual do cuidador
-- Lista de documentos enviados
-- Funcoes para criar/atualizar submissao
-- Funcoes para upload de documentos (mock)
-- Registro de audit log
+- Lista de documentos ativos por tipo
+- Aceites do usuario atual
+- Funcoes para aceitar documentos
+- Verificacao de pendencias de aceite
+- Flag de reaceite necessario
+- Registro em audit log
 
 ---
 
-### Parte 2: Paginas do Cuidador
+### Parte 2: Conteudo dos Documentos
 
-#### 2.1 Pagina KYC Wizard (src/pages/caregiver/CaregiverKyc.tsx)
+Serao criados 4 documentos legais com conteudo em markdown:
 
-Rota: `/cuidador/verificacao`
+#### 2.1 Termos de Uso
+- Definicao do servico como plataforma de intermediacao
+- Responsabilidades do usuario
+- Pagamentos e cancelamentos (MVP)
+- Suspensao e banimento
+- Limitacao de responsabilidade
+- Foro e contato
 
-**Estrutura em Wizard com 3 etapas:**
+#### 2.2 Politica de Privacidade (LGPD)
+- Dados coletados (identificacao, contato, KYC, uso)
+- Finalidades (verificacao, seguranca, pagamento, suporte)
+- Compartilhamentos necessarios
+- Retencao e seguranca
+- Direitos do titular
+- Canal de contato
 
-**Step A - Dados Pessoais:**
-- Nome (pre-preenchido do contexto de auth)
-- CPF com mascara e validacao de digito verificador
-- Data de nascimento
-- Cidade (default: Porto Alegre)
-- Estado (default: RS)
-- Botao "Salvar e continuar"
+#### 2.3 Termo de Responsabilidade do Cuidador
+- Declaracoes de veracidade
+- Prestacao independente (sem vinculo empregaticio)
+- Limites de atuacao
+- Conduta e seguranca
+- Sigilo e dados
+- Pagamento e anti-bypass
+- Penalidades
 
-**Step B - Documentos:**
-
-Cards de upload organizados:
-
-| Documento | Obrigatorio | Formatos |
-|-----------|-------------|----------|
-| Documento com foto (frente) | Sim | jpg, png, pdf |
-| Verso do documento | Nao | jpg, png, pdf |
-| Selfie | Sim | jpg, png |
-| Certidao PF | Sim | pdf |
-| Certidao RS | Sim | pdf |
-| Comprovante de residencia | Nao | jpg, png, pdf |
-
-Cada card tera:
-- Area de drag-and-drop
-- Preview do arquivo
-- Botao remover/substituir
-- Indicador de status
-
-**Step C - Revisao e Envio:**
-- Checklist visual de itens preenchidos
-- Checkbox de declaracao
-- Botao "Enviar para analise"
-
-#### 2.2 Componentes de Suporte
-
-| Componente | Descricao |
-|------------|-----------|
-| KycStatusBanner | Banner contextual exibido no topo do layout |
-| KycDocumentCard | Card individual para upload de documento |
-| KycProgressBar | Barra de progresso das etapas do wizard |
-| CpfInput | Input com mascara e validacao de CPF |
+#### 2.4 Regras do Marketplace
+- Objetivo
+- O que o cuidador PODE fazer
+- O que PODE com restricoes
+- O que NAO PODE (linha vermelha)
+- Seguranca e conduta
+- Consequencias
 
 ---
 
-### Parte 3: Paginas do Admin
+### Parte 3: Paginas Publicas
 
-#### 3.1 Fila de Verificacoes (src/pages/admin/AdminKycQueue.tsx)
+#### 3.1 Rotas a criar
 
-Rota: `/admin/kyc`
+| Rota | Pagina | Documento |
+|------|--------|-----------|
+| /termos | TermsOfUsePage.tsx | TERMS_OF_USE |
+| /privacidade | PrivacyPolicyPage.tsx | PRIVACY_POLICY |
+| /regras | MarketplaceRulesPage.tsx | MARKETPLACE_RULES |
+| /termo-cuidador | CaregiverTermPage.tsx | CAREGIVER_LIABILITY_TERM |
 
-**Funcionalidades:**
-- Tabela com submissoes pendentes
-- Filtros por status, cidade, data
-- Colunas: Cuidador, Status, Enviado em, Ultima atualizacao, Acoes
-- Badges coloridos por status
-- Botao "Revisar" para cada linha
+#### 3.2 Layout das paginas publicas
 
-#### 3.2 Revisao de Submissao (src/pages/admin/AdminKycReview.tsx)
+Cada pagina tera:
+- Navbar simples
+- Titulo + versao + data de atualizacao
+- Conteudo renderizado em markdown (formatado)
+- Links para outras paginas legais
+- Botao "Imprimir" (opcional)
+- Footer padrao
 
-Rota: `/admin/kyc/:submissionId`
+#### 3.3 Componente reutilizavel
 
-**Layout em duas colunas:**
-
-**Coluna Esquerda:**
-- Dados do cuidador (nome, CPF, nascimento, cidade)
-- Cards de documentos com preview/download
-- Checkbox de verificacao por documento
-- Campo de comentario por documento
-
-**Coluna Direita:**
-- Notas internas (textarea)
-- Botoes de acao:
-  - Aprovar (verde)
-  - Solicitar mais info (amarelo) com checklist
-  - Reprovar (vermelho) com dropdown de motivo + texto livre
-
-**Motivos de reprovacao padronizados:**
-- Documento ilegivel
-- CPF divergente
-- Selfie insuficiente
-- Certidao invalida
-- Informacoes incompletas
-- Suspeita de fraude
+Criar `LegalDocumentPage.tsx` como componente base que recebe:
+- documentKey
+- Renderiza automaticamente titulo, versao, conteudo
+- Links para navegacao entre documentos
 
 ---
 
-### Parte 4: Integracao e Bloqueios
+### Parte 4: Fluxo de Aceite
 
-#### 4.1 Atualizacao do CaregiverLayout
+#### 4.1 Modal de Aceite Inicial (Cadastro/Login)
 
-Adicionar KycStatusBanner no topo que mostra:
-- NOT_STARTED/IN_PROGRESS: "Finalize sua verificacao para receber atendimentos"
-- SUBMITTED: "Em analise - retornaremos em breve"
-- NEEDS_MORE_INFO: Lista de pendencias + botao corrigir
-- REJECTED: Motivo + botao "Corrigir e reenviar"
-- APPROVED: "Verificacao aprovada" (badge verde)
+Componente: `LegalAcceptanceModal.tsx`
 
-#### 4.2 Atualizacao do CaregiverSidebar
+- Exibido apos primeiro login/cadastro
+- Checkboxes:
+  - "Li e aceito os Termos de Uso"
+  - "Li e aceito a Politica de Privacidade"
+- Links para abrir documentos em nova aba
+- Botao "Continuar" habilitado apenas quando ambos marcados
+- Ao aceitar: registrar em LegalAcceptance
 
-Adicionar item de menu:
-- Icone: Shield ou FileCheck
-- Label: "Verificacao"
-- Href: `/cuidador/verificacao`
-- Badge indicador de status
+#### 4.2 Aceite do Cuidador (antes do KYC)
 
-#### 4.3 Atualizacao do AdminSidebar
+Modificar `CaregiverKyc.tsx`:
 
-Adicionar item de menu:
-- Icone: ShieldCheck
-- Label: "KYC"
-- Href: `/admin/kyc`
-- Badge com contagem de pendentes
+- Adicionar Step 0 (antes dos dados pessoais):
+  - Titulo: "Termos do Cuidador"
+  - Checkbox: "Li e aceito o Termo de Responsabilidade do Cuidador"
+  - Checkbox: "Li e aceito as Regras do Marketplace"
+  - Links para abrir documentos
+  - Botao "Continuar" so habilita quando ambos aceitos
+- Registrar acceptances com versao
 
-#### 4.4 Protecao de Rotas
+#### 4.3 Aceite do Familiar (Agendamento)
 
-Criar HOC ou componente `RequireApprovedKyc`:
-- Se status != APPROVED, redirecionar para `/cuidador/verificacao`
-- Aplicar em rotas de agenda/atendimentos
+Modificar `BookingPage.tsx`:
 
----
-
-### Parte 5: Validacoes
-
-#### 5.1 Validacao de CPF
-
-Funcao utilitaria em `src/lib/validators.ts`:
-- Validar formato (11 digitos)
-- Validar digitos verificadores
-- Rejeitar CPFs conhecidos como invalidos (todos iguais)
-
-#### 5.2 Validacao de Upload
-
-- Tipos aceitos: jpg, jpeg, png, pdf
-- Tamanho maximo: 10MB por arquivo
-- Validar antes de "aceitar" o upload
+- Antes do botao de confirmar:
+  - Resumo das regras principais (bullet points)
+  - Checkbox: "Confirmo que li as Regras do Marketplace"
+  - Link para documento completo
+- Registrar LegalAcceptance ao confirmar booking
 
 ---
 
-### Parte 6: Audit Log
+### Parte 5: Painel Admin de Documentos Legais
 
-Implementar registro para acoes:
-- KYC_STARTED
-- KYC_DOCUMENT_UPLOADED
-- KYC_SUBMITTED
-- KYC_APPROVED
-- KYC_REJECTED
-- KYC_NEEDS_MORE_INFO
-- KYC_RESUBMITTED
+#### 5.1 Lista de Documentos (/admin/legal)
+
+Componente: `AdminLegalDocuments.tsx`
+
+- Tabela com:
+  - Titulo do documento
+  - Tipo (key)
+  - Versao ativa
+  - Data de criacao
+  - Status (Ativo/Inativo)
+  - Botao "Editar" / "Nova versao"
+- Filtros por tipo
+
+#### 5.2 Criar/Editar Documento (/admin/legal/new, /admin/legal/:id)
+
+Componente: `AdminLegalDocumentEdit.tsx`
+
+- Formulario:
+  - Tipo (dropdown)
+  - Titulo
+  - Conteudo (textarea grande para markdown)
+  - Preview do markdown
+- Botoes:
+  - "Salvar rascunho"
+  - "Publicar" (marca como ativo, versao anterior inativa)
+  - "Forcar reaceite" (flag para usuarios daquele papel)
+
+#### 5.3 Estatisticas de aceites
+
+- Contagem de aceites por versao
+- Lista de usuarios que precisam reaceitar
+- Exportar lista (futuro)
+
+---
+
+### Parte 6: Middleware de Bloqueio
+
+#### 6.1 Componente RequireLegalAcceptance
+
+Funcionalidade:
+- Verifica se usuario tem todos os aceites obrigatorios
+- Diferencia por tipo de usuario (cuidador vs familiar)
+- Redireciona para modal/pagina de aceite se pendente
+
+#### 6.2 Integracoes com bloqueio
+
+| Fluxo | Bloqueio |
+|-------|----------|
+| Cuidador -> KYC | Exigir Termos + Privacidade + Termo Cuidador + Regras |
+| Cuidador -> Aceitar atendimento | Exigir KYC aprovado (que ja inclui termos) |
+| Familiar -> Agendar/Pagar | Exigir Termos + Privacidade + Regras |
+
+#### 6.3 Modificar RegisterPage e LoginPage
+
+- Apos login/cadastro bem-sucedido, verificar aceites pendentes
+- Se pendente, mostrar modal de aceite antes de redirecionar
+
+---
+
+### Parte 7: Atualizacao do Footer
+
+Modificar `Footer.tsx`:
+
+Adicionar links na secao "Legal":
+- Termos de Uso -> /termos
+- Politica de Privacidade -> /privacidade
+- Regras do Marketplace -> /regras
+- Termo do Cuidador -> /termo-cuidador
 
 ---
 
@@ -219,102 +247,95 @@ Implementar registro para acoes:
 
 | Arquivo | Descricao |
 |---------|-----------|
-| `src/types/kyc.ts` | Tipos TypeScript para KYC |
-| `src/contexts/KycContext.tsx` | Contexto de estado KYC |
-| `src/lib/validators.ts` | Funcoes de validacao (CPF, etc) |
-| `src/pages/caregiver/CaregiverKyc.tsx` | Wizard KYC do cuidador |
-| `src/pages/admin/AdminKycQueue.tsx` | Fila de verificacoes |
-| `src/pages/admin/AdminKycReview.tsx` | Pagina de revisao |
-| `src/components/kyc/KycStatusBanner.tsx` | Banner de status |
-| `src/components/kyc/KycDocumentCard.tsx` | Card de upload |
-| `src/components/kyc/KycProgressBar.tsx` | Barra de progresso |
-| `src/components/kyc/CpfInput.tsx` | Input de CPF |
-| `src/components/kyc/RequireApprovedKyc.tsx` | Componente de protecao de rota |
+| `src/types/legal.ts` | Tipos TypeScript para documentos e aceites |
+| `src/contexts/LegalContext.tsx` | Contexto de estado e funcoes legais |
+| `src/data/legalDocuments.ts` | Conteudo inicial dos documentos (markdown) |
+| `src/pages/legal/TermsOfUsePage.tsx` | Pagina Termos de Uso |
+| `src/pages/legal/PrivacyPolicyPage.tsx` | Pagina Politica de Privacidade |
+| `src/pages/legal/MarketplaceRulesPage.tsx` | Pagina Regras do Marketplace |
+| `src/pages/legal/CaregiverTermPage.tsx` | Pagina Termo do Cuidador |
+| `src/components/legal/LegalDocumentPage.tsx` | Componente base para paginas legais |
+| `src/components/legal/LegalAcceptanceModal.tsx` | Modal de aceite inicial |
+| `src/components/legal/LegalAcceptanceCheckbox.tsx` | Checkbox reutilizavel com link |
+| `src/components/legal/RequireLegalAcceptance.tsx` | HOC/componente de bloqueio |
+| `src/pages/admin/AdminLegalDocuments.tsx` | Lista de documentos admin |
+| `src/pages/admin/AdminLegalDocumentEdit.tsx` | Criar/editar documento |
 
 ### Arquivos a Modificar
 
 | Arquivo | Alteracoes |
 |---------|------------|
-| `src/App.tsx` | Adicionar rotas e KycProvider |
-| `src/components/caregiver/CaregiverSidebar.tsx` | Adicionar item Verificacao |
-| `src/components/caregiver/CaregiverLayout.tsx` | Adicionar KycStatusBanner |
-| `src/components/admin/AdminSidebar.tsx` | Adicionar item KYC |
-| `src/pages/caregiver/CaregiverDashboard.tsx` | Adicionar alerta de KYC pendente |
+| `src/App.tsx` | Adicionar rotas legais e LegalProvider |
+| `src/components/layout/Footer.tsx` | Adicionar links para paginas legais |
+| `src/pages/RegisterPage.tsx` | Integrar verificacao de aceite |
+| `src/pages/LoginPage.tsx` | Integrar verificacao de aceite |
+| `src/pages/caregiver/CaregiverKyc.tsx` | Adicionar step 0 com termos do cuidador |
+| `src/pages/BookingPage.tsx` | Adicionar checkbox de regras |
+| `src/components/admin/AdminSidebar.tsx` | Adicionar item "Documentos Legais" |
+| `src/types/kyc.ts` | Estender AuditLogEntry para acoes legais |
 
 ---
 
-### Dados Mock para Desenvolvimento
+### Registro de Aceite (campos)
 
-Criar cuidadores de teste com status variados:
-- 1 com status NOT_STARTED
-- 1 com status IN_PROGRESS
-- 1 com status SUBMITTED (aguardando)
-- 1 com status APPROVED
-- 1 com status REJECTED
-- 1 com status NEEDS_MORE_INFO
-
----
-
-### Fluxo Visual do Usuario
-
-```text
-Cuidador faz login
-        |
-        v
-+---[KYC Aprovado?]---+
-|                     |
-Nao                  Sim
-|                     |
-v                     v
-Banner aviso      Dashboard normal
-+ redireciona     (funcionalidades
-para /verificacao    completas)
-        |
-        v
-Wizard KYC (3 etapas)
-        |
-        v
-Envia para analise
-        |
-        v
-Aguarda revisao do Admin
-        |
-        v
-+---[Decisao Admin]---+
-|         |           |
-Aprovado  Ajustes   Rejeitado
-|         |           |
-v         v           v
-Acesso   Corrigir   Corrigir
-total    e reenviar  e reenviar
-```
+Cada aceite registrara:
+- userId
+- documentKey
+- documentVersion
+- acceptedAt (timestamp)
+- ipAddress (se disponivel via header/API)
+- userAgent (navigator.userAgent)
+- metadata (JSON: role, city, state)
 
 ---
 
-### Criterios de Aceitacao
+### Fluxo de Reaceite
 
-1. Cuidador consegue preencher dados e fazer upload de documentos
-2. Cuidador consegue enviar submissao para analise
-3. Cuidador ve status atual claramente em banner
-4. Admin consegue ver fila de submissoes pendentes
-5. Admin consegue revisar documentos com preview
-6. Admin consegue aprovar, reprovar ou pedir ajustes
-7. Cuidador ve resultado da revisao e pode corrigir se necessario
-8. Cuidador sem KYC aprovado nao consegue acessar funcoes de agendamento
-9. Todas as acoes sao registradas no audit log
+Quando admin publica nova versao:
+1. Versao anterior marcada como inativa
+2. Nova versao marcada como ativa
+3. Flag `requiresReacceptance` setada para papel afetado
+4. No proximo acesso, usuario ve modal de reaceite
+5. Apos aceitar, flag limpa para aquele usuario
 
 ---
 
 ### Ordem de Implementacao
 
-1. Tipos e contexto KYC
-2. Funcoes de validacao (CPF)
-3. Componentes reutilizaveis (Cards, Banner, Progress)
-4. Pagina wizard do cuidador
-5. Atualizacao do layout e sidebar do cuidador
-6. Pagina fila do admin
-7. Pagina revisao do admin
-8. Atualizacao do sidebar do admin
-9. Protecao de rotas
-10. Dados mock e testes
+1. Tipos e dados iniciais (legal.ts, legalDocuments.ts)
+2. Contexto LegalContext.tsx
+3. Componentes base (LegalDocumentPage, LegalAcceptanceCheckbox)
+4. Paginas publicas (/termos, /privacidade, /regras, /termo-cuidador)
+5. Atualizar Footer com links
+6. Modal de aceite inicial
+7. Integrar modal no Login/Register
+8. Atualizar CaregiverKyc com step de termos
+9. Atualizar BookingPage com checkbox de regras
+10. Componente RequireLegalAcceptance
+11. Paginas admin de documentos legais
+12. Atualizar AdminSidebar
 
+---
+
+### Criterios de Aceitacao
+
+1. Paginas publicas de termos/regras existem e sao acessiveis via rodape
+2. Aceite obrigatorio funciona no cadastro/login
+3. Cuidador nao consegue iniciar KYC sem aceitar termo especifico
+4. Familiar nao consegue confirmar agendamento sem aceitar regras
+5. Aceites ficam registrados com versao, timestamp, IP e userAgent
+6. Admin consegue ver documentos e criar novas versoes
+7. Nova versao forca reaceite quando publicada
+8. UI clara, acessivel e em portugues BR
+9. Todas as acoes registradas no audit log
+
+---
+
+### UI e Tom de Comunicacao
+
+- Linguagem simples e objetiva, sem juridiques excessivo
+- Tom acolhedor mas profissional
+- Titulos claros com versao e data visivel
+- Checkboxes grandes e clicaveis
+- Links destacados para abrir documentos
+- Feedback visual ao aceitar (toast de confirmacao)
