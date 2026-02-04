@@ -1,10 +1,12 @@
-import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Heart, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, User, Shield } from "lucide-react";
+import { Heart, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useKyc } from "@/contexts/KycContext";
+import { Badge } from "@/components/ui/badge";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
+  { icon: ShieldCheck, label: "KYC", href: "/admin/kyc", showPendingBadge: true },
   { icon: Users, label: "Usuários", href: "/admin/usuarios" },
   { icon: Calendar, label: "Atendimentos", href: "/admin/atendimentos" },
   { icon: Star, label: "Avaliações", href: "/admin/avaliacoes" },
@@ -13,6 +15,7 @@ const navItems = [
 
 export function AdminSidebar() {
   const location = useLocation();
+  const { pendingCount } = useKyc();
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-foreground flex flex-col">
@@ -32,7 +35,7 @@ export function AdminSidebar() {
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.href;
+          const isActive = location.pathname === item.href || location.pathname.startsWith(item.href + '/');
           return (
             <Link
               key={item.href}
@@ -46,6 +49,11 @@ export function AdminSidebar() {
             >
               <item.icon className="w-5 h-5" />
               <span className="font-medium">{item.label}</span>
+              {item.showPendingBadge && pendingCount > 0 && !isActive && (
+                <Badge className="ml-auto bg-primary text-primary-foreground text-xs">
+                  {pendingCount}
+                </Badge>
+              )}
             </Link>
           );
         })}
