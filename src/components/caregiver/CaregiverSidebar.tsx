@@ -1,9 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { Heart, LayoutDashboard, GraduationCap, Calendar, User, LogOut, Settings } from "lucide-react";
+import { Heart, LayoutDashboard, GraduationCap, Calendar, User, LogOut, Settings, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useKyc } from "@/contexts/KycContext";
+import { Badge } from "@/components/ui/badge";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/cuidador/dashboard" },
+  { icon: ShieldCheck, label: "Verificação", href: "/cuidador/verificacao", showKycBadge: true },
   { icon: GraduationCap, label: "Formação", href: "/cuidador/formacao" },
   { icon: Calendar, label: "Agenda", href: "/cuidador/agenda" },
   { icon: User, label: "Meu Perfil", href: "/cuidador/perfil" },
@@ -12,6 +15,21 @@ const navItems = [
 
 export function CaregiverSidebar() {
   const location = useLocation();
+  const { kycStatus } = useKyc();
+
+  const getKycBadge = () => {
+    switch (kycStatus) {
+      case 'APPROVED':
+        return <Badge variant="secondary" className="ml-auto text-xs bg-success/20 text-success border-0">✓</Badge>;
+      case 'SUBMITTED':
+        return <Badge variant="outline" className="ml-auto text-xs">Análise</Badge>;
+      case 'REJECTED':
+      case 'NEEDS_MORE_INFO':
+        return <Badge variant="destructive" className="ml-auto text-xs">!</Badge>;
+      default:
+        return <Badge variant="outline" className="ml-auto text-xs">Pendente</Badge>;
+    }
+  };
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-card border-r border-border flex flex-col">
@@ -42,6 +60,7 @@ export function CaregiverSidebar() {
             >
               <item.icon className="w-5 h-5" />
               <span className="font-medium">{item.label}</span>
+              {item.showKycBadge && !isActive && getKycBadge()}
             </Link>
           );
         })}
