@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { CaregiverLayout } from '@/components/caregiver/CaregiverLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,13 +12,16 @@ import { KycDocumentCard } from '@/components/kyc/KycDocumentCard';
 import { CpfInput } from '@/components/kyc/CpfInput';
 import { useKyc } from '@/contexts/KycContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLegal } from '@/contexts/LegalContext';
 import { KYC_DOCUMENT_CONFIGS, KycDocumentType } from '@/types/kyc';
+import { LegalDocumentKey } from '@/types/legal';
 import { validateBirthDate } from '@/lib/validators';
-import { ArrowLeft, ArrowRight, Send, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Send, CheckCircle, Clock, AlertCircle, ExternalLink, ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const STEPS = [
+  { id: 0, label: 'Termos' },
   { id: 1, label: 'Dados Pessoais' },
   { id: 2, label: 'Documentos' },
   { id: 3, label: 'Revisão' },
@@ -41,8 +45,18 @@ const CaregiverKyc = () => {
     submitForReview,
     resubmit 
   } = useKyc();
+  const { hasAccepted, acceptDocument } = useLegal();
 
-  const [currentStep, setCurrentStep] = useState(1);
+  // Check if caregiver terms are already accepted
+  const hasCaregiverTerms = hasAccepted('CAREGIVER_LIABILITY_TERM');
+  const hasMarketplaceRules = hasAccepted('MARKETPLACE_RULES');
+  const hasAllCaregiverTerms = hasCaregiverTerms && hasMarketplaceRules;
+
+  const [currentStep, setCurrentStep] = useState(hasAllCaregiverTerms ? 1 : 0);
+  
+  // Form state for step 0 (terms)
+  const [acceptedCaregiverTerm, setAcceptedCaregiverTerm] = useState(hasCaregiverTerms);
+  const [acceptedMarketplaceRules, setAcceptedMarketplaceRules] = useState(hasMarketplaceRules);
   
   // Form state for step 1
   const [cpf, setCpf] = useState(currentSubmission?.profile?.cpf || '');
@@ -64,8 +78,26 @@ const CaregiverKyc = () => {
     }
   }, [currentSubmission]);
 
+  // Check if step 0 is valid (terms accepted)
+  const isStep0Valid = acceptedCaregiverTerm && acceptedMarketplaceRules;
+
   // Check if step 1 is valid
   const isStep1Valid = cpfValid && birthDate && validateBirthDate(birthDate) && city && state;
+  
+  // Handle step 0 save (accept terms)
+  const handleAcceptTerms = () => {
+    if (acceptedCaregiverTerm) {
+      acceptDocument('CAREGIVER_LIABILITY_TERM');
+    }
+    if (acceptedMarketplaceRules) {
+      acceptDocument('MARKETPLACE_RULES');
+    }
+    toast({
+      title: 'Termos aceitos',
+      description: 'Você aceitou os termos do cuidador.',
+    });
+    setCurrentStep(1);
+  };
 
   // Check required documents for step 2
   const getDocumentByType = (type: KycDocumentType) => 
@@ -207,6 +239,91 @@ const CaregiverKyc = () => {
             <KycProgressBar steps={STEPS} currentStep={currentStep} />
           </CardContent>
         </Card>
+
+        {/* Step 0: Caregiver Terms */}
+        {currentStep === 0 && (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle>Termos do Cuidador</CardTitle>
+                  <CardDescription>
+                    Antes de iniciar, leia e aceite os termos específicos para cuidadores.
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-muted/50 rounded-xl p-4 space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Para atuar como cuidador na plataforma ElderCare, você precisa aceitar:
+                </p>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3 p-4 border rounded-xl bg-background">
+                    <Checkbox
+                      id="caregiver-term"
+                      checked={acceptedCaregiverTerm}
+                      onCheckedChange={(checked) => setAcceptedCaregiverTerm(checked as boolean)}
+                    />
+                    <div className="flex-1">
+                      <Label htmlFor="caregiver-term" className="text-sm font-medium cursor-pointer">
+                        Li e aceito o{' '}
+                        <Link
+                          to="/termo-cuidador"
+                          target="_blank"
+                          className="text-primary hover:underline inline-flex items-center gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Termo de Responsabilidade do Cuidador
+                          <ExternalLink className="w-3 h-3" />
+                        </Link>
+                      </Label>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Define suas responsabilidades, limites de atuação e conduta profissional.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3 p-4 border rounded-xl bg-background">
+                    <Checkbox
+                      id="marketplace-rules"
+                      checked={acceptedMarketplaceRules}
+                      onCheckedChange={(checked) => setAcceptedMarketplaceRules(checked as boolean)}
+                    />
+                    <div className="flex-1">
+                      <Label htmlFor="marketplace-rules" className="text-sm font-medium cursor-pointer">
+                        Li e aceito as{' '}
+                        <Link
+                          to="/regras"
+                          target="_blank"
+                          className="text-primary hover:underline inline-flex items-center gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Regras do Marketplace
+                          <ExternalLink className="w-3 h-3" />
+                        </Link>
+                      </Label>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        O que pode e não pode fazer como cuidador na plataforma.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-end pt-4">
+                <Button onClick={handleAcceptTerms} disabled={!isStep0Valid}>
+                  Aceitar e continuar
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Step 1: Personal Data */}
         {currentStep === 1 && (
