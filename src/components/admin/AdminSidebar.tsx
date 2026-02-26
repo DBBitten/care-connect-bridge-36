@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { Heart, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck, FileText, Package, CreditCard } from "lucide-react";
+import { Heart, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck, FileText, Package, CreditCard, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useKyc } from "@/contexts/KycContext";
 import { Badge } from "@/components/ui/badge";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
+  { icon: BarChart3, label: "Métricas", href: "/admin/metrics" },
   { icon: ShieldCheck, label: "KYC", href: "/admin/kyc", showPendingBadge: true },
   { icon: FileText, label: "Documentos Legais", href: "/admin/legal" },
   { icon: Package, label: "Serviços", href: "/admin/services" },
