@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { KycProvider } from "@/contexts/KycContext";
 import { LegalProvider } from "@/contexts/LegalContext";
 import { ServiceProvider } from "@/contexts/ServiceContext";
+import { PaymentProvider } from "@/contexts/PaymentContext";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -17,6 +18,7 @@ import CaregiverProfile from "./pages/CaregiverProfile";
 import BookingPage from "./pages/BookingPage";
 import ReviewPage from "./pages/ReviewPage";
 import ServicesPage from "./pages/ServicesPage";
+import CheckoutPage from "./pages/CheckoutPage";
 
 // Legal Pages
 import TermsOfUsePage from "./pages/legal/TermsOfUsePage";
@@ -44,6 +46,8 @@ import AdminLegalDocuments from "./pages/admin/AdminLegalDocuments";
 import AdminLegalDocumentEdit from "./pages/admin/AdminLegalDocumentEdit";
 import AdminServices from "./pages/admin/AdminServices";
 import AdminServiceEdit from "./pages/admin/AdminServiceEdit";
+import AdminPayments from "./pages/admin/AdminPayments";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 import NotFound from "./pages/NotFound";
 
@@ -55,6 +59,7 @@ const App = () => (
       <LegalProvider>
         <KycProvider>
           <ServiceProvider>
+            <PaymentProvider>
             <TooltipProvider>
               <Toaster />
               <Sonner />
@@ -68,7 +73,8 @@ const App = () => (
                   <Route path="/cuidador/:id" element={<CaregiverProfile />} />
                   <Route path="/agendar/:id" element={<BookingPage />} />
                   <Route path="/avaliar/:id" element={<ReviewPage />} />
-                  <Route path="/services" element={<ServicesPage />} />
+                   <Route path="/services" element={<ServicesPage />} />
+                   <Route path="/checkout/:appointmentId" element={<CheckoutPage />} />
                   
                   {/* Legal Routes */}
                   <Route path="/termos" element={<TermsOfUsePage />} />
@@ -96,14 +102,17 @@ const App = () => (
                   <Route path="/admin/legal/new" element={<AdminLegalDocumentEdit />} />
                   <Route path="/admin/legal/edit/:key" element={<AdminLegalDocumentEdit />} />
                   <Route path="/admin/services" element={<AdminServices />} />
-                  <Route path="/admin/services/new" element={<AdminServiceEdit />} />
-                  <Route path="/admin/services/:id" element={<AdminServiceEdit />} />
+                   <Route path="/admin/services/new" element={<AdminServiceEdit />} />
+                   <Route path="/admin/services/:id" element={<AdminServiceEdit />} />
+                   <Route path="/admin/payments" element={<AdminPayments />} />
+                   <Route path="/admin/settings" element={<AdminSettings />} />
                   
                   {/* Catch-all */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
             </TooltipProvider>
+            </PaymentProvider>
           </ServiceProvider>
         </KycProvider>
       </LegalProvider>

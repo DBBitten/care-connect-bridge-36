@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Heart, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck, FileText, Package } from "lucide-react";
+import { Heart, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck, FileText, Package, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useKyc } from "@/contexts/KycContext";
 import { Badge } from "@/components/ui/badge";
@@ -9,10 +9,11 @@ const navItems = [
   { icon: ShieldCheck, label: "KYC", href: "/admin/kyc", showPendingBadge: true },
   { icon: FileText, label: "Documentos Legais", href: "/admin/legal" },
   { icon: Package, label: "Serviços", href: "/admin/services" },
+  { icon: CreditCard, label: "Pagamentos", href: "/admin/payments" },
   { icon: Users, label: "Usuários", href: "/admin/usuarios" },
   { icon: Calendar, label: "Atendimentos", href: "/admin/atendimentos" },
   { icon: Star, label: "Avaliações", href: "/admin/avaliacoes" },
-  { icon: Settings, label: "Configurações", href: "/admin/configuracoes" },
+  { icon: Settings, label: "Configurações", href: "/admin/settings" },
 ];
 
 export function AdminSidebar() {

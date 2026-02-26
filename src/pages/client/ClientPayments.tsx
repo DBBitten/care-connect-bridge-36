@@ -2,192 +2,133 @@ import { ClientLayout } from "@/components/client/ClientLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Plus, Trash2, CheckCircle, Building2 } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CreditCard, XCircle, AlertTriangle, CheckCircle, Clock } from "lucide-react";
 import { useState } from "react";
+import { usePayments } from "@/contexts/PaymentContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-
-const paymentMethods = [
-  {
-    id: 1,
-    type: "credit",
-    brand: "Visa",
-    lastDigits: "4532",
-    expiry: "12/26",
-    isDefault: true,
-  },
-  {
-    id: 2,
-    type: "credit",
-    brand: "Mastercard",
-    lastDigits: "8791",
-    expiry: "08/25",
-    isDefault: false,
-  },
-];
-
-const recentTransactions = [
-  {
-    id: 1,
-    description: "Atendimento - Maria Silva",
-    date: "22 Jan 2025",
-    amount: "R$ 280,00",
-    status: "completed",
-  },
-  {
-    id: 2,
-    description: "Atendimento - Ana Santos",
-    date: "18 Jan 2025",
-    amount: "R$ 200,00",
-    status: "completed",
-  },
-  {
-    id: 3,
-    description: "Atendimento - Carla Mendes",
-    date: "15 Jan 2025",
-    amount: "R$ 480,00",
-    status: "completed",
-  },
-  {
-    id: 4,
-    description: "Atendimento agendado - Maria Silva",
-    date: "25 Jan 2025",
-    amount: "R$ 280,00",
-    status: "pending",
-  },
-];
+import { useNavigate } from "react-router-dom";
 
 const ClientPayments = () => {
   const { toast } = useToast();
-  const [methods, setMethods] = useState(paymentMethods);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { getAppointmentsByClient, cancelAppointment, getPaymentByAppointment } = usePayments();
+  const [cancelId, setCancelId] = useState<string | null>(null);
 
-  const handleSetDefault = (id: number) => {
-    setMethods(methods.map(m => ({ ...m, isDefault: m.id === id })));
-    toast({
-      title: "Cartão padrão atualizado",
-      description: "Este cartão será usado para pagamentos futuros.",
-    });
+  const appointments = user ? getAppointmentsByClient(user.email) : [];
+  const sorted = [...appointments].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const handleCancel = (appointmentId: string) => {
+    cancelAppointment(appointmentId);
+    toast({ title: "Agendamento cancelado", description: "O reembolso será processado conforme a política de cancelamento." });
+    setCancelId(null);
   };
 
-  const handleRemove = (id: number) => {
-    setMethods(methods.filter(m => m.id !== id));
-    toast({
-      title: "Cartão removido",
-      description: "O cartão foi removido com sucesso.",
-    });
+  const getCancelInfo = (appt: typeof appointments[0]) => {
+    const apptDate = new Date(`${appt.date}T${appt.startTime}:00`);
+    const hoursUntil = (apptDate.getTime() - Date.now()) / (1000 * 60 * 60);
+    if (hoursUntil > 24) return { text: "Reembolso integral", rate: "100%" };
+    return { text: "Reembolso parcial (50%)", rate: "50%" };
+  };
+
+  const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive"; icon: typeof CheckCircle }> = {
+    PAYMENT_PENDING: { label: "Aguardando pagamento", variant: "secondary", icon: Clock },
+    PAID: { label: "Pago", variant: "default", icon: CheckCircle },
+    CANCELED: { label: "Cancelado", variant: "destructive", icon: XCircle },
+    COMPLETED: { label: "Concluído", variant: "default", icon: CheckCircle },
+    IN_PROGRESS: { label: "Em andamento", variant: "secondary", icon: Clock },
   };
 
   return (
-    <ClientLayout title="Pagamentos" subtitle="Gerencie suas formas de pagamento">
+    <ClientLayout title="Pagamentos" subtitle="Acompanhe seus agendamentos e pagamentos">
       <div className="max-w-4xl space-y-6">
-        {/* Payment Methods */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">Formas de Pagamento</CardTitle>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Adicionar cartão
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {methods.map((method) => (
-              <div
-                key={method.id}
-                className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card hover:bg-muted/50 transition-colors"
-              >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <CreditCard className="w-6 h-6 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-foreground">{method.brand} •••• {method.lastDigits}</p>
-                    {method.isDefault && (
-                      <Badge variant="default" className="text-xs">Padrão</Badge>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">Expira em {method.expiry}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {!method.isDefault && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleSetDefault(method.id)}
-                    >
-                      <CheckCircle className="w-4 h-4 mr-1" />
-                      Definir padrão
-                    </Button>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    onClick={() => handleRemove(method.id)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
+        <Alert className="border-yellow-500/50 bg-yellow-500/10">
+          <AlertTriangle className="w-4 h-4 text-yellow-600" />
+          <AlertDescription className="text-yellow-700">
+            <strong>Modo MVP</strong> — Todos os pagamentos são simulados. Nenhum valor real é cobrado.
+          </AlertDescription>
+        </Alert>
 
-            {methods.length === 0 && (
-              <div className="text-center py-8">
-                <CreditCard className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">Nenhuma forma de pagamento cadastrada</p>
-                <Button className="mt-4">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar cartão
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Billing Address */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">Endereço de Cobrança</CardTitle>
-            <Button variant="outline" size="sm">Editar</Button>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-start gap-4 p-4 rounded-xl bg-muted/50">
-              <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center">
-                <Building2 className="w-5 h-5 text-secondary-foreground" />
-              </div>
-              <div>
-                <p className="font-medium text-foreground">João Oliveira</p>
-                <p className="text-sm text-muted-foreground">Rua das Flores, 123</p>
-                <p className="text-sm text-muted-foreground">Pinheiros - São Paulo, SP</p>
-                <p className="text-sm text-muted-foreground">CEP: 05420-010</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Recent Transactions */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Transações Recentes</CardTitle>
+            <CardTitle className="text-lg">Meus Agendamentos</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {recentTransactions.map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className="flex items-center justify-between p-4 rounded-xl bg-muted/50"
-                >
-                  <div>
-                    <p className="font-medium text-foreground">{transaction.description}</p>
-                    <p className="text-sm text-muted-foreground">{transaction.date}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-foreground">{transaction.amount}</p>
-                    <Badge variant={transaction.status === "completed" ? "default" : "secondary"}>
-                      {transaction.status === "completed" ? "Pago" : "Pendente"}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {sorted.length === 0 ? (
+              <div className="text-center py-8">
+                <CreditCard className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">Nenhum agendamento encontrado</p>
+                <Button className="mt-4" onClick={() => navigate("/buscar-cuidadores")}>Buscar cuidadores</Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {sorted.map(appt => {
+                  const config = statusConfig[appt.status] || statusConfig.PAYMENT_PENDING;
+                  const StatusIcon = config.icon;
+                  const payment = getPaymentByAppointment(appt.id);
+                  const cancelInfo = getCancelInfo(appt);
+
+                  return (
+                    <div key={appt.id} className="p-4 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <StatusIcon className="w-4 h-4 text-muted-foreground" />
+                            <p className="font-semibold text-foreground">{appt.serviceName}</p>
+                            <Badge variant={config.variant}>{config.label}</Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {appt.caregiverName} • {new Date(appt.date).toLocaleDateString("pt-BR")} às {appt.startTime} • {appt.durationHours}h
+                          </p>
+                          {payment && (
+                            <p className="text-xs text-muted-foreground">
+                              Método: {payment.method === "SIMULATED" ? "Simulado" : payment.method}
+                              {payment.paidAt && ` • Pago em ${new Date(payment.paidAt).toLocaleDateString("pt-BR")}`}
+                            </p>
+                          )}
+                        </div>
+                        <div className="text-right space-y-2">
+                          <p className="text-lg font-bold text-foreground">R$ {appt.totalPrice.toFixed(2)}</p>
+                          {appt.status === "PAYMENT_PENDING" && (
+                            <Button size="sm" onClick={() => navigate(`/checkout/${appt.id}`)}>
+                              Pagar agora
+                            </Button>
+                          )}
+                          {appt.status === "PAID" && (
+                            <Dialog open={cancelId === appt.id} onOpenChange={open => { if (!open) setCancelId(null); }}>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm" className="text-destructive" onClick={() => setCancelId(appt.id)}>
+                                  Cancelar
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Cancelar agendamento</DialogTitle>
+                                  <DialogDescription>
+                                    Deseja cancelar o atendimento "{appt.serviceName}" em {new Date(appt.date).toLocaleDateString("pt-BR")}?
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="p-4 rounded-xl bg-muted/50 space-y-2">
+                                  <p className="text-sm font-medium text-foreground">Política de Cancelamento:</p>
+                                  <p className="text-sm text-muted-foreground">{cancelInfo.text} ({cancelInfo.rate} de R$ {appt.totalPrice.toFixed(2)})</p>
+                                </div>
+                                <DialogFooter>
+                                  <Button variant="outline" onClick={() => setCancelId(null)}>Voltar</Button>
+                                  <Button variant="destructive" onClick={() => handleCancel(appt.id)}>Confirmar cancelamento</Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
