@@ -40,6 +40,9 @@ export function Navbar() {
             <a href="/#sobre" className="text-muted-foreground hover:text-foreground transition-colors">
               Sobre
             </a>
+            <Link to="/services" className="text-muted-foreground hover:text-foreground transition-colors">
+              Serviços
+            </Link>
           </div>
 
           {/* Auth Buttons */}
@@ -104,6 +107,13 @@ export function Navbar() {
             >
               Sobre
             </a>
+            <Link
+              to="/services"
+              className="block text-muted-foreground hover:text-foreground transition-colors py-2"
+              onClick={() => setIsOpen(false)}
+            >
+              Serviços
+            </Link>
             <div className="flex gap-3 pt-4 border-t border-border">
               {isAuthenticated ? (
                 <>

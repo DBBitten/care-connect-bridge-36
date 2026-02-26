@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import { ArrowLeft, Clock, CreditCard, ShieldCheck, CheckCircle, ExternalLink } 
 import { toast } from "sonner";
 import { useLegal } from "@/contexts/LegalContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useServices } from "@/contexts/ServiceContext";
 
 // Mock caregiver data
 const caregiver = {
@@ -22,17 +23,38 @@ const caregiver = {
 
 const BookingPage = () => {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { hasAccepted, acceptDocument } = useLegal();
-  
+  const { getActiveServices, getServiceById } = useServices();
+
+  const serviceIdParam = searchParams.get("serviceId");
+  const activeServices = getActiveServices();
+
+  const [selectedServiceId, setSelectedServiceId] = useState(serviceIdParam || "");
+  const selectedService = selectedServiceId ? getServiceById(selectedServiceId) : undefined;
+
+  const effectiveRate = selectedService?.pricePerHour ?? caregiver.hourlyRate;
+
+  // Build duration options from selected service or fallback
+  const durationOptions = selectedService
+    ? selectedService.allowedDurationsMinutes.map((m) => ({ value: String(m / 60), label: `${m / 60} horas` }))
+    : [
+        { value: "2", label: "2 horas" },
+        { value: "4", label: "4 horas" },
+        { value: "6", label: "6 horas" },
+        { value: "8", label: "8 horas" },
+        { value: "12", label: "12 horas" },
+      ];
+
   const [date, setDate] = useState<Date | undefined>();
   const [startTime, setStartTime] = useState("");
   const [duration, setDuration] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [acceptedRules, setAcceptedRules] = useState(hasAccepted('MARKETPLACE_RULES'));
 
-  const totalValue = duration ? parseInt(duration) * caregiver.hourlyRate : 0;
+  const totalValue = duration ? parseFloat(duration) * effectiveRate : 0;
 
   const handleBooking = async () => {
     if (!date || !startTime || !duration) {
@@ -45,19 +67,14 @@ const BookingPage = () => {
       return;
     }
 
-    // Record acceptance if not already recorded
     if (!hasAccepted('MARKETPLACE_RULES')) {
       acceptDocument('MARKETPLACE_RULES');
     }
 
     setIsLoading(true);
-    
-    // Simulate booking
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    
     toast.success("Agendamento confirmado com sucesso!");
     navigate("/meus-agendamentos");
-    
     setIsLoading(false);
   };
 
@@ -89,6 +106,25 @@ const BookingPage = () => {
                   <CardTitle>Data e Horário</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                  {/* Service selector */}
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Serviço
+                    </label>
+                    <Select value={selectedServiceId} onValueChange={(val) => { setSelectedServiceId(val); setDuration(""); }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o serviço" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {activeServices.map((svc) => (
+                          <SelectItem key={svc.id} value={svc.id}>
+                            {svc.name} — R$ {svc.pricePerHour}/h
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Selecione a data
@@ -112,19 +148,9 @@ const BookingPage = () => {
                         <SelectValue placeholder="Selecione o horário" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="06:00">06:00</SelectItem>
-                        <SelectItem value="07:00">07:00</SelectItem>
-                        <SelectItem value="08:00">08:00</SelectItem>
-                        <SelectItem value="09:00">09:00</SelectItem>
-                        <SelectItem value="10:00">10:00</SelectItem>
-                        <SelectItem value="11:00">11:00</SelectItem>
-                        <SelectItem value="12:00">12:00</SelectItem>
-                        <SelectItem value="13:00">13:00</SelectItem>
-                        <SelectItem value="14:00">14:00</SelectItem>
-                        <SelectItem value="15:00">15:00</SelectItem>
-                        <SelectItem value="16:00">16:00</SelectItem>
-                        <SelectItem value="17:00">17:00</SelectItem>
-                        <SelectItem value="18:00">18:00</SelectItem>
+                        {["06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"].map((t) => (
+                          <SelectItem key={t} value={t}>{t}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -139,11 +165,9 @@ const BookingPage = () => {
                         <SelectValue placeholder="Selecione a duração" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="2">2 horas</SelectItem>
-                        <SelectItem value="4">4 horas</SelectItem>
-                        <SelectItem value="6">6 horas</SelectItem>
-                        <SelectItem value="8">8 horas</SelectItem>
-                        <SelectItem value="12">12 horas</SelectItem>
+                        {durationOptions.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -161,6 +185,13 @@ const BookingPage = () => {
                       <span className="text-muted-foreground">Cuidador</span>
                       <span className="font-medium text-foreground">{caregiver.name}</span>
                     </div>
+
+                    {selectedService && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Serviço</span>
+                        <span className="font-medium text-foreground">{selectedService.name}</span>
+                      </div>
+                    )}
                     
                     {date && (
                       <div className="flex justify-between text-sm">
@@ -175,7 +206,7 @@ const BookingPage = () => {
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Horário</span>
                         <span className="font-medium text-foreground">
-                          {startTime} - {parseInt(startTime) + parseInt(duration)}:00 ({duration}h)
+                          {startTime} - {parseInt(startTime) + parseFloat(duration)}:00 ({duration}h)
                         </span>
                       </div>
                     )}
@@ -183,7 +214,7 @@ const BookingPage = () => {
                     <div className="border-t border-border pt-4">
                       <div className="flex justify-between text-sm mb-2">
                         <span className="text-muted-foreground">Valor por hora</span>
-                        <span className="text-foreground">R$ {caregiver.hourlyRate}</span>
+                        <span className="text-foreground">R$ {effectiveRate}</span>
                       </div>
                       {duration && (
                         <div className="flex justify-between text-sm mb-2">
