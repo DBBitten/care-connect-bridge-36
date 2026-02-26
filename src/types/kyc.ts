@@ -10,7 +10,6 @@ export type KycStatus =
 // Document types enum
 export type KycDocumentType = 
   | 'ID_FRONT'
-  | 'ID_BACK'
   | 'SELFIE'
   | 'PROOF_OF_ADDRESS'
   | 'CRIMINAL_RECORD_FEDERAL'
@@ -31,13 +30,6 @@ export const KYC_DOCUMENT_CONFIGS: KycDocumentConfig[] = [
     label: 'Documento com foto (frente)',
     description: 'RG, CNH ou outro documento oficial com foto',
     required: true,
-    acceptedFormats: ['image/jpeg', 'image/png', 'application/pdf'],
-  },
-  {
-    type: 'ID_BACK',
-    label: 'Verso do documento',
-    description: 'Verso do documento de identificação (opcional)',
-    required: false,
     acceptedFormats: ['image/jpeg', 'image/png', 'application/pdf'],
   },
   {
@@ -77,6 +69,7 @@ export interface CaregiverKycProfile {
   birthDate: string;
   city: string;
   state: string;
+  phone: string;
   addressLine?: string;
   createdAt: Date;
 }

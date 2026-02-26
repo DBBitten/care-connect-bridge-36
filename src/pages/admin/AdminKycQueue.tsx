@@ -186,6 +186,7 @@ const AdminKycQueue = () => {
                 <TableHead>Cidade</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Enviado em</TableHead>
+                <TableHead>Versão</TableHead>
                 <TableHead>Atualizado</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
@@ -193,7 +194,7 @@ const AdminKycQueue = () => {
             <TableBody>
               {filteredSubmissions.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                     Nenhuma submissão encontrada.
                   </TableCell>
                 </TableRow>
@@ -228,6 +229,7 @@ const AdminKycQueue = () => {
                           ? format(new Date(submission.submittedAt), "dd/MM/yyyy", { locale: ptBR })
                           : '-'}
                       </TableCell>
+                      <TableCell>{submission.version}</TableCell>
                       <TableCell>
                         {format(new Date(submission.updatedAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                       </TableCell>

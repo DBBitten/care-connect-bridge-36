@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Star, GraduationCap, Clock, Filter } from "lucide-react";
+import { Search, MapPin, Star, GraduationCap, Clock, Filter, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const caregivers = [
@@ -90,6 +90,10 @@ const SearchCaregivers = () => {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Cuidadores verificados e certificados prontos para ajudar você e sua família.
             </p>
+            <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-success/10 text-success rounded-full text-sm font-medium">
+              <ShieldCheck className="w-4 h-4" />
+              Todos os cuidadores são verificados via KYC
+            </div>
           </div>
 
           {/* Search & Filters */}

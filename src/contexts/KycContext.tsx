@@ -28,6 +28,7 @@ const createMockSubmissions = (): KycSubmission[] => [
       birthDate: '1985-03-15',
       city: 'Porto Alegre',
       state: 'RS',
+      phone: '(51) 99123-4567',
       createdAt: new Date('2024-01-10'),
     },
     documents: [
@@ -52,6 +53,7 @@ const createMockSubmissions = (): KycSubmission[] => [
       birthDate: '1990-07-22',
       city: 'Porto Alegre',
       state: 'RS',
+      phone: '(51) 98765-4321',
       createdAt: new Date('2024-01-08'),
     },
     documents: [
@@ -77,6 +79,7 @@ const createMockSubmissions = (): KycSubmission[] => [
       birthDate: '1978-11-05',
       city: 'Canoas',
       state: 'RS',
+      phone: '(51) 99876-5432',
       createdAt: new Date('2024-01-01'),
     },
     documents: [
@@ -103,6 +106,7 @@ const createMockSubmissions = (): KycSubmission[] => [
       birthDate: '1995-02-18',
       city: 'Gravataí',
       state: 'RS',
+      phone: '(51) 91234-5678',
       createdAt: new Date('2024-01-05'),
     },
     documents: [

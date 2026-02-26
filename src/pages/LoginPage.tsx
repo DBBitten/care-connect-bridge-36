@@ -4,22 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Heart, ArrowLeft, Users, UserCheck, Mail, Lock } from "lucide-react";
+import { Heart, ArrowLeft, Users, UserCheck, Mail, Lock, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLegal } from "@/contexts/LegalContext";
 import { LegalAcceptanceModal } from "@/components/legal/LegalAcceptanceModal";
 
-type UserType = "cuidador" | "necessitado";
+type LoginUserType = "cuidador" | "necessitado" | "admin";
 
 const LoginPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { login, isAuthenticated, userType: currentUserType } = useAuth();
   const { hasPendingInitialAcceptance } = useLegal();
-  const initialType = searchParams.get("tipo") as UserType | null;
+  const initialType = searchParams.get("tipo") as LoginUserType | null;
   
-  const [userType, setUserType] = useState<UserType | null>(initialType);
+  const [userType, setUserType] = useState<LoginUserType | null>(initialType);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +39,7 @@ const LoginPage = () => {
     toast.success("Login realizado com sucesso!");
     
     // Check if user needs to accept terms
-    const redirectPath = userType === "cuidador" ? "/cuidador/dashboard" : "/cliente/dashboard";
+    const redirectPath = userType === "admin" ? "/admin" : userType === "cuidador" ? "/cuidador/dashboard" : "/cliente/dashboard";
     setPendingRedirect(redirectPath);
     setIsLoading(false);
     
@@ -49,7 +49,7 @@ const LoginPage = () => {
   // Check for pending legal acceptance after login
   useEffect(() => {
     if (isAuthenticated && pendingRedirect) {
-      if (hasPendingInitialAcceptance()) {
+      if (userType !== 'admin' && hasPendingInitialAcceptance()) {
         setShowLegalModal(true);
       } else {
         navigate(pendingRedirect);
@@ -117,6 +117,22 @@ const LoginPage = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <Card
+              variant="feature"
+              className="cursor-pointer"
+              onClick={() => setUserType("admin")}
+            >
+              <CardContent className="p-6 flex items-center gap-4">
+                <div className="w-14 h-14 rounded-xl bg-secondary flex items-center justify-center">
+                  <Shield className="w-7 h-7 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Sou administrador</h3>
+                  <p className="text-sm text-muted-foreground">Acesso ao painel de gestão</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           <p className="text-center text-sm text-muted-foreground mt-8">
@@ -146,7 +162,7 @@ const LoginPage = () => {
             <div className="mx-auto w-12 h-12 rounded-xl bg-primary flex items-center justify-center mb-4">
               <Heart className="w-6 h-6 text-primary-foreground" />
             </div>
-            <CardTitle>Entrar como {userType === "cuidador" ? "Cuidador" : "Familiar"}</CardTitle>
+            <CardTitle>Entrar como {userType === "admin" ? "Administrador" : userType === "cuidador" ? "Cuidador" : "Familiar"}</CardTitle>
             <CardDescription>
               Digite seus dados para acessar sua conta
             </CardDescription>

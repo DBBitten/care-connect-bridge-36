@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-type UserType = "cuidador" | "necessitado";
+type UserType = "cuidador" | "necessitado" | "admin";
 
 interface AuthUser {
   email: string;
