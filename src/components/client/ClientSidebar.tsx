@@ -1,10 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { Heart, LayoutDashboard, Calendar, CreditCard, Star, User, LogOut, Settings, Search } from "lucide-react";
+import { Heart, LayoutDashboard, Calendar, CreditCard, Star, User, LogOut, Settings, Search, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { Badge } from "@/components/ui/badge";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/cliente/dashboard" },
   { icon: Search, label: "Buscar Cuidadores", href: "/buscar-cuidadores" },
+  { icon: Bell, label: "Notificações", href: "/notifications", showBadge: true },
   { icon: Calendar, label: "Meus Agendamentos", href: "/cliente/agenda" },
   { icon: CreditCard, label: "Pagamentos", href: "/cliente/pagamentos" },
   { icon: Star, label: "Avaliações", href: "/cliente/avaliacoes" },
@@ -14,6 +17,7 @@ const navItems = [
 
 export function ClientSidebar() {
   const location = useLocation();
+  const { unreadCount } = useNotifications();
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-card border-r border-border flex flex-col">
@@ -44,6 +48,9 @@ export function ClientSidebar() {
             >
               <item.icon className="w-5 h-5" />
               <span className="font-medium">{item.label}</span>
+              {(item as any).showBadge && unreadCount > 0 && !isActive && (
+                <Badge className="ml-auto text-xs">{unreadCount}</Badge>
+              )}
             </Link>
           );
         })}

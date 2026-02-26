@@ -1,12 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
-import { Heart, LayoutDashboard, GraduationCap, Calendar, User, LogOut, Settings, ShieldCheck } from "lucide-react";
+import { Heart, LayoutDashboard, GraduationCap, Calendar, User, LogOut, Settings, ShieldCheck, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useKyc } from "@/contexts/KycContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 import { Badge } from "@/components/ui/badge";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/cuidador/dashboard" },
   { icon: ShieldCheck, label: "Verificação", href: "/cuidador/verificacao", showKycBadge: true },
+  { icon: Bell, label: "Notificações", href: "/notifications", showNotifBadge: true },
   { icon: GraduationCap, label: "Formação", href: "/cuidador/formacao" },
   { icon: Calendar, label: "Agenda", href: "/cuidador/agenda" },
   { icon: User, label: "Meu Perfil", href: "/cuidador/perfil" },
@@ -16,6 +18,7 @@ const navItems = [
 export function CaregiverSidebar() {
   const location = useLocation();
   const { kycStatus } = useKyc();
+  const { unreadCount } = useNotifications();
 
   const getKycBadge = () => {
     switch (kycStatus) {
@@ -61,6 +64,9 @@ export function CaregiverSidebar() {
               <item.icon className="w-5 h-5" />
               <span className="font-medium">{item.label}</span>
               {item.showKycBadge && !isActive && getKycBadge()}
+              {(item as any).showNotifBadge && unreadCount > 0 && !isActive && (
+                <Badge className="ml-auto text-xs">{unreadCount}</Badge>
+              )}
             </Link>
           );
         })}

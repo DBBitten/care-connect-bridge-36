@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, Menu, X, LogOut, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,6 +50,7 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {isAuthenticated ? (
               <>
+                <NotificationBell />
                 <Button variant="ghost" asChild>
                   <Link to={dashboardPath} className="flex items-center gap-2">
                     <LayoutDashboard className="w-4 h-4" />

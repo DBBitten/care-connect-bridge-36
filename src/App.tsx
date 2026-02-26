@@ -9,6 +9,7 @@ import { LegalProvider } from "@/contexts/LegalContext";
 import { ServiceProvider } from "@/contexts/ServiceContext";
 import { PaymentProvider } from "@/contexts/PaymentContext";
 import { CaregiverProvider } from "@/contexts/CaregiverContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -52,6 +53,7 @@ import AdminPayments from "./pages/admin/AdminPayments";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminMetrics from "./pages/admin/AdminMetrics";
 
+import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -59,6 +61,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
+      <NotificationProvider>
       <LegalProvider>
         <KycProvider>
           <ServiceProvider>
@@ -79,6 +82,7 @@ const App = () => (
                   <Route path="/avaliar/:id" element={<ReviewPage />} />
                    <Route path="/services" element={<ServicesPage />} />
                    <Route path="/checkout/:appointmentId" element={<CheckoutPage />} />
+                   <Route path="/notifications" element={<NotificationsPage />} />
                   
                   {/* Legal Routes */}
                   <Route path="/termos" element={<TermsOfUsePage />} />
@@ -123,6 +127,7 @@ const App = () => (
           </ServiceProvider>
         </KycProvider>
       </LegalProvider>
+      </NotificationProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
