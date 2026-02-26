@@ -40,33 +40,42 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
   const addNotification = useCallback(
     (data: Omit<Notification, "id" | "createdAt" | "isRead">) => {
-      const notif: Notification = {
-        ...data,
-        id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        isRead: false,
-        createdAt: new Date().toISOString(),
-      };
-      const updated = [notif, ...notifications];
-      persist(updated);
+      setNotifications((prev) => {
+        const notif: Notification = {
+          ...data,
+          id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          isRead: false,
+          createdAt: new Date().toISOString(),
+        };
+        const updated = [notif, ...prev];
+        save(updated);
+        return updated;
+      });
     },
-    [notifications, persist]
+    []
   );
 
   const markAsRead = useCallback(
     (id: string) => {
-      persist(notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
+      setNotifications((prev) => {
+        const updated = prev.map((n) => (n.id === id ? { ...n, isRead: true } : n));
+        save(updated);
+        return updated;
+      });
     },
-    [notifications, persist]
+    []
   );
 
   const markAllAsRead = useCallback(() => {
     if (!user?.email) return;
-    persist(
-      notifications.map((n) =>
+    setNotifications((prev) => {
+      const updated = prev.map((n) =>
         n.userId === user.email ? { ...n, isRead: true } : n
-      )
-    );
-  }, [notifications, user?.email, persist]);
+      );
+      save(updated);
+      return updated;
+    });
+  }, [user?.email]);
 
   const userNotifications = useMemo(
     () => (user?.email ? notifications.filter((n) => n.userId === user.email) : []),
