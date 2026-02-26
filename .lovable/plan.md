@@ -1,213 +1,109 @@
 
 
-## Plano: Modulo de Pagamentos MVP Simulado — ElderCare
+## Plano: Dashboard de Metricas Admin — ElderCare
 
 ### Resumo
 
-Implementar o fluxo completo de pagamentos simulados: tipos de dados (Payment, Refund, PlatformSettings, Appointment), contexto centralizado, checkout do cliente, historico de pagamentos, painel admin com gestao de pagamentos/reembolsos e configuracao de taxa, e politica de cancelamento.
+Criar pagina `/admin/metrics` com metricas do marketplace, funil, graficos de tendencia, tabelas de ranking e export CSV. Todos os dados vem dos contexts existentes (PaymentContext, KycContext, AuthContext). Tambem e necessario adicionar o status `NO_SHOW` ao tipo AppointmentStatus.
+
+### Analise do Estado Atual
+
+- **Appointments/Payments/Refunds**: Persistidos em localStorage via PaymentContext
+- **KYC**: Mock + localStorage via KycContext (tem contagens de SUBMITTED, APPROVED, etc.)
+- **Reviews**: Nao existe contexto — ReviewPage usa mock hardcoded, sem persistencia
+- **NO_SHOW**: Nao existe no enum AppointmentStatus atual
+- **Visitantes/Cadastros**: Nao ha tracking — sera marcado como "TODO"
 
 ### Arquivos Novos
 
 | Arquivo | Descricao |
 |---------|-----------|
-| `src/types/payment.ts` | Tipos Payment, Refund, PlatformSettings, Appointment, enums de status |
-| `src/contexts/PaymentContext.tsx` | Context com CRUD de payments, refunds, appointments, platform settings, logica de calculo de fees |
-| `src/pages/CheckoutPage.tsx` | Pagina `/checkout/:appointmentId` — resumo + pagamento simulado |
-| `src/pages/admin/AdminPayments.tsx` | Lista de pagamentos com acao de reembolso |
-| `src/pages/admin/AdminSettings.tsx` | Edicao da platformFeeRate |
+| `src/pages/admin/AdminMetrics.tsx` | Pagina completa do dashboard de metricas |
+| `src/lib/csvExport.ts` | Utilitario para gerar e baixar CSV |
 
 ### Arquivos Modificados
 
 | Arquivo | Alteracao |
 |---------|-----------|
-| `src/App.tsx` | Adicionar PaymentProvider, rotas `/checkout/:appointmentId`, `/admin/payments`, `/admin/settings` |
-| `src/pages/BookingPage.tsx` | Ao confirmar, criar Appointment em PAYMENT_PENDING e redirecionar para `/checkout/:appointmentId` |
-| `src/pages/client/ClientPayments.tsx` | Reescrever para usar dados reais do PaymentContext em vez de mock hardcoded |
-| `src/components/admin/AdminSidebar.tsx` | Adicionar itens "Pagamentos" e atualizar "Configuracoes" para `/admin/settings` |
-| `src/components/client/ClientSidebar.tsx` | Nenhuma mudanca (ja aponta para `/cliente/pagamentos`) |
+| `src/types/payment.ts` | Adicionar `NO_SHOW` ao AppointmentStatus |
+| `src/App.tsx` | Adicionar rota `/admin/metrics` |
+| `src/components/admin/AdminSidebar.tsx` | Adicionar item "Metricas" com icone BarChart3 |
 
 ### Detalhamento Tecnico
 
-#### 1. Tipos (`src/types/payment.ts`)
+#### 1. AppointmentStatus — Adicionar NO_SHOW
 
 ```text
-AppointmentStatus = 'PAYMENT_PENDING' | 'PAID' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED'
-PaymentStatus = 'INITIATED' | 'PAID' | 'FAILED' | 'REFUNDED' | 'CANCELED'
-PaymentMethod = 'SIMULATED' | 'PIX' | 'CARD'
-
-Appointment {
-  id: string
-  clientEmail: string
-  caregiverName: string
-  serviceId: string
-  serviceName: string
-  date: string (ISO)
-  startTime: string
-  durationHours: number
-  pricePerHour: number
-  totalPrice: number
-  platformFee: number
-  caregiverPayout: number
-  status: AppointmentStatus
-  address?: string            // endereco completo, so visivel apos PAID
-  createdAt: string
-}
-
-Payment {
-  id: string
-  appointmentId: string
-  status: PaymentStatus
-  amountTotal: number
-  platformFee: number
-  caregiverPayout: number
-  method: PaymentMethod
-  createdAt: string
-  paidAt?: string
-  refundedAt?: string
-  metadata?: Record<string, any>
-}
-
-Refund {
-  id: string
-  paymentId: string
-  amount: number
-  reason: string
-  createdAt: string
-  createdBy: string
-}
-
-PlatformSettings {
-  id: string
-  platformFeeRate: number     // ex.: 0.18
-  currency: string            // 'BRL'
-  updatedAt: string
-}
+AppointmentStatus = 'PAYMENT_PENDING' | 'PAID' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' | 'NO_SHOW'
 ```
 
-#### 2. PaymentContext (`src/contexts/PaymentContext.tsx`)
+#### 2. CSV Export (`src/lib/csvExport.ts`)
 
-Estado em localStorage com keys separadas:
-- `eldercare_appointments`
-- `eldercare_payments`
-- `eldercare_refunds`
-- `eldercare_platform_settings`
+Funcao generica `exportToCsv(filename, headers, rows)` que:
+- Gera string CSV com separador `;` (padrao BR para Excel)
+- Cria Blob e dispara download via anchor tag
 
-Seed de PlatformSettings: `{ platformFeeRate: 0.18, currency: 'BRL' }`
+#### 3. AdminMetrics (`src/pages/admin/AdminMetrics.tsx`)
 
-Operacoes expostas:
-- `getPlatformSettings()` / `updatePlatformFeeRate(rate: number)`
-- `createAppointment(data)` — calcula totalPrice, platformFee, caregiverPayout usando settings.platformFeeRate
-- `getAppointmentById(id)` / `getAppointmentsByClient(email)`
-- `processPayment(appointmentId)` — cria Payment PAID, atualiza Appointment para PAID
-- `cancelAppointment(appointmentId)` — aplica politica de cancelamento:
-  - Se status != PAID: cancela sem refund
-  - Se PAID e faltam >24h: refund total
-  - Se PAID e faltam <=24h: refund 50%
-  - Cria Refund, atualiza Payment para REFUNDED, Appointment para CANCELED
-- `adminRefund(paymentId, reason)` — refund manual pelo admin
-- `getPayments()` / `getPaymentByAppointment(appointmentId)`
-- `getRefunds()`
+**Filtros** (topo da pagina):
+- Select de periodo: "Ultimos 7 dias", "Ultimos 30 dias", "Ultimos 90 dias", "Personalizado"
+- Se personalizado: dois date pickers (de/ate) usando o Calendar/Popover existente
+- Select de cidade: "Porto Alegre" (default), "Todas" — campo preparado mas sem filtragem real (appointments nao tem cidade)
 
-Regra de calculo:
-```text
-totalPrice = durationHours * service.pricePerHour
-platformFee = totalPrice * platformFeeRate
-caregiverPayout = totalPrice - platformFee
-```
+**Cards de metricas** (grid 4 colunas):
+1. GMV — soma `totalPrice` dos appointments PAID/COMPLETED no periodo
+2. Receita Plataforma — soma `platformFee` dos mesmos
+3. Atendimentos Criados — count appointments criados no periodo
+4. Atendimentos Pagos — count PAID/COMPLETED
+5. Taxa de Conversao — pagos / criados (%)
+6. Cancelamentos — count CANCELED + % sobre criados
+7. No-show — count NO_SHOW + % sobre criados
+8. Nota Media — "TODO: integrar reviews" (pois ReviewPage nao persiste dados)
 
-#### 3. BookingPage — Mudancas
+**Funil** (tabela simples):
+- Visitantes: "TODO: tracking"
+- Cadastros clientes: "TODO: tracking"
+- Cadastros cuidadores: "TODO: tracking"
+- KYC SUBMITTED: count do KycContext
+- KYC APPROVED: count do KycContext
+- Appointments criados: count no periodo
+- Checkouts iniciados: count Payment INITIATED (se existir)
+- Payments PAID: count
 
-Ao clicar "Confirmar e pagar":
-1. Chamar `createAppointment()` com dados do form (servico, data, horario, duracao)
-2. Redirecionar para `/checkout/{appointmentId}` em vez de navegar para `/meus-agendamentos`
-3. Remover a simulacao de delay atual
+**Graficos** (usando Recharts, ja instalado):
+1. Serie diaria: appointments criados vs pagos (LineChart com 2 linhas)
+2. Serie diaria: GMV (BarChart)
+3. Serie diaria: cancelamentos + no-show (LineChart)
 
-#### 4. CheckoutPage (`/checkout/:appointmentId`)
+Logica de agrupamento por dia:
+- Iterar appointments no periodo, agrupar por `date` (ou `createdAt` parseado)
+- Gerar array de dias entre inicio e fim do filtro, fill com zeros
 
-Layout: Navbar + Footer (mesmo padrao publico)
+**Tabelas de quebra**:
+1. Top 10 cuidadores por atendimentos concluidos — agrupar appointments COMPLETED por `caregiverName`, ordenar desc
+2. Top 10 por rating — "TODO: integrar reviews" (sem dados persistidos)
+3. Tempo medio ate pagar — diff entre `createdAt` do appointment e `paidAt` do payment correspondente, calcular media e mediana
 
-Conteudo:
-- Card "Resumo do Atendimento": servico, cuidador, data/hora, duracao
-- Card "Detalhamento de Valores":
-  - Valor do servico: R$ X
-  - Taxa da plataforma: inclusa (nota: "A taxa de servico esta inclusa no valor total" — conforme regra de fee embutida)
-  - Total: R$ X
-- Banner amarelo: "Pagamento simulado (MVP) — Nenhum valor sera cobrado"
-- Checkbox obrigatorio: "Confirmo que li as Regras do Marketplace e a Politica de Cancelamento"
-  - Links para /regras
-  - Texto da politica de cancelamento inline
-- Botao "Pagar agora (simulado)"
-- Ao clicar: `processPayment(appointmentId)` → toast sucesso → redirecionar para `/cliente/pagamentos`
+**Export CSV** (3 botoes):
+- "Exportar Appointments" — appointments do periodo filtrado
+- "Exportar Payments" — payments do periodo
+- "Exportar Reviews" — "TODO" (sem dados)
 
-Gate: verificar se usuario aceitou termos via LegalContext
+**Performance**:
+- Todas as agregacoes sao feitas com `useMemo` sobre os arrays filtrados por periodo
+- Nao carrega dados extras — usa os arrays ja em memoria dos contexts
 
-#### 5. ClientPayments — Reescrita
+#### 4. Navegacao
 
-Substituir dados mock por dados reais do PaymentContext:
-- Listar appointments do usuario logado (`getAppointmentsByClient(user.email)`)
-- Mostrar status (PAYMENT_PENDING, PAID, CANCELED)
-- Para cada appointment PAID, mostrar botao "Cancelar" com dialog de confirmacao
-  - Exibir politica de cancelamento (>24h = total, <24h = 50%)
-  - Ao confirmar: `cancelAppointment(appointmentId)`
-- Remover secoes de "Formas de Pagamento" e "Endereco de Cobranca" (nao se aplicam ao MVP simulado)
-- Manter layout ClientLayout
+AdminSidebar: novo item `{ icon: BarChart3, label: "Metricas", href: "/admin/metrics" }` logo apos "Dashboard"
 
-#### 6. AdminPayments (`/admin/payments`)
-
-AdminLayout com titulo "Pagamentos"
-
-Conteudo:
-- Cards de resumo no topo: Total recebido, Taxa acumulada, Reembolsos
-- Tabela com colunas: ID, Cliente, Servico, Valor, Taxa, Payout, Status, Data, Acoes
-- Acao "Reembolsar" (dialog com campo de motivo obrigatorio)
-  - Ao confirmar: `adminRefund(paymentId, reason)` → toast
-
-#### 7. AdminSettings (`/admin/settings`)
-
-AdminLayout com titulo "Configuracoes da Plataforma"
-
-Conteudo:
-- Card "Taxa da Plataforma":
-  - Input numerico (slider ou input com %) — range 10% a 30%
-  - Valor atual destacado
-  - Botao "Salvar" → `updatePlatformFeeRate(rate)` → toast + audit log
-- Nota: "A taxa e aplicada a novos agendamentos. Agendamentos existentes mantem a taxa original."
-
-#### 8. AdminSidebar — Mudancas
-
-Adicionar/atualizar itens:
-- `{ icon: CreditCard, label: "Pagamentos", href: "/admin/payments" }` apos "Servicos"
-- Atualizar href de "Configuracoes" de `/admin/configuracoes` para `/admin/settings`
-
-#### 9. Rotas (App.tsx)
-
-Adicionar:
-```text
-/checkout/:appointmentId → CheckoutPage
-/admin/payments → AdminPayments
-/admin/settings → AdminSettings
-```
-
-Envolver com PaymentProvider (dentro de ServiceProvider, pois precisa acessar servicos)
-
-### Politica de Cancelamento — Texto exibido
-
-```text
-Politica de Cancelamento ElderCare:
-- Cancelamento com mais de 24 horas de antecedencia: reembolso integral
-- Cancelamento com menos de 24 horas: reembolso de 50% do valor total
-- Apos o inicio do atendimento: sem reembolso
-```
+App.tsx: rota `<Route path="/admin/metrics" element={<AdminMetrics />} />`
 
 ### Ordem de Implementacao
 
-1. `src/types/payment.ts`
-2. `src/contexts/PaymentContext.tsx`
-3. `src/pages/CheckoutPage.tsx`
-4. `src/pages/client/ClientPayments.tsx` (reescrita)
-5. `src/pages/admin/AdminPayments.tsx`
-6. `src/pages/admin/AdminSettings.tsx`
-7. `src/pages/BookingPage.tsx` (integracao)
-8. `src/components/admin/AdminSidebar.tsx`
-9. `src/App.tsx` (rotas + provider)
+1. `src/types/payment.ts` (adicionar NO_SHOW)
+2. `src/lib/csvExport.ts`
+3. `src/pages/admin/AdminMetrics.tsx`
+4. `src/components/admin/AdminSidebar.tsx`
+5. `src/App.tsx`
 
