@@ -1,119 +1,213 @@
 
 
-## Plano: Modulo Catalogo de Servicos — ElderCare
+## Plano: Modulo de Pagamentos MVP Simulado — ElderCare
 
 ### Resumo
 
-Criar o modulo de catalogo de servicos com 3 frentes: tipos/dados, paginas publicas e admin, e integracao com o fluxo de agendamento existente.
+Implementar o fluxo completo de pagamentos simulados: tipos de dados (Payment, Refund, PlatformSettings, Appointment), contexto centralizado, checkout do cliente, historico de pagamentos, painel admin com gestao de pagamentos/reembolsos e configuracao de taxa, e politica de cancelamento.
 
 ### Arquivos Novos
 
 | Arquivo | Descricao |
 |---------|-----------|
-| `src/types/service.ts` | Tipos Service e ServicePriceRule |
-| `src/contexts/ServiceContext.tsx` | Context com CRUD, seed de 5 servicos, estado global |
-| `src/pages/ServicesPage.tsx` | Pagina publica `/services` com cards dos servicos ativos |
-| `src/pages/admin/AdminServices.tsx` | Tabela admin com ativar/desativar, ordenar, editar |
-| `src/pages/admin/AdminServiceEdit.tsx` | Form completo de criacao/edicao de servico |
+| `src/types/payment.ts` | Tipos Payment, Refund, PlatformSettings, Appointment, enums de status |
+| `src/contexts/PaymentContext.tsx` | Context com CRUD de payments, refunds, appointments, platform settings, logica de calculo de fees |
+| `src/pages/CheckoutPage.tsx` | Pagina `/checkout/:appointmentId` — resumo + pagamento simulado |
+| `src/pages/admin/AdminPayments.tsx` | Lista de pagamentos com acao de reembolso |
+| `src/pages/admin/AdminSettings.tsx` | Edicao da platformFeeRate |
 
 ### Arquivos Modificados
 
 | Arquivo | Alteracao |
 |---------|-----------|
-| `src/App.tsx` | Adicionar ServiceProvider e rotas `/services`, `/admin/services`, `/admin/services/new`, `/admin/services/:id` |
-| `src/components/admin/AdminSidebar.tsx` | Adicionar item "Servicos" no menu com icone Package |
-| `src/components/layout/Navbar.tsx` | Adicionar link "Servicos" na navegacao desktop e mobile |
-| `src/pages/BookingPage.tsx` | Ler `serviceId` da query string, pre-selecionar servico, usar duracao/preco do servico selecionado |
+| `src/App.tsx` | Adicionar PaymentProvider, rotas `/checkout/:appointmentId`, `/admin/payments`, `/admin/settings` |
+| `src/pages/BookingPage.tsx` | Ao confirmar, criar Appointment em PAYMENT_PENDING e redirecionar para `/checkout/:appointmentId` |
+| `src/pages/client/ClientPayments.tsx` | Reescrever para usar dados reais do PaymentContext em vez de mock hardcoded |
+| `src/components/admin/AdminSidebar.tsx` | Adicionar itens "Pagamentos" e atualizar "Configuracoes" para `/admin/settings` |
+| `src/components/client/ClientSidebar.tsx` | Nenhuma mudanca (ja aponta para `/cliente/pagamentos`) |
 
 ### Detalhamento Tecnico
 
-#### 1. Tipos (`src/types/service.ts`)
+#### 1. Tipos (`src/types/payment.ts`)
 
 ```text
-Service {
+AppointmentStatus = 'PAYMENT_PENDING' | 'PAID' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED'
+PaymentStatus = 'INITIATED' | 'PAID' | 'FAILED' | 'REFUNDED' | 'CANCELED'
+PaymentMethod = 'SIMULATED' | 'PIX' | 'CARD'
+
+Appointment {
   id: string
-  name: string
-  description: string
-  baseDurationMinutes: number
-  allowedDurationsMinutes: number[]
+  clientEmail: string
+  caregiverName: string
+  serviceId: string
+  serviceName: string
+  date: string (ISO)
+  startTime: string
+  durationHours: number
   pricePerHour: number
-  minHours: number (default 2)
-  maxHours: number (default 12)
-  requiresCertificationTag?: string
-  isActive: boolean
-  sortOrder: number
+  totalPrice: number
+  platformFee: number
+  caregiverPayout: number
+  status: AppointmentStatus
+  address?: string            // endereco completo, so visivel apos PAID
   createdAt: string
-  updatedAt: string
 }
 
-ServicePriceRule {
+Payment {
   id: string
-  serviceId: string
-  ruleType: 'WEEKEND' | 'NIGHT' | 'URGENT'
-  multiplier: number
-  isActive: boolean
+  appointmentId: string
+  status: PaymentStatus
+  amountTotal: number
+  platformFee: number
+  caregiverPayout: number
+  method: PaymentMethod
+  createdAt: string
+  paidAt?: string
+  refundedAt?: string
+  metadata?: Record<string, any>
+}
+
+Refund {
+  id: string
+  paymentId: string
+  amount: number
+  reason: string
+  createdAt: string
+  createdBy: string
+}
+
+PlatformSettings {
+  id: string
+  platformFeeRate: number     // ex.: 0.18
+  currency: string            // 'BRL'
+  updatedAt: string
 }
 ```
 
-#### 2. ServiceContext (`src/contexts/ServiceContext.tsx`)
+#### 2. PaymentContext (`src/contexts/PaymentContext.tsx`)
 
-- Estado: lista de servicos em memoria (mock/localStorage)
-- Operacoes: `getActiveServices()`, `getServiceById(id)`, `createService()`, `updateService()`, `toggleActive(id)`, `reorder(id, newSortOrder)`
-- Seed com 5 servicos ativos:
-  1. Companhia e supervisao — R$ 35/h — [120, 240, 480]
-  2. Apoio em mobilidade leve — R$ 40/h — [120, 240] — tag BASIC_MOBILITY
-  3. Apoio em alimentacao/hidratacao — R$ 38/h — [120, 240]
-  4. Higiene nao invasiva — R$ 42/h — [120, 240]
-  5. Acompanhamento em consulta (logistica) — R$ 45/h — [120, 240, 480]
+Estado em localStorage com keys separadas:
+- `eldercare_appointments`
+- `eldercare_payments`
+- `eldercare_refunds`
+- `eldercare_platform_settings`
 
-#### 3. Pagina publica `/services` (`src/pages/ServicesPage.tsx`)
+Seed de PlatformSettings: `{ platformFeeRate: 0.18, currency: 'BRL' }`
 
-- Layout com Navbar + Footer (mesmo padrao de SearchCaregivers)
-- Header: "Nossos Servicos" + subtitulo
-- Grid de cards (servicos ativos, ordenados por sortOrder):
-  - Nome, descricao
-  - "A partir de R$ X/h"
-  - Duracoes disponiveis como badges
-  - Botao "Agendar" → navega para `/agendar/1?serviceId={id}` (usa cuidador mock ID 1 por ora)
+Operacoes expostas:
+- `getPlatformSettings()` / `updatePlatformFeeRate(rate: number)`
+- `createAppointment(data)` — calcula totalPrice, platformFee, caregiverPayout usando settings.platformFeeRate
+- `getAppointmentById(id)` / `getAppointmentsByClient(email)`
+- `processPayment(appointmentId)` — cria Payment PAID, atualiza Appointment para PAID
+- `cancelAppointment(appointmentId)` — aplica politica de cancelamento:
+  - Se status != PAID: cancela sem refund
+  - Se PAID e faltam >24h: refund total
+  - Se PAID e faltam <=24h: refund 50%
+  - Cria Refund, atualiza Payment para REFUNDED, Appointment para CANCELED
+- `adminRefund(paymentId, reason)` — refund manual pelo admin
+- `getPayments()` / `getPaymentByAppointment(appointmentId)`
+- `getRefunds()`
 
-#### 4. Admin — Lista (`src/pages/admin/AdminServices.tsx`)
+Regra de calculo:
+```text
+totalPrice = durationHours * service.pricePerHour
+platformFee = totalPrice * platformFeeRate
+caregiverPayout = totalPrice - platformFee
+```
 
-- AdminLayout com titulo "Servicos"
-- Botao "Criar servico" → `/admin/services/new`
-- Tabela com colunas: Ordem, Nome, Preco/h, Duracoes, Status (badge), Acoes
-- Toggle ativar/desativar inline (Switch)
-- Botao "Editar" por linha
+#### 3. BookingPage — Mudancas
 
-#### 5. Admin — Form (`src/pages/admin/AdminServiceEdit.tsx`)
+Ao clicar "Confirmar e pagar":
+1. Chamar `createAppointment()` com dados do form (servico, data, horario, duracao)
+2. Redirecionar para `/checkout/{appointmentId}` em vez de navegar para `/meus-agendamentos`
+3. Remover a simulacao de delay atual
 
-- AdminLayout com titulo dinamico "Novo Servico" ou "Editar Servico"
-- Campos: name (obrigatorio), description (textarea), pricePerHour (number > 0), baseDurationMinutes, allowedDurationsMinutes (checkboxes: 1h, 2h, 4h, 6h, 8h, 12h), minHours, maxHours, requiresCertificationTag (select opcional), sortOrder, isActive (switch)
-- Validacoes: name obrigatorio, pricePerHour > 0, pelo menos 1 duracao selecionada
-- Salvar → redirecionar para `/admin/services` com toast de sucesso
+#### 4. CheckoutPage (`/checkout/:appointmentId`)
 
-#### 6. Integracao com BookingPage
+Layout: Navbar + Footer (mesmo padrao publico)
 
-- Ler `serviceId` de `useSearchParams`
-- Se presente, buscar servico via `getServiceById`
-- Exibir nome do servico no resumo
-- Substituir opcoes de duracao fixas pelas `allowedDurationsMinutes` do servico
-- Usar `pricePerHour` do servico em vez do `caregiver.hourlyRate` fixo
-- Adicionar Select de servico no topo caso nao venha pre-selecionado (lista dos ativos)
+Conteudo:
+- Card "Resumo do Atendimento": servico, cuidador, data/hora, duracao
+- Card "Detalhamento de Valores":
+  - Valor do servico: R$ X
+  - Taxa da plataforma: inclusa (nota: "A taxa de servico esta inclusa no valor total" — conforme regra de fee embutida)
+  - Total: R$ X
+- Banner amarelo: "Pagamento simulado (MVP) — Nenhum valor sera cobrado"
+- Checkbox obrigatorio: "Confirmo que li as Regras do Marketplace e a Politica de Cancelamento"
+  - Links para /regras
+  - Texto da politica de cancelamento inline
+- Botao "Pagar agora (simulado)"
+- Ao clicar: `processPayment(appointmentId)` → toast sucesso → redirecionar para `/cliente/pagamentos`
 
-#### 7. Navegacao
+Gate: verificar se usuario aceitou termos via LegalContext
 
-- AdminSidebar: novo item `{ icon: Package, label: "Servicos", href: "/admin/services" }` entre "Documentos Legais" e "Usuarios"
-- Navbar: link "Servicos" apontando para `/services` na navegacao desktop e mobile
+#### 5. ClientPayments — Reescrita
+
+Substituir dados mock por dados reais do PaymentContext:
+- Listar appointments do usuario logado (`getAppointmentsByClient(user.email)`)
+- Mostrar status (PAYMENT_PENDING, PAID, CANCELED)
+- Para cada appointment PAID, mostrar botao "Cancelar" com dialog de confirmacao
+  - Exibir politica de cancelamento (>24h = total, <24h = 50%)
+  - Ao confirmar: `cancelAppointment(appointmentId)`
+- Remover secoes de "Formas de Pagamento" e "Endereco de Cobranca" (nao se aplicam ao MVP simulado)
+- Manter layout ClientLayout
+
+#### 6. AdminPayments (`/admin/payments`)
+
+AdminLayout com titulo "Pagamentos"
+
+Conteudo:
+- Cards de resumo no topo: Total recebido, Taxa acumulada, Reembolsos
+- Tabela com colunas: ID, Cliente, Servico, Valor, Taxa, Payout, Status, Data, Acoes
+- Acao "Reembolsar" (dialog com campo de motivo obrigatorio)
+  - Ao confirmar: `adminRefund(paymentId, reason)` → toast
+
+#### 7. AdminSettings (`/admin/settings`)
+
+AdminLayout com titulo "Configuracoes da Plataforma"
+
+Conteudo:
+- Card "Taxa da Plataforma":
+  - Input numerico (slider ou input com %) — range 10% a 30%
+  - Valor atual destacado
+  - Botao "Salvar" → `updatePlatformFeeRate(rate)` → toast + audit log
+- Nota: "A taxa e aplicada a novos agendamentos. Agendamentos existentes mantem a taxa original."
+
+#### 8. AdminSidebar — Mudancas
+
+Adicionar/atualizar itens:
+- `{ icon: CreditCard, label: "Pagamentos", href: "/admin/payments" }` apos "Servicos"
+- Atualizar href de "Configuracoes" de `/admin/configuracoes` para `/admin/settings`
+
+#### 9. Rotas (App.tsx)
+
+Adicionar:
+```text
+/checkout/:appointmentId → CheckoutPage
+/admin/payments → AdminPayments
+/admin/settings → AdminSettings
+```
+
+Envolver com PaymentProvider (dentro de ServiceProvider, pois precisa acessar servicos)
+
+### Politica de Cancelamento — Texto exibido
+
+```text
+Politica de Cancelamento ElderCare:
+- Cancelamento com mais de 24 horas de antecedencia: reembolso integral
+- Cancelamento com menos de 24 horas: reembolso de 50% do valor total
+- Apos o inicio do atendimento: sem reembolso
+```
 
 ### Ordem de Implementacao
 
-1. `src/types/service.ts`
-2. `src/contexts/ServiceContext.tsx`
-3. `src/pages/ServicesPage.tsx`
-4. `src/pages/admin/AdminServices.tsx`
-5. `src/pages/admin/AdminServiceEdit.tsx`
-6. `src/App.tsx` (rotas + provider)
-7. `src/components/admin/AdminSidebar.tsx`
-8. `src/components/layout/Navbar.tsx`
-9. `src/pages/BookingPage.tsx`
+1. `src/types/payment.ts`
+2. `src/contexts/PaymentContext.tsx`
+3. `src/pages/CheckoutPage.tsx`
+4. `src/pages/client/ClientPayments.tsx` (reescrita)
+5. `src/pages/admin/AdminPayments.tsx`
+6. `src/pages/admin/AdminSettings.tsx`
+7. `src/pages/BookingPage.tsx` (integracao)
+8. `src/components/admin/AdminSidebar.tsx`
+9. `src/App.tsx` (rotas + provider)
 
