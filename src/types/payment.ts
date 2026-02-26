@@ -1,4 +1,4 @@
-export type AppointmentStatus = 'PAYMENT_PENDING' | 'PAID' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED';
+export type AppointmentStatus = 'PAYMENT_PENDING' | 'PAID' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' | 'NO_SHOW';
 export type PaymentStatus = 'INITIATED' | 'PAID' | 'FAILED' | 'REFUNDED' | 'CANCELED';
 export type PaymentMethod = 'SIMULATED' | 'PIX' | 'CARD';
 
