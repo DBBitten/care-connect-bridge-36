@@ -8,6 +8,7 @@ import { KycProvider } from "@/contexts/KycContext";
 import { LegalProvider } from "@/contexts/LegalContext";
 import { ServiceProvider } from "@/contexts/ServiceContext";
 import { PaymentProvider } from "@/contexts/PaymentContext";
+import { CaregiverProvider } from "@/contexts/CaregiverContext";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -30,6 +31,7 @@ import CaregiverTermPage from "./pages/legal/CaregiverTermPage";
 import CaregiverDashboard from "./pages/caregiver/CaregiverDashboard";
 import CaregiverTraining from "./pages/caregiver/CaregiverTraining";
 import CaregiverKyc from "./pages/caregiver/CaregiverKyc";
+import CaregiverProfileEdit from "./pages/caregiver/CaregiverProfileEdit";
 
 // Client Pages
 import ClientDashboard from "./pages/client/ClientDashboard";
@@ -61,6 +63,7 @@ const App = () => (
         <KycProvider>
           <ServiceProvider>
             <PaymentProvider>
+            <CaregiverProvider>
             <TooltipProvider>
               <Toaster />
               <Sonner />
@@ -87,6 +90,7 @@ const App = () => (
                   <Route path="/cuidador/dashboard" element={<CaregiverDashboard />} />
                   <Route path="/cuidador/formacao" element={<CaregiverTraining />} />
                   <Route path="/cuidador/verificacao" element={<CaregiverKyc />} />
+                  <Route path="/cuidador/perfil" element={<CaregiverProfileEdit />} />
                   
                   {/* Client Routes */}
                   <Route path="/cliente/dashboard" element={<ClientDashboard />} />
@@ -114,6 +118,7 @@ const App = () => (
                 </Routes>
               </BrowserRouter>
             </TooltipProvider>
+            </CaregiverProvider>
             </PaymentProvider>
           </ServiceProvider>
         </KycProvider>
