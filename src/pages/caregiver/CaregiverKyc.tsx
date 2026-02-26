@@ -15,7 +15,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLegal } from '@/contexts/LegalContext';
 import { KYC_DOCUMENT_CONFIGS, KycDocumentType } from '@/types/kyc';
 import { LegalDocumentKey } from '@/types/legal';
-import { validateBirthDate } from '@/lib/validators';
+import { validateBirthDate, formatPhone, validatePhone } from '@/lib/validators';
 import { ArrowLeft, ArrowRight, Send, CheckCircle, Clock, AlertCircle, ExternalLink, ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -64,6 +64,7 @@ const CaregiverKyc = () => {
   const [birthDate, setBirthDate] = useState(currentSubmission?.profile?.birthDate || '');
   const [city, setCity] = useState(currentSubmission?.profile?.city || 'Porto Alegre');
   const [state, setState] = useState(currentSubmission?.profile?.state || 'RS');
+  const [phone, setPhone] = useState(currentSubmission?.profile?.phone || '');
   
   // Form state for step 3
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -75,6 +76,7 @@ const CaregiverKyc = () => {
       setBirthDate(currentSubmission.profile.birthDate);
       setCity(currentSubmission.profile.city);
       setState(currentSubmission.profile.state);
+      setPhone(currentSubmission.profile.phone || '');
     }
   }, [currentSubmission]);
 
@@ -82,7 +84,7 @@ const CaregiverKyc = () => {
   const isStep0Valid = acceptedCaregiverTerm && acceptedMarketplaceRules;
 
   // Check if step 1 is valid
-  const isStep1Valid = cpfValid && birthDate && validateBirthDate(birthDate) && city && state;
+  const isStep1Valid = cpfValid && birthDate && validateBirthDate(birthDate) && city && state && validatePhone(phone);
   
   // Handle step 0 save (accept terms)
   const handleAcceptTerms = () => {
@@ -113,6 +115,7 @@ const CaregiverKyc = () => {
       birthDate,
       city,
       state,
+      phone,
     });
     toast({
       title: 'Dados salvos',
@@ -397,6 +400,21 @@ const CaregiverKyc = () => {
                 </div>
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="phone">Telefone</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(formatPhone(e.target.value))}
+                  placeholder="(51) 99999-9999"
+                  maxLength={15}
+                />
+                {phone && !validatePhone(phone) && (
+                  <p className="text-sm text-destructive">Telefone inválido</p>
+                )}
+              </div>
+
               <div className="flex justify-end pt-4">
                 <Button onClick={handleSaveProfile} disabled={!isStep1Valid}>
                   Salvar e continuar
@@ -465,6 +483,8 @@ const CaregiverKyc = () => {
                   <p className="text-foreground">{birthDate ? new Date(birthDate + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}</p>
                   <p className="text-muted-foreground">Cidade/Estado:</p>
                   <p className="text-foreground">{city}, {state}</p>
+                  <p className="text-muted-foreground">Telefone:</p>
+                  <p className="text-foreground">{phone || '-'}</p>
                 </div>
               </div>
 

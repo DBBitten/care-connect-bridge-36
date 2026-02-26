@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useKyc } from '@/contexts/KycContext';
 import { KYC_DOCUMENT_CONFIGS, KYC_REJECTION_REASONS, KycDocumentType } from '@/types/kyc';
-import { ArrowLeft, CheckCircle, XCircle, AlertTriangle, FileText, Image, Download, User, Calendar, MapPin, CreditCard } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, AlertTriangle, FileText, Image, Download, User, Calendar, MapPin, CreditCard, Phone } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
@@ -192,6 +192,15 @@ const AdminKycReview = () => {
                     <p className="font-medium">
                       {submission.profile?.city}, {submission.profile?.state}
                     </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                    <Phone className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Telefone</p>
+                    <p className="font-medium">{submission.profile?.phone || '-'}</p>
                   </div>
                 </div>
               </div>

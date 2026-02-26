@@ -94,6 +94,20 @@ export function formatFileSize(bytes: number): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
+// Phone validation
+export function validatePhone(phone: string): boolean {
+  const clean = phone.replace(/\D/g, '');
+  return clean.length === 10 || clean.length === 11;
+}
+
+export function formatPhone(value: string): string {
+  const clean = value.replace(/\D/g, '');
+  if (clean.length <= 2) return clean;
+  if (clean.length <= 7) return `(${clean.slice(0, 2)}) ${clean.slice(2)}`;
+  if (clean.length <= 11) return `(${clean.slice(0, 2)}) ${clean.slice(2, 7)}-${clean.slice(7, 11)}`;
+  return `(${clean.slice(0, 2)}) ${clean.slice(2, 7)}-${clean.slice(7, 11)}`;
+}
+
 // Date validation
 export function validateBirthDate(date: string): boolean {
   const birthDate = new Date(date);

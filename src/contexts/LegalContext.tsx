@@ -154,7 +154,7 @@ export function LegalProvider({ children }: { children: ReactNode }) {
       ipAddress: undefined, // Would come from API in real implementation
       userAgent: navigator.userAgent,
       metadata: {
-        role: userType || undefined,
+        role: (userType === 'admin' ? undefined : userType) || undefined,
         city: 'Porto Alegre',
         state: 'RS',
       },
@@ -201,7 +201,7 @@ export function LegalProvider({ children }: { children: ReactNode }) {
       if (info.requiredAtStage !== stage) return;
       
       const isRequired = info.requiredFor.includes('all') || 
-        (userType && info.requiredFor.includes(userType));
+        (userType && userType !== 'admin' && info.requiredFor.includes(userType as 'cuidador' | 'necessitado'));
       
       if (isRequired && !hasAccepted(info.key)) {
         pending.push(info.key);
