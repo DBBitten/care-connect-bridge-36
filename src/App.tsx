@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { KycProvider } from "@/contexts/KycContext";
 import { LegalProvider } from "@/contexts/LegalContext";
+import { ServiceProvider } from "@/contexts/ServiceContext";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -15,6 +16,7 @@ import SearchCaregivers from "./pages/SearchCaregivers";
 import CaregiverProfile from "./pages/CaregiverProfile";
 import BookingPage from "./pages/BookingPage";
 import ReviewPage from "./pages/ReviewPage";
+import ServicesPage from "./pages/ServicesPage";
 
 // Legal Pages
 import TermsOfUsePage from "./pages/legal/TermsOfUsePage";
@@ -40,6 +42,8 @@ import AdminKycQueue from "./pages/admin/AdminKycQueue";
 import AdminKycReview from "./pages/admin/AdminKycReview";
 import AdminLegalDocuments from "./pages/admin/AdminLegalDocuments";
 import AdminLegalDocumentEdit from "./pages/admin/AdminLegalDocumentEdit";
+import AdminServices from "./pages/admin/AdminServices";
+import AdminServiceEdit from "./pages/admin/AdminServiceEdit";
 
 import NotFound from "./pages/NotFound";
 
@@ -50,51 +54,57 @@ const App = () => (
     <AuthProvider>
       <LegalProvider>
         <KycProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/cadastro" element={<RegisterPage />} />
-                <Route path="/buscar-cuidadores" element={<SearchCaregivers />} />
-                <Route path="/cuidador/:id" element={<CaregiverProfile />} />
-                <Route path="/agendar/:id" element={<BookingPage />} />
-                <Route path="/avaliar/:id" element={<ReviewPage />} />
-                
-                {/* Legal Routes */}
-                <Route path="/termos" element={<TermsOfUsePage />} />
-                <Route path="/privacidade" element={<PrivacyPolicyPage />} />
-                <Route path="/regras" element={<MarketplaceRulesPage />} />
-                <Route path="/termo-cuidador" element={<CaregiverTermPage />} />
-                
-                {/* Caregiver Routes */}
-                <Route path="/cuidador/dashboard" element={<CaregiverDashboard />} />
-                <Route path="/cuidador/formacao" element={<CaregiverTraining />} />
-                <Route path="/cuidador/verificacao" element={<CaregiverKyc />} />
-                
-                {/* Client Routes */}
-                <Route path="/cliente/dashboard" element={<ClientDashboard />} />
-                <Route path="/cliente/perfil" element={<ClientProfile />} />
-                <Route path="/cliente/pagamentos" element={<ClientPayments />} />
-                <Route path="/cliente/agenda" element={<ClientCalendar />} />
-                <Route path="/cliente/avaliacoes" element={<ClientReviews />} />
-                
-                {/* Admin Routes */}
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin/kyc" element={<AdminKycQueue />} />
-                <Route path="/admin/kyc/:submissionId" element={<AdminKycReview />} />
-                <Route path="/admin/legal" element={<AdminLegalDocuments />} />
-                <Route path="/admin/legal/new" element={<AdminLegalDocumentEdit />} />
-                <Route path="/admin/legal/edit/:key" element={<AdminLegalDocumentEdit />} />
-                
-                {/* Catch-all */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
+          <ServiceProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/cadastro" element={<RegisterPage />} />
+                  <Route path="/buscar-cuidadores" element={<SearchCaregivers />} />
+                  <Route path="/cuidador/:id" element={<CaregiverProfile />} />
+                  <Route path="/agendar/:id" element={<BookingPage />} />
+                  <Route path="/avaliar/:id" element={<ReviewPage />} />
+                  <Route path="/services" element={<ServicesPage />} />
+                  
+                  {/* Legal Routes */}
+                  <Route path="/termos" element={<TermsOfUsePage />} />
+                  <Route path="/privacidade" element={<PrivacyPolicyPage />} />
+                  <Route path="/regras" element={<MarketplaceRulesPage />} />
+                  <Route path="/termo-cuidador" element={<CaregiverTermPage />} />
+                  
+                  {/* Caregiver Routes */}
+                  <Route path="/cuidador/dashboard" element={<CaregiverDashboard />} />
+                  <Route path="/cuidador/formacao" element={<CaregiverTraining />} />
+                  <Route path="/cuidador/verificacao" element={<CaregiverKyc />} />
+                  
+                  {/* Client Routes */}
+                  <Route path="/cliente/dashboard" element={<ClientDashboard />} />
+                  <Route path="/cliente/perfil" element={<ClientProfile />} />
+                  <Route path="/cliente/pagamentos" element={<ClientPayments />} />
+                  <Route path="/cliente/agenda" element={<ClientCalendar />} />
+                  <Route path="/cliente/avaliacoes" element={<ClientReviews />} />
+                  
+                  {/* Admin Routes */}
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/kyc" element={<AdminKycQueue />} />
+                  <Route path="/admin/kyc/:submissionId" element={<AdminKycReview />} />
+                  <Route path="/admin/legal" element={<AdminLegalDocuments />} />
+                  <Route path="/admin/legal/new" element={<AdminLegalDocumentEdit />} />
+                  <Route path="/admin/legal/edit/:key" element={<AdminLegalDocumentEdit />} />
+                  <Route path="/admin/services" element={<AdminServices />} />
+                  <Route path="/admin/services/new" element={<AdminServiceEdit />} />
+                  <Route path="/admin/services/:id" element={<AdminServiceEdit />} />
+                  
+                  {/* Catch-all */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </ServiceProvider>
         </KycProvider>
       </LegalProvider>
     </AuthProvider>
