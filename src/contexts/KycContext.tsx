@@ -10,6 +10,7 @@ import {
   KYC_DOCUMENT_CONFIGS
 } from '@/types/kyc';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNotifications } from '@/contexts/NotificationContext';
 
 // Generate unique ID
 const generateId = () => Math.random().toString(36).substring(2, 15);
@@ -155,6 +156,7 @@ const KycContext = createContext<KycContextType | undefined>(undefined);
 
 export function KycProvider({ children }: { children: ReactNode }) {
   const { user, userType } = useAuth();
+  const { addNotification } = useNotifications();
   
   const [allSubmissions, setAllSubmissions] = useState<KycSubmission[]>(() => {
     const stored = localStorage.getItem('kyc_submissions');
@@ -353,7 +355,9 @@ export function KycProvider({ children }: { children: ReactNode }) {
       )
     );
     addAuditEntry('KYC_APPROVED', 'KYC_SUBMISSION', submissionId, { notes });
-  }, [user?.email, addAuditEntry]);
+    const sub = allSubmissions.find(s => s.id === submissionId);
+    if (sub) addNotification({ userId: sub.userEmail, type: 'KYC_STATUS_CHANGED', title: 'KYC Aprovado!', body: 'Sua verificação foi aprovada. Você já pode receber agendamentos.', linkUrl: '/cuidador/verificacao' });
+  }, [user?.email, addAuditEntry, addNotification, allSubmissions]);
 
   // Reject submission (admin)
   const rejectSubmission = useCallback((submissionId: string, reason: string, details: string) => {
@@ -373,7 +377,9 @@ export function KycProvider({ children }: { children: ReactNode }) {
       )
     );
     addAuditEntry('KYC_REJECTED', 'KYC_SUBMISSION', submissionId, { reason, details });
-  }, [user?.email, addAuditEntry]);
+    const sub = allSubmissions.find(s => s.id === submissionId);
+    if (sub) addNotification({ userId: sub.userEmail, type: 'KYC_STATUS_CHANGED', title: 'KYC Reprovado', body: `Sua verificação foi reprovada: ${details}`, linkUrl: '/cuidador/verificacao' });
+  }, [user?.email, addAuditEntry, addNotification, allSubmissions]);
 
   // Request more info (admin)
   const requestMoreInfo = useCallback((submissionId: string, pendingItems: string[], notes?: string) => {
@@ -393,7 +399,9 @@ export function KycProvider({ children }: { children: ReactNode }) {
       )
     );
     addAuditEntry('KYC_NEEDS_MORE_INFO', 'KYC_SUBMISSION', submissionId, { pendingItems, notes });
-  }, [user?.email, addAuditEntry]);
+    const sub = allSubmissions.find(s => s.id === submissionId);
+    if (sub) addNotification({ userId: sub.userEmail, type: 'KYC_STATUS_CHANGED', title: 'Pendências no KYC', body: 'Sua verificação precisa de ajustes. Verifique os itens pendentes.', linkUrl: '/cuidador/verificacao' });
+  }, [user?.email, addAuditEntry, addNotification, allSubmissions]);
 
   // Update document verification (admin)
   const updateDocumentVerification = useCallback((submissionId: string, documentId: string, verified: boolean, comment?: string) => {

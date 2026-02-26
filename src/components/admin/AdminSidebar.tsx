@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { Heart, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck, FileText, Package, CreditCard, BarChart3 } from "lucide-react";
+import { Heart, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck, FileText, Package, CreditCard, BarChart3, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useKyc } from "@/contexts/KycContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 import { Badge } from "@/components/ui/badge";
 
 const navItems = [
@@ -11,6 +12,7 @@ const navItems = [
   { icon: FileText, label: "Documentos Legais", href: "/admin/legal" },
   { icon: Package, label: "Serviços", href: "/admin/services" },
   { icon: CreditCard, label: "Pagamentos", href: "/admin/payments" },
+  { icon: Bell, label: "Notificações", href: "/notifications", showNotifBadge: true },
   { icon: Users, label: "Usuários", href: "/admin/usuarios" },
   { icon: Calendar, label: "Atendimentos", href: "/admin/atendimentos" },
   { icon: Star, label: "Avaliações", href: "/admin/avaliacoes" },
@@ -20,6 +22,7 @@ const navItems = [
 export function AdminSidebar() {
   const location = useLocation();
   const { pendingCount } = useKyc();
+  const { unreadCount } = useNotifications();
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-foreground flex flex-col">
@@ -56,6 +59,11 @@ export function AdminSidebar() {
               {item.showPendingBadge && pendingCount > 0 && !isActive && (
                 <Badge className="ml-auto bg-primary text-primary-foreground text-xs">
                   {pendingCount}
+                </Badge>
+              )}
+              {(item as any).showNotifBadge && unreadCount > 0 && !isActive && (
+                <Badge className="ml-auto bg-primary text-primary-foreground text-xs">
+                  {unreadCount}
                 </Badge>
               )}
             </Link>

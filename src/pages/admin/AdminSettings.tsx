@@ -3,14 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Settings, Info } from "lucide-react";
+import { Settings, Info, Bell } from "lucide-react";
 import { useState } from "react";
 import { usePayments } from "@/contexts/PaymentContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 import { useToast } from "@/hooks/use-toast";
 
 const AdminSettings = () => {
   const { toast } = useToast();
   const { settings, updatePlatformFeeRate } = usePayments();
+  const { runReminderJob } = useNotifications();
   const [rate, setRate] = useState(Math.round(settings.platformFeeRate * 100));
 
   const handleSave = () => {
@@ -74,6 +76,29 @@ const AdminSettings = () => {
             A taxa é aplicada apenas a novos agendamentos. Agendamentos existentes mantêm a taxa vigente no momento da criação.
           </AlertDescription>
         </Alert>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Bell className="w-5 h-5" />
+              Lembretes de Atendimento
+            </CardTitle>
+            <CardDescription>
+              Gerar notificações de lembrete (24h e 2h) para atendimentos próximos
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const count = runReminderJob();
+                toast({ title: "Job executado", description: `${count} lembrete(s) criado(s).` });
+              }}
+            >
+              Executar lembretes agora
+            </Button>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>

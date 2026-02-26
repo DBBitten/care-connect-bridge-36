@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, ReactNode } from "rea
 import {
   Appointment, AppointmentStatus, Payment, PaymentStatus, Refund, PlatformSettings, PaymentMethod,
 } from "@/types/payment";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 const KEYS = {
   appointments: "eldercare_appointments",
@@ -69,6 +70,7 @@ interface PaymentContextType {
 const PaymentContext = createContext<PaymentContextType | null>(null);
 
 export function PaymentProvider({ children }: { children: ReactNode }) {
+  const { addNotification } = useNotifications();
   const [appointments, setAppointments] = useState<Appointment[]>(() => load(KEYS.appointments, []));
   const [payments, setPayments] = useState<Payment[]>(() => load(KEYS.payments, []));
   const [refunds, setRefunds] = useState<Refund[]>(() => load(KEYS.refunds, []));
@@ -94,8 +96,10 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
     };
     const updated = [...appointments, appt];
     persistAppointments(updated);
+    addNotification({ userId: data.clientEmail, type: "PAYMENT_PENDING", title: "Agendamento criado", body: `Seu agendamento com ${data.caregiverName} está aguardando pagamento.`, linkUrl: `/checkout/${appt.id}` });
+    addNotification({ userId: data.caregiverName, type: "APPOINTMENT_REQUESTED", title: "Novo agendamento", body: `Você tem um novo agendamento de ${data.clientEmail} para ${data.date}.`, linkUrl: "/cuidador/dashboard" });
     return appt;
-  }, [appointments, settings.platformFeeRate, persistAppointments]);
+  }, [appointments, settings.platformFeeRate, persistAppointments, addNotification]);
 
   const getAppointmentById = useCallback((id: string) => appointments.find(a => a.id === id), [appointments]);
   const getAppointmentsByClient = useCallback((email: string) => appointments.filter(a => a.clientEmail === email), [appointments]);
@@ -117,8 +121,10 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
     };
     persistPayments([...payments, payment]);
     persistAppointments(appointments.map(a => a.id === appointmentId ? { ...a, status: "PAID" as AppointmentStatus } : a));
+    addNotification({ userId: appt.clientEmail, type: "PAYMENT_CONFIRMED", title: "Pagamento confirmado", body: `Seu pagamento de R$ ${appt.totalPrice.toFixed(2)} foi confirmado.`, linkUrl: "/cliente/pagamentos" });
+    addNotification({ userId: appt.caregiverName, type: "APPOINTMENT_CONFIRMED", title: "Atendimento confirmado", body: `O atendimento de ${appt.date} às ${appt.startTime} foi confirmado.`, linkUrl: "/cuidador/dashboard" });
     return payment;
-  }, [appointments, payments, persistAppointments, persistPayments]);
+  }, [appointments, payments, persistAppointments, persistPayments, addNotification]);
 
   const cancelAppointment = useCallback((appointmentId: string) => {
     const appt = appointments.find(a => a.id === appointmentId);
@@ -149,7 +155,9 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
       persistRefunds([...refunds, refund]);
     }
     persistAppointments(appointments.map(a => a.id === appointmentId ? { ...a, status: "CANCELED" as AppointmentStatus } : a));
-  }, [appointments, payments, refunds, persistAppointments, persistPayments, persistRefunds]);
+    addNotification({ userId: appt.clientEmail, type: "APPOINTMENT_CANCELED", title: "Agendamento cancelado", body: `Seu agendamento de ${appt.date} foi cancelado.`, linkUrl: "/cliente/pagamentos" });
+    addNotification({ userId: appt.caregiverName, type: "APPOINTMENT_CANCELED", title: "Atendimento cancelado", body: `O atendimento de ${appt.date} foi cancelado.`, linkUrl: "/cuidador/dashboard" });
+  }, [appointments, payments, refunds, persistAppointments, persistPayments, persistRefunds, addNotification]);
 
   const adminRefund = useCallback((paymentId: string, reason: string) => {
     const payment = payments.find(p => p.id === paymentId);
