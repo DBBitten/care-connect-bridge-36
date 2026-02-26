@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useLegal } from "@/contexts/LegalContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useServices } from "@/contexts/ServiceContext";
+import { usePayments } from "@/contexts/PaymentContext";
 
 // Mock caregiver data
 const caregiver = {
@@ -25,9 +26,10 @@ const BookingPage = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { hasAccepted, acceptDocument } = useLegal();
   const { getActiveServices, getServiceById } = useServices();
+  const { createAppointment } = usePayments();
 
   const serviceIdParam = searchParams.get("serviceId");
   const activeServices = getActiveServices();
@@ -56,8 +58,8 @@ const BookingPage = () => {
 
   const totalValue = duration ? parseFloat(duration) * effectiveRate : 0;
 
-  const handleBooking = async () => {
-    if (!date || !startTime || !duration) {
+  const handleBooking = () => {
+    if (!date || !startTime || !duration || !selectedService) {
       toast.error("Por favor, preencha todos os campos");
       return;
     }
@@ -72,9 +74,19 @@ const BookingPage = () => {
     }
 
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    toast.success("Agendamento confirmado com sucesso!");
-    navigate("/meus-agendamentos");
+    const appt = createAppointment({
+      clientEmail: user?.email || "guest@eldercare.com",
+      caregiverName: caregiver.name,
+      serviceId: selectedService.id,
+      serviceName: selectedService.name,
+      date: date.toISOString().split("T")[0],
+      startTime,
+      durationHours: parseFloat(duration),
+      pricePerHour: effectiveRate,
+      address: "Rua das Flores, 123 — Pinheiros, São Paulo/SP",
+    });
+    toast.success("Agendamento criado! Finalize o pagamento.");
+    navigate(`/checkout/${appt.id}`);
     setIsLoading(false);
   };
 
