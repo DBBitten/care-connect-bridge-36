@@ -52,6 +52,7 @@ import AdminServiceEdit from "./pages/admin/AdminServiceEdit";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminMetrics from "./pages/admin/AdminMetrics";
+import AdminSitemap from "./pages/admin/AdminSitemap";
 
 import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound";
@@ -116,6 +117,7 @@ const App = () => (
                    <Route path="/admin/payments" element={<AdminPayments />} />
                    <Route path="/admin/settings" element={<AdminSettings />} />
                    <Route path="/admin/metrics" element={<AdminMetrics />} />
+                   <Route path="/admin/sitemap" element={<AdminSitemap />} />
                   
                   {/* Catch-all */}
                   <Route path="*" element={<NotFound />} />
