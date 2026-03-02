@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Heart, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck, FileText, Package, CreditCard, BarChart3, Bell } from "lucide-react";
+import { Heart, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck, FileText, Package, CreditCard, BarChart3, Bell, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useKyc } from "@/contexts/KycContext";
 import { useNotifications } from "@/contexts/NotificationContext";
@@ -16,6 +16,7 @@ const navItems = [
   { icon: Users, label: "Usuários", href: "/admin/usuarios" },
   { icon: Calendar, label: "Atendimentos", href: "/admin/atendimentos" },
   { icon: Star, label: "Avaliações", href: "/admin/avaliacoes" },
+  { icon: Map, label: "Sitemap", href: "/admin/sitemap" },
   { icon: Settings, label: "Configurações", href: "/admin/settings" },
 ];
 
