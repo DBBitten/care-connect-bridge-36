@@ -262,7 +262,7 @@ const CaregiverKyc = () => {
             <CardContent className="space-y-6">
               <div className="bg-muted/50 rounded-xl p-4 space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Para atuar como cuidador na plataforma ElderCare, você precisa aceitar:
+                  Para atuar como cuidador na plataforma Cuidare, você precisa aceitar:
                 </p>
                 
                 <div className="space-y-4">

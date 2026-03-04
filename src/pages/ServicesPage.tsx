@@ -26,7 +26,7 @@ const ServicesPage = () => {
               Nossos Serviços
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Conheça os serviços de cuidado oferecidos pela ElderCare em Porto Alegre. Todos os cuidadores são verificados e treinados.
+              Conheça os serviços de cuidado oferecidos pela Cuidare em Porto Alegre. Todos os cuidadores são verificados e treinados.
             </p>
           </div>
 

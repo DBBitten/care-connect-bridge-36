@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Heart } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 export function Footer() {
   return (
@@ -10,19 +10,19 @@ export function Footer() {
           <div className="md:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <Heart className="w-5 h-5 text-primary-foreground" />
+                <ShieldCheck className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">ElderCare</span>
+              <span className="text-xl font-bold">Cuidare</span>
             </Link>
             <p className="text-background/70 max-w-md">
               Conectando quem precisa de cuidado com quem sabe cuidar. 
-              Uma plataforma segura e confiável para encontrar cuidadores qualificados.
+              Uma plataforma segura e confiável para encontrar cuidadores verificados.
             </p>
           </div>
 
           {/* Links */}
           <div>
-            <h4 className="font-semibold mb-4">Plataforma</h4>
+            <h4 className="font-bold mb-4">Plataforma</h4>
             <ul className="space-y-2">
               <li>
                 <a href="/#como-funciona" className="text-background/70 hover:text-background transition-colors">
@@ -44,7 +44,7 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
+            <h4 className="font-bold mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
                 <Link to="/termos" className="text-background/70 hover:text-background transition-colors">
@@ -71,7 +71,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-background/20 mt-8 pt-8 text-center text-background/50">
-          <p>&copy; {new Date().getFullYear()} ElderCare. Todos os direitos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} Cuidare. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

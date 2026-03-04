@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Heart, ArrowLeft, Users, UserCheck, Mail, Lock, User, Phone, MapPin, Calendar, FileText, ExternalLink } from "lucide-react";
+import { ShieldCheck, ArrowLeft, Users, UserCheck, Mail, Lock, User, Phone, MapPin, Calendar, FileText, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLegal } from "@/contexts/LegalContext";
@@ -90,7 +90,7 @@ const RegisterPage = () => {
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-4">
               <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-                <Heart className="w-6 h-6 text-primary-foreground" />
+                <ShieldCheck className="w-6 h-6 text-primary-foreground" />
               </div>
             </Link>
             <h1 className="text-2xl font-bold text-foreground">Criar conta</h1>
