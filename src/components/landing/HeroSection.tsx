@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ShieldCheck, Users } from "lucide-react";
-import heroImage from "@/assets/hero-eldercare.jpg";
+import heroImage from "@/assets/hero-cuidare.png";
 
 export function HeroSection() {
   return (
@@ -13,7 +13,7 @@ export function HeroSection() {
           alt="Cuidadora com paciente idosa feliz"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/70 to-foreground/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(12,61%,20%/0.92)] via-[hsl(12,50%,25%/0.75)] to-[hsl(25,40%,30%/0.40)]" />
       </div>
 
       {/* Content */}
