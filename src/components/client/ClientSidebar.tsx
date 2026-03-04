@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Heart, LayoutDashboard, Calendar, CreditCard, Star, User, LogOut, Settings, Search, Bell } from "lucide-react";
+import { ShieldCheck, LayoutDashboard, Calendar, CreditCard, Star, User, LogOut, Settings, Search, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { Badge } from "@/components/ui/badge";
@@ -24,10 +24,10 @@ export function ClientSidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-border">
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-            <Heart className="w-5 h-5 text-primary-foreground" />
+           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+            <ShieldCheck className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold text-foreground">ElderCare</span>
+          <span className="text-xl font-bold text-foreground">Cuidare</span>
         </Link>
       </div>
 

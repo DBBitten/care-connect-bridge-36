@@ -60,7 +60,7 @@ export const LEGAL_DOCUMENT_INFO: LegalDocumentInfo[] = [
     title: 'Termos de Uso',
     shortTitle: 'Termos',
     route: '/termos',
-    description: 'Termos gerais de uso da plataforma ElderCare',
+    description: 'Termos gerais de uso da plataforma Cuidare',
     requiredFor: ['all'],
     requiredAtStage: 'registration',
   },

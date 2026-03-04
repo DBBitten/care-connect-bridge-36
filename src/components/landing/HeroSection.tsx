@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Heart, Users } from "lucide-react";
+import { ArrowRight, ShieldCheck, Users } from "lucide-react";
 import heroImage from "@/assets/hero-eldercare.jpg";
 
 export function HeroSection() {
@@ -20,18 +20,18 @@ export function HeroSection() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-2xl">
           <div className="inline-flex items-center gap-2 bg-primary/20 text-primary-foreground px-4 py-2 rounded-full mb-6 animate-fade-up">
-            <Heart className="w-4 h-4" />
-            <span className="text-sm font-medium">Cuidado com amor e profissionalismo</span>
+            <ShieldCheck className="w-4 h-4" />
+            <span className="text-sm font-medium">Profissionais verificados e treinados</span>
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-background mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-            Conectando quem precisa de cuidado com{" "}
-            <span className="text-primary">quem sabe cuidar</span>
+            Cuidadores de confiança para quem você{" "}
+            <span className="text-primary">ama</span>
           </h1>
 
           <p className="text-lg md:text-xl text-background/80 mb-8 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-            Encontre cuidadores qualificados e certificados para você ou seu ente querido. 
-            Segurança, confiança e qualidade em cada atendimento.
+            Profissionais treinados e verificados para cuidar com segurança e carinho.
+            Encontre o cuidador ideal para sua família.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 animate-fade-up" style={{ animationDelay: "0.3s" }}>
@@ -44,7 +44,7 @@ export function HeroSection() {
             </Button>
             <Button size="xl" variant="hero-outline" asChild>
               <Link to="/cadastro?tipo=cuidador">
-                <Heart className="w-5 h-5" />
+                <ShieldCheck className="w-5 h-5" />
                 Quero ser cuidador
               </Link>
             </Button>
@@ -54,7 +54,7 @@ export function HeroSection() {
           <div className="flex flex-wrap gap-8 mt-12 animate-fade-up" style={{ animationDelay: "0.4s" }}>
             <div>
               <p className="text-3xl font-bold text-background">500+</p>
-              <p className="text-sm text-background/60">Cuidadores ativos</p>
+              <p className="text-sm text-background/60">Cuidadores verificados</p>
             </div>
             <div>
               <p className="text-3xl font-bold text-background">2.000+</p>

@@ -170,7 +170,7 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
       amount: payment.amountTotal,
       reason,
       createdAt: now,
-      createdBy: "admin@eldercare.com",
+      createdBy: "admin@cuidare.com.br",
     };
     persistRefunds([...refunds, refund]);
     persistAppointments(appointments.map(a => a.id === payment.appointmentId ? { ...a, status: "CANCELED" as AppointmentStatus } : a));

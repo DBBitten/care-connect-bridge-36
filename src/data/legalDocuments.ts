@@ -5,15 +5,15 @@ const TERMS_OF_USE_CONTENT = `
 
 **Versão 1.0 - Atualizado em Fevereiro de 2025**
 
-Bem-vindo(a) ao ElderCare! Ao usar nossa plataforma, você concorda com estes termos.
+Bem-vindo(a) à Cuidare! Ao usar nossa plataforma, você concorda com estes termos.
 
 ---
 
-## 1. O que é o ElderCare?
+## 1. O que é a Cuidare?
 
-O ElderCare é uma **plataforma de intermediação** que conecta cuidadores independentes a famílias que precisam de cuidado para idosos e pessoas com necessidades especiais.
+A Cuidare é uma **plataforma de intermediação** que conecta cuidadores independentes a famílias que precisam de cuidado para idosos e pessoas com necessidades especiais.
 
-**Importante:** O ElderCare **não é** uma agência de empregos e **não possui vínculo empregatício** com os cuidadores cadastrados. Atuamos apenas como facilitadores da conexão entre as partes.
+**Importante:** A Cuidare **não é** uma agência de empregos e **não possui vínculo empregatício** com os cuidadores cadastrados. Atuamos apenas como facilitadores da conexão entre as partes.
 
 ---
 
@@ -26,7 +26,7 @@ O ElderCare é uma **plataforma de intermediação** que conecta cuidadores inde
 
 ## 3. Suas responsabilidades
 
-Ao usar o ElderCare, você se compromete a:
+Ao usar a Cuidare, você se compromete a:
 
 - Fornecer informações verdadeiras e atualizadas
 - Manter a confidencialidade da sua senha
@@ -59,7 +59,7 @@ Podemos suspender ou banir contas que:
 
 ## 6. Limitação de Responsabilidade
 
-O ElderCare:
+A Cuidare:
 
 - **Não se responsabiliza** por danos decorrentes da relação entre cuidador e família
 - **Não garante** disponibilidade contínua do serviço
@@ -71,12 +71,12 @@ O ElderCare:
 ## 7. Foro e Contato
 
 - **Foro:** Porto Alegre/RS
-- **Contato:** contato@eldercare.com.br
+- **Contato:** contato@cuidare.com.br
 - **Dúvidas:** Acesse nossa Central de Ajuda
 
 ---
 
-Ao continuar usando o ElderCare, você confirma que leu e concorda com estes termos.
+Ao continuar usando a Cuidare, você confirma que leu e concorda com estes termos.
 `;
 
 const PRIVACY_POLICY_CONTENT = `
@@ -84,7 +84,7 @@ const PRIVACY_POLICY_CONTENT = `
 
 **Versão 1.0 - Atualizado em Fevereiro de 2025**
 
-O ElderCare respeita sua privacidade e está comprometido com a proteção dos seus dados pessoais, em conformidade com a **Lei Geral de Proteção de Dados (LGPD)**.
+A Cuidare respeita sua privacidade e está comprometida com a proteção dos seus dados pessoais, em conformidade com a **Lei Geral de Proteção de Dados (LGPD)**.
 
 ---
 
@@ -169,12 +169,12 @@ Você tem direito a:
 
 Para exercer seus direitos ou tirar dúvidas sobre privacidade:
 
-- **E-mail:** privacidade@eldercare.com.br
+- **E-mail:** privacidade@cuidare.com.br
 - **Resposta:** Em até 15 dias úteis
 
 ---
 
-Ao usar o ElderCare, você confirma que leu e compreendeu esta Política de Privacidade.
+Ao usar a Cuidare, você confirma que leu e compreendeu esta Política de Privacidade.
 `;
 
 const CAREGIVER_LIABILITY_TERM_CONTENT = `
@@ -182,7 +182,7 @@ const CAREGIVER_LIABILITY_TERM_CONTENT = `
 
 **Versão 1.0 - Atualizado em Fevereiro de 2025**
 
-Este termo estabelece suas responsabilidades como cuidador cadastrado na plataforma ElderCare.
+Este termo estabelece suas responsabilidades como cuidador cadastrado na plataforma Cuidare.
 
 ---
 
@@ -203,7 +203,7 @@ Ao aceitar este termo, você declara que:
 Você reconhece que:
 
 - Atua como **prestador de serviço independente**
-- **Não há vínculo empregatício** com o ElderCare
+- **Não há vínculo empregatício** com a Cuidare
 - É responsável por suas **obrigações fiscais e previdenciárias**
 - A plataforma atua apenas como **intermediária** entre você e os clientes
 
@@ -249,7 +249,7 @@ Você se compromete a:
 Você se compromete a:
 
 - **Receber pagamentos apenas** através da plataforma
-- **Não negociar** atendimentos originados no ElderCare fora da plataforma
+- **Não negociar** atendimentos originados na Cuidare fora da plataforma
 - **Não solicitar** pagamentos diretos aos clientes
 - Reportar tentativas de pagamento fora da plataforma
 
@@ -276,13 +276,13 @@ const MARKETPLACE_RULES_CONTENT = `
 
 **Versão 1.0 - Atualizado em Fevereiro de 2025**
 
-Estas regras definem o que é permitido e proibido na plataforma ElderCare. Foram criadas para garantir a **segurança** e o **bem-estar** de todos.
+Estas regras definem o que é permitido e proibido na plataforma Cuidare. Foram criadas para garantir a **segurança** e o **bem-estar** de todos.
 
 ---
 
 ## 1. Objetivo
 
-O ElderCare conecta **cuidadores independentes** a **famílias** que precisam de cuidado para idosos e pessoas com necessidades especiais. Todos os agendamentos e pagamentos são realizados pela plataforma.
+A Cuidare conecta **cuidadores independentes** a **famílias** que precisam de cuidado para idosos e pessoas com necessidades especiais. Todos os agendamentos e pagamentos são realizados pela plataforma.
 
 ---
 
@@ -330,7 +330,7 @@ Alguns serviços podem exigir **certificação específica** ou **aceite especia
 ### Transporte e pagamentos
 - ❌ Transportar o atendido em veículo próprio (no MVP)
 - ❌ **Negociar ou receber pagamentos fora da plataforma**
-- ❌ Combinar atendimentos direto com famílias sem passar pelo ElderCare
+- ❌ Combinar atendimentos direto com famílias sem passar pela Cuidare
 
 **Importante:** Negociações fora da plataforma (bypass) resultam em **banimento permanente** e podem ter consequências legais.
 
@@ -374,11 +374,11 @@ O descumprimento destas regras pode resultar em:
 
 ## Dúvidas?
 
-Entre em contato: **contato@eldercare.com.br**
+Entre em contato: **contato@cuidare.com.br**
 
 ---
 
-Ao usar o ElderCare, você confirma que leu e concorda com estas regras.
+Ao usar a Cuidare, você confirma que leu e concorda com estas regras.
 `;
 
 // Initial legal documents (mock data)

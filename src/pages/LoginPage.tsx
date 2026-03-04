@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Heart, ArrowLeft, Users, UserCheck, Mail, Lock, Shield } from "lucide-react";
+import { ShieldCheck, ArrowLeft, Users, UserCheck, Mail, Lock, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLegal } from "@/contexts/LegalContext";
@@ -78,7 +78,7 @@ const LoginPage = () => {
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-4">
               <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-                <Heart className="w-6 h-6 text-primary-foreground" />
+                <ShieldCheck className="w-6 h-6 text-primary-foreground" />
               </div>
             </Link>
             <h1 className="text-2xl font-bold text-foreground">Bem-vindo de volta</h1>
@@ -160,7 +160,7 @@ const LoginPage = () => {
         <Card variant="elevated">
           <CardHeader className="text-center">
             <div className="mx-auto w-12 h-12 rounded-xl bg-primary flex items-center justify-center mb-4">
-              <Heart className="w-6 h-6 text-primary-foreground" />
+              <ShieldCheck className="w-6 h-6 text-primary-foreground" />
             </div>
             <CardTitle>Entrar como {userType === "admin" ? "Administrador" : userType === "cuidador" ? "Cuidador" : "Familiar"}</CardTitle>
             <CardDescription>
@@ -225,7 +225,7 @@ const LoginPage = () => {
           open={showLegalModal}
           onAccepted={handleLegalAccepted}
           title="Termos de Uso"
-          description="Para continuar usando o ElderCare, aceite nossos termos."
+          description="Para continuar usando a Cuidare, aceite nossos termos."
           requiredDocuments={['TERMS_OF_USE', 'PRIVACY_POLICY']}
         />
       </div>
