@@ -1,46 +1,114 @@
 
 
-## Plano: Pagina Admin Sitemap — Mapa do Produto
+## Plano: Rebrand para "Cuidare" — Reestilizacao Global
 
 ### Resumo
 
-Criar pagina `/admin/sitemap` com 4 tabs (Rotas, Gates, Fluxos, QA) que funciona como mapa completo do produto para facilitar QA e revisao.
+Aplicar nova identidade visual "Cuidare" (paleta Terracota & Creme, tipografia Inter, tom de confianca) em todo o produto, sem alterar rotas, funcionalidades ou arquitetura.
 
-### Arquivos
+### Escopo de Arquivos
 
-| Arquivo | Acao |
-|---------|------|
-| `src/pages/admin/AdminSitemap.tsx` | **Novo** — Pagina completa com tabs, dados estaticos das rotas, gates, fluxos e checklist |
-| `src/components/admin/AdminSidebar.tsx` | **Editar** — Adicionar item "Sitemap" com icone Map |
-| `src/App.tsx` | **Editar** — Importar AdminSitemap e adicionar rota `/admin/sitemap` |
+**Fase 1 — Tokens e Tipografia (3 arquivos)**
 
-### Detalhamento
+| Arquivo | Alteracao |
+|---------|-----------|
+| `src/index.css` | Substituir todas as CSS variables (paleta terracota/creme), trocar fonte para Inter, ajustar gradients e shadows |
+| `tailwind.config.ts` | Atualizar fontFamily para Inter, ajustar shadows para nova paleta |
+| `index.html` | Titulo "Cuidare", meta tags, lang="pt-BR" |
 
-#### AdminSitemap.tsx
+**Fase 2 — Componentes UI (3 arquivos)**
 
-Pagina unica com `AdminLayout` e 4 tabs via Radix Tabs:
+| Arquivo | Alteracao |
+|---------|-----------|
+| `src/components/ui/button.tsx` | Ajustar variantes hero/hero-outline para terracota, garantir min-height 44px mobile |
+| `src/components/ui/card.tsx` | Ajustar shadow-card para nova cor |
+| `src/components/ui/input.tsx` | Garantir focus ring visivel e acessivel |
 
-**Tab 1 — Rotas**: Const array com todas as rotas do App.tsx, agrupadas por secao (Publico, Cliente, Cuidador, Admin). Cada entrada tem: `path`, `description`, `role` (tag colorida), `gates` (texto), `states` (texto). Campo de busca filtra por path/descricao. Links abrem em nova aba. Rotas listadas no requisito que nao existem no App.tsx atual serao marcadas "(nao implementada)".
+**Fase 3 — Layout (2 arquivos)**
 
-**Tab 2 — Gates**: Tabela com colunas Recurso, Role, Condicao, Comportamento se falhar. Lista fixa baseada nas regras do MVP (KYC, termos, pagamento, suspensao, anti-bypass).
+| Arquivo | Alteracao |
+|---------|-----------|
+| `src/components/layout/Navbar.tsx` | "ElderCare" → "Cuidare", icone ShieldCheck ao inves de Heart |
+| `src/components/layout/Footer.tsx` | "ElderCare" → "Cuidare", icone ShieldCheck |
 
-**Tab 3 — Fluxos**: 3 fluxos (Cliente agendar, Cuidador onboarding, Incidente) com passos numerados, cada passo e um link clicavel + descricao do estado. Fluxo de incidente marcado como "nao implementado" onde aplicavel.
+**Fase 4 — Telas e Copy (11+ arquivos)**
 
-**Tab 4 — QA**: Checklist com ~8 itens de verificacao, estado local (useState), nao persiste. Checkboxes com descricao.
+Substituir "ElderCare" → "Cuidare" em todos os arquivos que contem a string. Ajustar hero headline e sub conforme briefing. Arquivos afetados:
 
-Busca por texto no topo da tab Rotas. Tudo em portugues BR.
+- `src/components/landing/HeroSection.tsx` — novo H1/sub, ajustar overlay e badge
+- `src/components/landing/CTASection.tsx` — "ElderCare" → "Cuidare"
+- `src/components/landing/TrustSection.tsx` — "ElderCare" → "Cuidare"
+- `src/components/client/ClientSidebar.tsx` — logo text
+- `src/components/caregiver/CaregiverSidebar.tsx` — logo text
+- `src/components/admin/AdminSidebar.tsx` — logo text + admin email
+- `src/pages/LoginPage.tsx` — "ElderCare" → "Cuidare"
+- `src/pages/RegisterPage.tsx` — nenhuma ref direta mas revisar
+- `src/pages/BookingPage.tsx` — "ElderCare" → "Cuidare"
+- `src/pages/ServicesPage.tsx` — "ElderCare" → "Cuidare"
+- `src/pages/caregiver/CaregiverKyc.tsx` — "ElderCare" → "Cuidare"
+- `src/components/legal/RequireLegalAcceptance.tsx` — "ElderCare" → "Cuidare"
+- `src/contexts/NotificationContext.tsx` — localStorage key permanece (nao quebrar dados)
+- `src/types/legal.ts` — descricao "ElderCare" → "Cuidare"
+- `src/data/legalDocuments.ts` — possiveis refs
 
-#### Rotas existentes vs solicitadas
+### Detalhamento Tecnico
 
-Mapeamento das rotas solicitadas para as reais do projeto:
-- `/search` → `/buscar-cuidadores`
-- `/signup` → `/cadastro`
-- `/client/*` → `/cliente/*`
-- `/caregiver/*` → `/cuidador/*`
-- `/book` → `/agendar/:id`
-- Rotas nao existentes (incidentes, calendario cuidador, disponibilidade): marcadas como "(nao implementada)"
+#### 1. CSS Variables (src/index.css)
 
-#### Sidebar + Rota
+Conversao dos hex para HSL:
+- `#B5472A` → ~12 63% 44% (primary)
+- `#7A2E1D` → ~12 61% 30% (primary hover/dark — usar como ring ou darker primary via utility)
+- `#FBF4EC` → ~30 58% 96% (background)
+- `#FFFDFB` → ~30 100% 99% (card)
+- `#1F2937` → ~220 26% 17% (foreground)
+- `#4B5563` → ~220 13% 34% (muted-foreground)
+- `#E7D8CC` → ~25 33% 85% (border/input)
 
-Adicionar `{ icon: Map, label: "Sitemap", href: "/admin/sitemap" }` ao AdminSidebar. Registrar rota no App.tsx.
+Trocar fonte de Plus Jakarta Sans para Inter. Atualizar `@import` do Google Fonts.
+
+Ajustar dark mode proporcionalmente (manter funcional mas adaptar tons).
+
+Atualizar gradients para terracota:
+- `--gradient-hero`: gradiente de #B5472A para tom mais quente
+- `--gradient-warm`: creme suave
+- `--shadow-card`: sombra com tom terracota
+
+#### 2. Tipografia
+
+- Body: 16px base (ja esta), line-height 1.5+
+- Headings: font-weight 700 (alterar de `font-semibold` para `font-bold` no base)
+- Min font size: garantir via classes existentes
+
+#### 3. Componentes
+
+Botoes: variantes ja puxam de CSS vars, entao a mudanca de tokens e suficiente. Revisar `hero-outline` para funcionar com terracota (borda + backdrop). Garantir `min-h-[44px]` nos sizes default/sm.
+
+Cards: ja usam `--card` e `--border` — tokens resolvem.
+
+Inputs: adicionar `focus-visible:ring-offset-2` mais visivel se necessario.
+
+#### 4. Copy
+
+Trocar todas as 21+ ocorrencias de "ElderCare"/"eldercare" em textos visiveis ao usuario. Manter chaves de localStorage inalteradas para nao perder dados.
+
+Hero novo:
+- H1: "Cuidadores de confianca para quem voce ama."
+- Sub: "Profissionais treinados e verificados para cuidar com seguranca e carinho."
+
+#### 5. Acessibilidade
+
+- Focus ring: ja usa `focus-visible:ring-2` — garantir que ring color tem contraste suficiente com fundo creme
+- Min click target: 44px — verificar button sizes
+- Contraste: texto #1F2937 em fundo #FBF4EC = ratio ~12:1 (excelente). Texto #4B5563 em #FBF4EC = ~7:1 (excelente). Botao #FFFFFF em #B5472A = ~4.8:1 (passa AA).
+
+#### 6. Icone da marca
+
+Trocar `Heart` por `ShieldCheck` no logo (Navbar, Footer, Sidebars) para reforcar confianca/seguranca.
+
+### Ordem de Execucao
+
+1. `index.html` + `src/index.css` + `tailwind.config.ts` (tokens)
+2. `button.tsx` + `card.tsx` + `input.tsx` (componentes)
+3. `Navbar.tsx` + `Footer.tsx` (layout)
+4. Todas as paginas/contextos com "ElderCare" (copy batch)
 
