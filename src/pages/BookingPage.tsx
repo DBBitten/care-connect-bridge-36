@@ -75,7 +75,7 @@ const BookingPage = () => {
 
     setIsLoading(true);
     const appt = createAppointment({
-      clientEmail: user?.email || "guest@eldercare.com",
+      clientEmail: user?.email || "guest@cuidare.com.br",
       caregiverName: caregiver.name,
       serviceId: selectedService.id,
       serviceName: selectedService.name,
