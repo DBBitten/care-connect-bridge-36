@@ -28,7 +28,7 @@ const ClientPayments = () => {
   };
 
   const getCancelInfo = (appt: typeof appointments[0]) => {
-    const apptDate = new Date(`${appt.date}T${appt.startTime}:00`);
+    const apptDate = new Date(`${appt.dates[0]}T${appt.startTime}:00`);
     const hoursUntil = (apptDate.getTime() - Date.now()) / (1000 * 60 * 60);
     if (hoursUntil > 24) return { text: "Reembolso integral", rate: "100%" };
     return { text: "Reembolso parcial (50%)", rate: "50%" };
@@ -81,7 +81,7 @@ const ClientPayments = () => {
                             <Badge variant={config.variant}>{config.label}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground">
-                            {appt.caregiverName} • {new Date(appt.date).toLocaleDateString("pt-BR")} às {appt.startTime} • {appt.durationHours}h
+                            {appt.caregiverName} • {appt.dates.map(d => new Date(d).toLocaleDateString("pt-BR")).join(", ")} às {appt.startTime} • {appt.durationHours}h
                           </p>
                           {payment && (
                             <p className="text-xs text-muted-foreground">
@@ -108,7 +108,7 @@ const ClientPayments = () => {
                                 <DialogHeader>
                                   <DialogTitle>Cancelar agendamento</DialogTitle>
                                   <DialogDescription>
-                                    Deseja cancelar o atendimento "{appt.serviceName}" em {new Date(appt.date).toLocaleDateString("pt-BR")}?
+                                    Deseja cancelar o atendimento "{appt.serviceName}" em {appt.dates.map(d => new Date(d).toLocaleDateString("pt-BR")).join(", ")}?
                                   </DialogDescription>
                                 </DialogHeader>
                                 <div className="p-4 rounded-xl bg-muted/50 space-y-2">

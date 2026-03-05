@@ -98,7 +98,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
       for (const appt of appointments) {
         if (appt.status !== "PAID") continue;
-        const start = new Date(`${appt.date}T${appt.startTime}:00`).getTime();
+        const start = new Date(`${appt.dates[0]}T${appt.startTime}:00`).getTime();
         const hoursUntil = (start - now) / (1000 * 60 * 60);
 
         const checks: { type: NotificationType; min: number; max: number }[] = [
@@ -119,7 +119,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
               userId: uid,
               type: check.type,
               title: check.type === "APPOINTMENT_REMINDER_24H" ? "Lembrete: atendimento em 24h" : "Lembrete: atendimento em 2h",
-              body: `Seu atendimento de ${appt.serviceName} está agendado para ${appt.date} às ${appt.startTime}. (ref: ${appt.id})`,
+              body: `Seu atendimento de ${appt.serviceName} está agendado para ${appt.dates[0]} às ${appt.startTime}. (ref: ${appt.id})`,
               isRead: false,
               linkUrl: "/cliente/agenda",
               createdAt: new Date().toISOString(),

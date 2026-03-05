@@ -11,7 +11,7 @@ const appointments = [
     id: 1,
     caregiverName: "Maria Silva",
     caregiverPhone: "(11) 99999-1234",
-    date: new Date(2025, 0, 30),
+    dates: [new Date(2025, 0, 30), new Date(2025, 0, 31)],
     time: "14:00 - 18:00",
     location: "Sua residência",
     type: "Cuidado diário",
@@ -22,7 +22,7 @@ const appointments = [
     id: 2,
     caregiverName: "Ana Santos",
     caregiverPhone: "(11) 98888-5678",
-    date: new Date(2025, 0, 31),
+    dates: [new Date(2025, 0, 31)],
     time: "08:00 - 12:00",
     location: "Sua residência",
     type: "Companhia",
@@ -33,7 +33,7 @@ const appointments = [
     id: 3,
     caregiverName: "Carla Mendes",
     caregiverPhone: "(11) 97777-9012",
-    date: new Date(2025, 1, 3),
+    dates: [new Date(2025, 1, 3), new Date(2025, 1, 4), new Date(2025, 1, 5)],
     time: "09:00 - 17:00",
     location: "Sua residência",
     type: "Cuidado integral",
@@ -45,10 +45,10 @@ const appointments = [
 const ClientCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
-  const appointmentDates = appointments.map(a => a.date.toDateString());
+  const appointmentDates = appointments.flatMap(a => a.dates.map(d => d.toDateString()));
 
   const filteredAppointments = selectedDate
-    ? appointments.filter(a => a.date.toDateString() === selectedDate.toDateString())
+    ? appointments.filter(a => a.dates.some(d => d.toDateString() === selectedDate.toDateString()))
     : appointments;
 
   const formatDate = (date: Date) => {
@@ -123,7 +123,7 @@ const ClientCalendar = () => {
                         <div className="grid sm:grid-cols-2 gap-2 text-sm">
                           <div className="flex items-center gap-2 text-muted-foreground">
                             <CalendarIcon className="w-4 h-4" />
-                            <span>{appointment.date.toLocaleDateString('pt-BR')}</span>
+                            <span>{appointment.dates.map(d => d.toLocaleDateString('pt-BR')).join(", ")}</span>
                           </div>
                           <div className="flex items-center gap-2 text-muted-foreground">
                             <Clock className="w-4 h-4" />
