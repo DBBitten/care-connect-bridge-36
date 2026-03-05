@@ -2,11 +2,6 @@ export interface Service {
   id: string;
   name: string;
   description: string;
-  baseDurationMinutes: number;
-  allowedDurationsMinutes: number[];
-  pricePerHour: number;
-  minHours: number;
-  maxHours: number;
   requiresCertificationTag?: string;
   isActive: boolean;
   sortOrder: number;
@@ -20,4 +15,10 @@ export interface ServicePriceRule {
   ruleType: 'WEEKEND' | 'NIGHT' | 'URGENT';
   multiplier: number;
   isActive: boolean;
+}
+
+export interface CaregiverServiceOffer {
+  serviceId: string;
+  pricePerHour: number;
+  availableDurations: number[]; // em minutos, ex: [60, 120, 240, 480]
 }

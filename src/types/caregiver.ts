@@ -1,3 +1,5 @@
+import { CaregiverServiceOffer } from "./service";
+
 export interface CaregiverProfileData {
   id: string;
   email: string;
@@ -7,7 +9,7 @@ export interface CaregiverProfileData {
   yearsExperience?: number;
   specialties: string[];
   languages: string[];
-  serviceTags: string[]; // IDs dos serviços que aceita
+  serviceOffers: CaregiverServiceOffer[];
   certifications: string[]; // badges internos
   neighborhood: string;
   city: string;
@@ -15,7 +17,6 @@ export interface CaregiverProfileData {
   maxDistanceKm?: number;
   profilePhotoUrl?: string;
   availability: string[]; // ex: ["Segunda a Sexta: 6h-18h"]
-  hourlyRate: number;
   kycStatus: 'APPROVED' | 'PENDING' | 'REJECTED';
   isSuspended: boolean;
   createdAt: string;
