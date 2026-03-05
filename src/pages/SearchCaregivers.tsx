@@ -114,7 +114,7 @@ const SearchCaregivers = () => {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Cuidadores verificados e certificados em sua Cidade, prontos para ajudar sua família.
 
             </p>
-            <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-success/10 text-success rounded-full text-sm font-medium">
+            <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-success/10 text-success rounded-full text-sm font-medium">Todos verificados
               <ShieldCheck className="w-4 h-4" />
               Todos verificados via KYC — Pagamento seguro pela plataforma
             </div>
