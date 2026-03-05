@@ -8,7 +8,7 @@ export interface Appointment {
   caregiverName: string;
   serviceId: string;
   serviceName: string;
-  date: string;
+  dates: string[];
   startTime: string;
   durationHours: number;
   pricePerHour: number;
