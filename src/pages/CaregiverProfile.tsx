@@ -136,14 +136,7 @@ const CaregiverProfile = () => {
                           <div key={offer.serviceId} className="flex items-center justify-between p-3 rounded-xl bg-muted/50">
                             <div className="flex items-center gap-2 flex-1">
                               <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
-                              <div>
-                                <span className="text-sm font-medium">{svc.name}</span>
-                                <div className="flex gap-1 mt-1">
-                                  {offer.availableDurations.map(d => (
-                                    <Badge key={d} variant="secondary" className="text-xs">{formatDuration(d)}</Badge>
-                                  ))}
-                                </div>
-                              </div>
+                              <span className="text-sm font-medium">{svc.name}</span>
                             </div>
                             <span className="text-sm font-bold text-foreground whitespace-nowrap ml-3">
                               R$ {offer.pricePerHour}/h

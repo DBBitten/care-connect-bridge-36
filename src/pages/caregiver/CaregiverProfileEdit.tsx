@@ -23,14 +23,6 @@ const neighborhoods = [
   "Centro Histórico", "Praia de Belas", "Cristal", "Tristeza", "Ipanema",
 ];
 
-const DURATION_OPTIONS = [
-  { value: 60, label: "1h" },
-  { value: 120, label: "2h" },
-  { value: 240, label: "4h" },
-  { value: 360, label: "6h" },
-  { value: 480, label: "8h" },
-  { value: 720, label: "12h" },
-];
 
 export default function CaregiverProfileEdit() {
   const { user } = useAuth();
@@ -57,23 +49,12 @@ export default function CaregiverProfileEdit() {
     if (isServiceSelected(serviceId)) {
       setServiceOffers(prev => prev.filter(o => o.serviceId !== serviceId));
     } else {
-      setServiceOffers(prev => [...prev, { serviceId, pricePerHour: 35, availableDurations: [120] }]);
+      setServiceOffers(prev => [...prev, { serviceId, pricePerHour: 35 }]);
     }
   };
-
+  };
   const updateOfferPrice = (serviceId: string, price: number) => {
     setServiceOffers(prev => prev.map(o => o.serviceId === serviceId ? { ...o, pricePerHour: price } : o));
-  };
-
-  const toggleOfferDuration = (serviceId: string, duration: number) => {
-    setServiceOffers(prev => prev.map(o => {
-      if (o.serviceId !== serviceId) return o;
-      const has = o.availableDurations.includes(duration);
-      const updated = has
-        ? o.availableDurations.filter(d => d !== duration)
-        : [...o.availableDurations, duration].sort((a, b) => a - b);
-      return { ...o, availableDurations: updated.length > 0 ? updated : [duration] };
-    }));
   };
 
   const handleSave = () => {
@@ -194,7 +175,7 @@ export default function CaregiverProfileEdit() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              Selecione os serviços e defina seu preço por hora e as durações que aceita para cada um.
+              Selecione os serviços e defina seu preço por hora.
             </p>
             <div className="space-y-4">
               {activeServices.map(svc => {
@@ -211,7 +192,7 @@ export default function CaregiverProfileEdit() {
                       </Label>
                     </div>
                     {selected && offer && (
-                      <div className="mt-4 ml-7 space-y-3">
+                      <div className="mt-4 ml-7">
                         <div className="flex items-center gap-3">
                           <Label className="text-sm whitespace-nowrap">Preço/hora (R$):</Label>
                           <Input
@@ -220,21 +201,6 @@ export default function CaregiverProfileEdit() {
                             onChange={e => updateOfferPrice(svc.id, Number(e.target.value))}
                             className="w-28"
                           />
-                        </div>
-                        <div>
-                          <Label className="text-sm">Durações aceitas:</Label>
-                          <div className="flex flex-wrap gap-3 mt-2">
-                            {DURATION_OPTIONS.map(opt => (
-                              <label key={opt.value} className="flex items-center gap-1.5 cursor-pointer">
-                                <Checkbox
-                                  checked={offer.availableDurations.includes(opt.value)}
-                                  onCheckedChange={() => toggleOfferDuration(svc.id, opt.value)}
-                                  className="h-4 w-4"
-                                />
-                                <span className="text-sm">{opt.label}</span>
-                              </label>
-                            ))}
-                          </div>
                         </div>
                       </div>
                     )}

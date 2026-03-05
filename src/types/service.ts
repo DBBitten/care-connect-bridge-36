@@ -20,5 +20,4 @@ export interface ServicePriceRule {
 export interface CaregiverServiceOffer {
   serviceId: string;
   pricePerHour: number;
-  availableDurations: number[]; // em minutos, ex: [60, 120, 240, 480]
 }

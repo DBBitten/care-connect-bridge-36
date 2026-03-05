@@ -118,8 +118,8 @@ export default function AdminMetrics() {
   // Export handlers
   const handleExportAppointments = () => {
     exportToCsv("appointments.csv",
-      ["ID", "Cliente", "Cuidador", "Serviço", "Datas", "Hora", "Duração(h)", "Valor Total", "Taxa", "Payout", "Status", "Criado em"],
-      filteredAppointments.map(a => [a.id, a.clientEmail, a.caregiverName, a.serviceName, a.dates.join("; "), a.startTime, a.durationHours, a.totalPrice, a.platformFee, a.caregiverPayout, a.status, a.createdAt])
+      ["ID", "Cliente", "Cuidador", "Serviço", "Datas", "Início", "Término", "Valor Total", "Taxa", "Payout", "Status", "Criado em"],
+      filteredAppointments.map(a => [a.id, a.clientEmail, a.caregiverName, a.serviceName, a.dates.join("; "), a.startTime, a.endTime, a.totalPrice, a.platformFee, a.caregiverPayout, a.status, a.createdAt])
     );
   };
   const handleExportPayments = () => {

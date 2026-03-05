@@ -16,8 +16,8 @@ import { useServices } from "@/contexts/ServiceContext";
 import { usePayments } from "@/contexts/PaymentContext";
 import { useCaregivers } from "@/contexts/CaregiverContext";
 
-function formatDuration(minutes: number) {
-  return minutes >= 60 ? `${minutes / 60}h` : `${minutes}min`;
+function calcHours(start: string, end: string) {
+  return parseInt(end) - parseInt(start);
 }
 
 const BookingPage = () => {
@@ -52,21 +52,23 @@ const BookingPage = () => {
   const selectedEntry = availableServices.find(e => e.service.id === selectedServiceId);
   const effectiveRate = selectedEntry?.offer.pricePerHour ?? 0;
 
-  const durationOptions = selectedEntry
-    ? selectedEntry.offer.availableDurations.map(m => ({ value: String(m / 60), label: formatDuration(m) }))
-    : [];
-
   const [dates, setDates] = useState<Date[] | undefined>();
   const [startTime, setStartTime] = useState("");
-  const [duration, setDuration] = useState("");
+  const [endTime, setEndTime] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [acceptedRules, setAcceptedRules] = useState(hasAccepted('MARKETPLACE_RULES'));
 
   const numDays = dates?.length || 0;
-  const totalValue = duration ? numDays * parseFloat(duration) * effectiveRate : 0;
+  const hours = (startTime && endTime) ? calcHours(startTime, endTime) : 0;
+  const totalValue = numDays * hours * effectiveRate;
+
+  const endTimeOptions = startTime
+    ? ["07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00"].filter(t => parseInt(t) > parseInt(startTime))
+    : [];
 
   const handleBooking = () => {
-    if (!dates || dates.length === 0 || !startTime || !duration || !selectedEntry) {
+    if (!dates || dates.length === 0 || !startTime || !endTime || !selectedEntry) {
       toast.error("Por favor, preencha todos os campos");
       return;
     }
@@ -88,7 +90,7 @@ const BookingPage = () => {
       serviceName: selectedEntry.service.name,
       dates: dates.map(d => d.toISOString().split("T")[0]).sort(),
       startTime,
-      durationHours: parseFloat(duration),
+      endTime,
       pricePerHour: effectiveRate,
       address: "Rua das Flores, 123 — Pinheiros, São Paulo/SP",
     });
@@ -130,7 +132,7 @@ const BookingPage = () => {
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Serviço
                     </label>
-                    <Select value={selectedServiceId} onValueChange={(val) => { setSelectedServiceId(val); setDuration(""); }}>
+                    <Select value={selectedServiceId} onValueChange={(val) => { setSelectedServiceId(val); setEndTime(""); }}>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione o serviço" />
                       </SelectTrigger>
@@ -161,7 +163,7 @@ const BookingPage = () => {
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Horário de início
                     </label>
-                    <Select value={startTime} onValueChange={setStartTime}>
+                    <Select value={startTime} onValueChange={(val) => { setStartTime(val); setEndTime(""); }}>
                       <SelectTrigger>
                         <Clock className="w-4 h-4 text-muted-foreground mr-2" />
                         <SelectValue placeholder="Selecione o horário" />
@@ -176,16 +178,16 @@ const BookingPage = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Duração
+                      Horário de término
                     </label>
-                    <Select value={duration} onValueChange={setDuration} disabled={durationOptions.length === 0}>
+                    <Select value={endTime} onValueChange={setEndTime} disabled={!startTime}>
                       <SelectTrigger>
                         <Clock className="w-4 h-4 text-muted-foreground mr-2" />
-                        <SelectValue placeholder={durationOptions.length === 0 ? "Selecione um serviço primeiro" : "Selecione a duração"} />
+                        <SelectValue placeholder={!startTime ? "Selecione o horário de início primeiro" : "Selecione o horário"} />
                       </SelectTrigger>
                       <SelectContent>
-                        {durationOptions.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                        {endTimeOptions.map((t) => (
+                          <SelectItem key={t} value={t}>{t}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -227,11 +229,11 @@ const BookingPage = () => {
                       </div>
                     )}
                     
-                    {startTime && duration && (
+                    {startTime && endTime && (
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Horário</span>
                         <span className="font-medium text-foreground">
-                          {startTime} - {parseInt(startTime) + parseFloat(duration)}:00 ({duration}h)
+                          {startTime} – {endTime} ({hours}h)
                         </span>
                       </div>
                     )}
@@ -241,10 +243,10 @@ const BookingPage = () => {
                         <span className="text-muted-foreground">Valor por hora</span>
                         <span className="text-foreground">R$ {effectiveRate}</span>
                       </div>
-                      {duration && numDays > 0 && (
+                      {hours > 0 && numDays > 0 && (
                         <div className="flex justify-between text-sm mb-2">
                           <span className="text-muted-foreground">Cálculo</span>
-                          <span className="text-foreground">{numDays} dia{numDays > 1 ? "s" : ""} × {duration}h × R$ {effectiveRate}</span>
+                          <span className="text-foreground">{numDays} dia{numDays > 1 ? "s" : ""} × {hours}h × R$ {effectiveRate}</span>
                         </div>
                       )}
                       <div className="flex justify-between text-lg font-bold pt-2 border-t border-border">
@@ -306,7 +308,7 @@ const BookingPage = () => {
                   className="w-full"
                   size="lg"
                   onClick={handleBooking}
-                  disabled={!dates || dates.length === 0 || !startTime || !duration || !acceptedRules || isLoading}
+                  disabled={!dates || dates.length === 0 || !startTime || !endTime || !acceptedRules || isLoading}
                 >
                   {isLoading ? "Processando..." : `Confirmar e pagar R$ ${totalValue.toFixed(2)}`}
                 </Button>

@@ -10,7 +10,7 @@ export interface Appointment {
   serviceName: string;
   dates: string[];
   startTime: string;
-  durationHours: number;
+  endTime: string;
   pricePerHour: number;
   totalPrice: number;
   platformFee: number;

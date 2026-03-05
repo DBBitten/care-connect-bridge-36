@@ -45,7 +45,7 @@ interface CreateAppointmentData {
   serviceName: string;
   dates: string[];
   startTime: string;
-  durationHours: number;
+  endTime: string;
   pricePerHour: number;
   address?: string;
 }
@@ -82,7 +82,8 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
   const persistSettings = useCallback((s: PlatformSettings) => { setSettings(s); save(KEYS.settings, s); }, []);
 
   const createAppointment = useCallback((data: CreateAppointmentData): Appointment => {
-    const totalPrice = data.dates.length * data.durationHours * data.pricePerHour;
+    const hours = parseInt(data.endTime) - parseInt(data.startTime);
+    const totalPrice = data.dates.length * hours * data.pricePerHour;
     const platformFee = Math.round(totalPrice * settings.platformFeeRate * 100) / 100;
     const caregiverPayout = Math.round((totalPrice - platformFee) * 100) / 100;
     const appt: Appointment = {
@@ -96,8 +97,8 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
     };
     const updated = [...appointments, appt];
     persistAppointments(updated);
-    addNotification({ userId: data.clientEmail, type: "PAYMENT_PENDING", title: "Agendamento criado", body: `Seu agendamento com ${data.caregiverName} está aguardando pagamento.`, linkUrl: `/checkout/${appt.id}` });
-    addNotification({ userId: data.caregiverName, type: "APPOINTMENT_REQUESTED", title: "Novo agendamento", body: `Você tem um novo agendamento de ${data.clientEmail} para ${data.dates.length} dia(s).`, linkUrl: "/cuidador/dashboard" });
+    addNotification({ userId: data.clientEmail, type: "PAYMENT_PENDING", title: "Agendamento criado", body: `Seu agendamento com ${data.caregiverName} (${data.startTime}–${data.endTime}) está aguardando pagamento.`, linkUrl: `/checkout/${appt.id}` });
+    addNotification({ userId: data.caregiverName, type: "APPOINTMENT_REQUESTED", title: "Novo agendamento", body: `Você tem um novo agendamento de ${data.clientEmail} para ${data.dates.length} dia(s) (${data.startTime}–${data.endTime}).`, linkUrl: "/cuidador/dashboard" });
     return appt;
   }, [appointments, settings.platformFeeRate, persistAppointments, addNotification]);
 
