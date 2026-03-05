@@ -81,7 +81,7 @@ const ClientPayments = () => {
                             <Badge variant={config.variant}>{config.label}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground">
-                            {appt.caregiverName} • {appt.dates.map(d => new Date(d).toLocaleDateString("pt-BR")).join(", ")} às {appt.startTime} • {appt.durationHours}h
+                            {appt.caregiverName} • {appt.dates.map(d => new Date(d).toLocaleDateString("pt-BR")).join(", ")} • {appt.startTime}–{appt.endTime}
                           </p>
                           {payment && (
                             <p className="text-xs text-muted-foreground">

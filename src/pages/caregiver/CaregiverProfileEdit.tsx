@@ -23,14 +23,6 @@ const neighborhoods = [
   "Centro Histórico", "Praia de Belas", "Cristal", "Tristeza", "Ipanema",
 ];
 
-const DURATION_OPTIONS = [
-  { value: 60, label: "1h" },
-  { value: 120, label: "2h" },
-  { value: 240, label: "4h" },
-  { value: 360, label: "6h" },
-  { value: 480, label: "8h" },
-  { value: 720, label: "12h" },
-];
 
 export default function CaregiverProfileEdit() {
   const { user } = useAuth();
@@ -57,23 +49,12 @@ export default function CaregiverProfileEdit() {
     if (isServiceSelected(serviceId)) {
       setServiceOffers(prev => prev.filter(o => o.serviceId !== serviceId));
     } else {
-      setServiceOffers(prev => [...prev, { serviceId, pricePerHour: 35, availableDurations: [120] }]);
+      setServiceOffers(prev => [...prev, { serviceId, pricePerHour: 35 }]);
     }
   };
-
+  };
   const updateOfferPrice = (serviceId: string, price: number) => {
     setServiceOffers(prev => prev.map(o => o.serviceId === serviceId ? { ...o, pricePerHour: price } : o));
-  };
-
-  const toggleOfferDuration = (serviceId: string, duration: number) => {
-    setServiceOffers(prev => prev.map(o => {
-      if (o.serviceId !== serviceId) return o;
-      const has = o.availableDurations.includes(duration);
-      const updated = has
-        ? o.availableDurations.filter(d => d !== duration)
-        : [...o.availableDurations, duration].sort((a, b) => a - b);
-      return { ...o, availableDurations: updated.length > 0 ? updated : [duration] };
-    }));
   };
 
   const handleSave = () => {
@@ -194,8 +175,7 @@ export default function CaregiverProfileEdit() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              Selecione os serviços e defina seu preço por hora e as durações que aceita para cada um.
-            </p>
+              Selecione os serviços e defina seu preço por hora.
             <div className="space-y-4">
               {activeServices.map(svc => {
                 const selected = isServiceSelected(svc.id);
