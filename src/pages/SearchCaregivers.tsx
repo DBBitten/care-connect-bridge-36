@@ -146,7 +146,7 @@ const SearchCaregivers = () => {
               </div>
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Rating mínimo:</span>
+                  <span className="text-sm text-muted-foreground">Classificação:</span>
                   <Select value={minRating} onValueChange={setMinRating}>
                     <SelectTrigger className="w-[100px]"><SelectValue placeholder="Todos" /></SelectTrigger>
                     <SelectContent>
