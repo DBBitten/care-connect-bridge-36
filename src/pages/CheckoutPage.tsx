@@ -58,8 +58,9 @@ const CheckoutPage = () => {
     navigate("/cliente/pagamentos");
   };
 
-  const apptDate = new Date(appointment.date);
-  const formattedDate = apptDate.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const formattedDates = appointment.dates.map(d => 
+    new Date(d).toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short", year: "numeric" })
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -99,9 +100,13 @@ const CheckoutPage = () => {
                   <span className="text-muted-foreground">Cuidador</span>
                   <span className="font-medium text-foreground">{appointment.caregiverName}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Data</span>
-                  <span className="font-medium text-foreground">{formattedDate}</span>
+                <div className="text-sm">
+                  <span className="text-muted-foreground">Datas ({appointment.dates.length} dia{appointment.dates.length > 1 ? "s" : ""})</span>
+                  <div className="mt-1 space-y-0.5">
+                    {formattedDates.map((d, i) => (
+                      <p key={i} className="font-medium text-foreground text-xs">{d}</p>
+                    ))}
+                  </div>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Horário</span>
@@ -117,7 +122,7 @@ const CheckoutPage = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Valor do serviço ({appointment.durationHours}h × R$ {appointment.pricePerHour.toFixed(2)})</span>
+                  <span className="text-muted-foreground">Valor do serviço ({appointment.dates.length} dia{appointment.dates.length > 1 ? "s" : ""} × {appointment.durationHours}h × R$ {appointment.pricePerHour.toFixed(2)})</span>
                   <span className="text-foreground">R$ {appointment.totalPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">

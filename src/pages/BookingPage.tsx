@@ -56,16 +56,17 @@ const BookingPage = () => {
     ? selectedEntry.offer.availableDurations.map(m => ({ value: String(m / 60), label: formatDuration(m) }))
     : [];
 
-  const [date, setDate] = useState<Date | undefined>();
+  const [dates, setDates] = useState<Date[] | undefined>();
   const [startTime, setStartTime] = useState("");
   const [duration, setDuration] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [acceptedRules, setAcceptedRules] = useState(hasAccepted('MARKETPLACE_RULES'));
 
-  const totalValue = duration ? parseFloat(duration) * effectiveRate : 0;
+  const numDays = dates?.length || 0;
+  const totalValue = duration ? numDays * parseFloat(duration) * effectiveRate : 0;
 
   const handleBooking = () => {
-    if (!date || !startTime || !duration || !selectedEntry) {
+    if (!dates || dates.length === 0 || !startTime || !duration || !selectedEntry) {
       toast.error("Por favor, preencha todos os campos");
       return;
     }
@@ -85,7 +86,7 @@ const BookingPage = () => {
       caregiverName,
       serviceId: selectedEntry.service.id,
       serviceName: selectedEntry.service.name,
-      date: date.toISOString().split("T")[0],
+      dates: dates.map(d => d.toISOString().split("T")[0]).sort(),
       startTime,
       durationHours: parseFloat(duration),
       pricePerHour: effectiveRate,
@@ -145,12 +146,12 @@ const BookingPage = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Selecione a data
+                      Selecione os dias <span className="text-muted-foreground font-normal">(múltiplos)</span>
                     </label>
                     <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={setDate}
+                      mode="multiple"
+                      selected={dates}
+                      onSelect={setDates}
                       disabled={(date) => date < new Date() || date.getDay() === 0}
                       className="rounded-xl border"
                     />
@@ -211,12 +212,18 @@ const BookingPage = () => {
                       </div>
                     )}
                     
-                    {date && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Data</span>
-                        <span className="font-medium text-foreground">
-                          {date.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
-                        </span>
+                    {dates && dates.length > 0 && (
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">Datas selecionadas ({dates.length} dia{dates.length > 1 ? "s" : ""})</span>
+                        <div className="mt-1 space-y-1">
+                          {dates
+                            .sort((a, b) => a.getTime() - b.getTime())
+                            .map((d, i) => (
+                              <p key={i} className="font-medium text-foreground text-xs">
+                                {d.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" })}
+                              </p>
+                            ))}
+                        </div>
                       </div>
                     )}
                     
@@ -234,10 +241,10 @@ const BookingPage = () => {
                         <span className="text-muted-foreground">Valor por hora</span>
                         <span className="text-foreground">R$ {effectiveRate}</span>
                       </div>
-                      {duration && (
+                      {duration && numDays > 0 && (
                         <div className="flex justify-between text-sm mb-2">
-                          <span className="text-muted-foreground">Duração</span>
-                          <span className="text-foreground">{duration} horas</span>
+                          <span className="text-muted-foreground">Cálculo</span>
+                          <span className="text-foreground">{numDays} dia{numDays > 1 ? "s" : ""} × {duration}h × R$ {effectiveRate}</span>
                         </div>
                       )}
                       <div className="flex justify-between text-lg font-bold pt-2 border-t border-border">
@@ -299,7 +306,7 @@ const BookingPage = () => {
                   className="w-full"
                   size="lg"
                   onClick={handleBooking}
-                  disabled={!date || !startTime || !duration || !acceptedRules || isLoading}
+                  disabled={!dates || dates.length === 0 || !startTime || !duration || !acceptedRules || isLoading}
                 >
                   {isLoading ? "Processando..." : `Confirmar e pagar R$ ${totalValue.toFixed(2)}`}
                 </Button>
