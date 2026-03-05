@@ -176,6 +176,7 @@ export default function CaregiverProfileEdit() {
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
               Selecione os serviços e defina seu preço por hora.
+            </p>
             <div className="space-y-4">
               {activeServices.map(svc => {
                 const selected = isServiceSelected(svc.id);
@@ -191,7 +192,7 @@ export default function CaregiverProfileEdit() {
                       </Label>
                     </div>
                     {selected && offer && (
-                      <div className="mt-4 ml-7 space-y-3">
+                      <div className="mt-4 ml-7">
                         <div className="flex items-center gap-3">
                           <Label className="text-sm whitespace-nowrap">Preço/hora (R$):</Label>
                           <Input
@@ -200,21 +201,6 @@ export default function CaregiverProfileEdit() {
                             onChange={e => updateOfferPrice(svc.id, Number(e.target.value))}
                             className="w-28"
                           />
-                        </div>
-                        <div>
-                          <Label className="text-sm">Durações aceitas:</Label>
-                          <div className="flex flex-wrap gap-3 mt-2">
-                            {DURATION_OPTIONS.map(opt => (
-                              <label key={opt.value} className="flex items-center gap-1.5 cursor-pointer">
-                                <Checkbox
-                                  checked={offer.availableDurations.includes(opt.value)}
-                                  onCheckedChange={() => toggleOfferDuration(svc.id, opt.value)}
-                                  className="h-4 w-4"
-                                />
-                                <span className="text-sm">{opt.label}</span>
-                              </label>
-                            ))}
-                          </div>
                         </div>
                       </div>
                     )}

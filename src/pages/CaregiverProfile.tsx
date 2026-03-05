@@ -138,7 +138,7 @@ const CaregiverProfile = () => {
                               <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
                               <div>
                                 <span className="text-sm font-medium">{svc.name}</span>
-                            </div>
+                              </div>
                             <span className="text-sm font-bold text-foreground whitespace-nowrap ml-3">
                               R$ {offer.pricePerHour}/h
                             </span>
