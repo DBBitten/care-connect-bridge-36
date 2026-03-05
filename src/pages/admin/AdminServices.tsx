@@ -1,15 +1,10 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useServices } from "@/contexts/ServiceContext";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Link } from "react-router-dom";
 import { Plus, Pencil } from "lucide-react";
-
-function formatDuration(minutes: number) {
-  return minutes >= 60 ? `${minutes / 60}h` : `${minutes}min`;
-}
 
 const AdminServices = () => {
   const { services, toggleActive } = useServices();
@@ -31,8 +26,7 @@ const AdminServices = () => {
             <TableRow>
               <TableHead className="w-16">Ordem</TableHead>
               <TableHead>Nome</TableHead>
-              <TableHead>Preço/h</TableHead>
-              <TableHead>Durações</TableHead>
+              <TableHead>Descrição</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="w-28">Ações</TableHead>
             </TableRow>
@@ -42,14 +36,7 @@ const AdminServices = () => {
               <TableRow key={svc.id}>
                 <TableCell className="font-mono text-sm">{svc.sortOrder}</TableCell>
                 <TableCell className="font-medium">{svc.name}</TableCell>
-                <TableCell>R$ {svc.pricePerHour}</TableCell>
-                <TableCell>
-                  <div className="flex gap-1 flex-wrap">
-                    {svc.allowedDurationsMinutes.map((d) => (
-                      <Badge key={d} variant="secondary" className="text-xs">{formatDuration(d)}</Badge>
-                    ))}
-                  </div>
-                </TableCell>
+                <TableCell className="text-sm text-muted-foreground max-w-xs truncate">{svc.description}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Switch checked={svc.isActive} onCheckedChange={() => toggleActive(svc.id)} />

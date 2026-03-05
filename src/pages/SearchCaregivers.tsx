@@ -7,9 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Search, MapPin, Star, GraduationCap, Clock, ShieldCheck, CheckCircle, Calendar } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useCaregivers } from "@/contexts/CaregiverContext";
 import { useServices } from "@/contexts/ServiceContext";
 
@@ -20,17 +19,18 @@ const neighborhoods = [
   "Centro Histórico", "Praia de Belas", "Cristal", "Tristeza", "Ipanema",
 ];
 
-type SortKey = "recommended" | "rating" | "experience";
+type SortKey = "recommended" | "rating" | "experience" | "price_asc";
 
 const SearchCaregivers = () => {
   const { getApprovedProfiles, getStatsForCaregiver } = useCaregivers();
   const { getActiveServices } = useServices();
+  const [searchParams] = useSearchParams();
   const activeServices = getActiveServices();
   const approvedProfiles = getApprovedProfiles();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [neighborhoodFilter, setNeighborhoodFilter] = useState("");
-  const [serviceFilter, setServiceFilter] = useState("");
+  const [serviceFilter, setServiceFilter] = useState(searchParams.get("serviceId") || "");
   const [minRating, setMinRating] = useState("");
   const [certFilter, setCertFilter] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<SortKey>("recommended");
@@ -45,13 +45,20 @@ const SearchCaregivers = () => {
     setCertFilter(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
   };
 
+  const getLowestPrice = (profile: typeof approvedProfiles[0], serviceId?: string) => {
+    const offers = serviceId
+      ? profile.serviceOffers.filter(o => o.serviceId === serviceId)
+      : profile.serviceOffers;
+    if (offers.length === 0) return null;
+    return Math.min(...offers.map(o => o.pricePerHour));
+  };
+
   const results = useMemo(() => {
     let list = approvedProfiles.map(p => ({
       profile: p,
       stats: getStatsForCaregiver(p.id),
     }));
 
-    // Filters
     if (searchTerm) {
       const q = searchTerm.toLowerCase();
       list = list.filter(({ profile }) => 
@@ -62,7 +69,7 @@ const SearchCaregivers = () => {
       list = list.filter(({ profile }) => profile.neighborhood === neighborhoodFilter);
     }
     if (serviceFilter && serviceFilter !== "all") {
-      list = list.filter(({ profile }) => profile.serviceTags.includes(serviceFilter));
+      list = list.filter(({ profile }) => profile.serviceOffers.some(o => o.serviceId === serviceFilter));
     }
     if (minRating && minRating !== "all") {
       const min = parseFloat(minRating);
@@ -72,11 +79,13 @@ const SearchCaregivers = () => {
       list = list.filter(({ profile }) => certFilter.every(c => profile.certifications.includes(c)));
     }
 
-    // Sort
     list.sort((a, b) => {
       if (sortBy === "rating") return (b.stats?.avgRating || 0) - (a.stats?.avgRating || 0);
       if (sortBy === "experience") return (b.profile.yearsExperience || 0) - (a.profile.yearsExperience || 0);
-      // recommended: composite score
+      if (sortBy === "price_asc") {
+        const svcId = serviceFilter && serviceFilter !== "all" ? serviceFilter : undefined;
+        return (getLowestPrice(a.profile, svcId) || 999) - (getLowestPrice(b.profile, svcId) || 999);
+      }
       const scoreA = (a.stats?.avgRating || 0) * 10 + (a.stats?.completedAppointmentsCount || 0) * 0.1;
       const scoreB = (b.stats?.avgRating || 0) * 10 + (b.stats?.completedAppointmentsCount || 0) * 0.1;
       return scoreB - scoreA;
@@ -89,6 +98,8 @@ const SearchCaregivers = () => {
     setSearchTerm(""); setNeighborhoodFilter(""); setServiceFilter("");
     setMinRating(""); setCertFilter([]); setSortBy("recommended");
   };
+
+  const activeServiceFilter = serviceFilter && serviceFilter !== "all" ? serviceFilter : undefined;
 
   return (
     <div className="min-h-screen bg-background">
@@ -174,6 +185,7 @@ const SearchCaregivers = () => {
                   <SelectItem value="recommended">Recomendados</SelectItem>
                   <SelectItem value="rating">Mais bem avaliados</SelectItem>
                   <SelectItem value="experience">Mais experientes</SelectItem>
+                  <SelectItem value="price_asc">Menor preço</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -181,7 +193,9 @@ const SearchCaregivers = () => {
 
           {/* Grid */}
           <div className="grid md:grid-cols-2 gap-6">
-            {results.map(({ profile, stats }) => (
+            {results.map(({ profile, stats }) => {
+              const lowestPrice = getLowestPrice(profile, activeServiceFilter);
+              return (
               <Card key={profile.id} variant="feature">
                 <CardContent className="p-6">
                   <div className="flex gap-4">
@@ -234,8 +248,17 @@ const SearchCaregivers = () => {
 
                       <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
                         <div>
-                          <span className="text-lg font-bold text-foreground">R$ {profile.hourlyRate}</span>
-                          <span className="text-sm text-muted-foreground">/hora</span>
+                          {lowestPrice ? (
+                            <>
+                              <span className="text-xs text-muted-foreground">A partir de</span>
+                              <div>
+                                <span className="text-lg font-bold text-foreground">R$ {lowestPrice}</span>
+                                <span className="text-sm text-muted-foreground">/hora</span>
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">Consulte o perfil</span>
+                          )}
                         </div>
                         <div className="flex gap-2">
                           <Button variant="outline" size="sm" asChild>
@@ -252,7 +275,8 @@ const SearchCaregivers = () => {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+              );
+            })}
           </div>
 
           {results.length === 0 && (

@@ -9,6 +9,10 @@ import { ArrowLeft, Star, MapPin, Clock, GraduationCap, Calendar, CheckCircle, S
 import { useCaregivers } from "@/contexts/CaregiverContext";
 import { useServices } from "@/contexts/ServiceContext";
 
+function formatDuration(minutes: number) {
+  return minutes >= 60 ? `${minutes / 60}h` : `${minutes}min`;
+}
+
 const REVIEWS_PER_PAGE = 5;
 
 const CaregiverProfile = () => {
@@ -38,10 +42,9 @@ const CaregiverProfile = () => {
     );
   }
 
-  const serviceNames = profile.serviceTags
-    .map(id => getServiceById(id))
-    .filter(Boolean)
-    .map(s => s!.name);
+  const lowestPrice = profile.serviceOffers.length > 0
+    ? Math.min(...profile.serviceOffers.map(o => o.pricePerHour))
+    : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -120,18 +123,34 @@ const CaregiverProfile = () => {
                 </CardContent>
               </Card>
 
-              {/* Services */}
-              {serviceNames.length > 0 && (
+              {/* Services with prices */}
+              {profile.serviceOffers.length > 0 && (
                 <Card>
-                  <CardHeader><CardTitle>Serviços</CardTitle></CardHeader>
+                  <CardHeader><CardTitle>Serviços e Preços</CardTitle></CardHeader>
                   <CardContent>
-                    <div className="grid sm:grid-cols-2 gap-2">
-                      {serviceNames.map((name, i) => (
-                        <div key={i} className="flex items-center gap-2 p-3 rounded-xl bg-muted/50">
-                          <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
-                          <span className="text-sm">{name}</span>
-                        </div>
-                      ))}
+                    <div className="space-y-3">
+                      {profile.serviceOffers.map((offer) => {
+                        const svc = getServiceById(offer.serviceId);
+                        if (!svc) return null;
+                        return (
+                          <div key={offer.serviceId} className="flex items-center justify-between p-3 rounded-xl bg-muted/50">
+                            <div className="flex items-center gap-2 flex-1">
+                              <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
+                              <div>
+                                <span className="text-sm font-medium">{svc.name}</span>
+                                <div className="flex gap-1 mt-1">
+                                  {offer.availableDurations.map(d => (
+                                    <Badge key={d} variant="secondary" className="text-xs">{formatDuration(d)}</Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                            <span className="text-sm font-bold text-foreground whitespace-nowrap ml-3">
+                              R$ {offer.pricePerHour}/h
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </CardContent>
                 </Card>
@@ -202,8 +221,17 @@ const CaregiverProfile = () => {
               <Card variant="elevated" className="sticky top-24">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
-                    <span className="text-3xl font-bold text-foreground">R$ {profile.hourlyRate}</span>
-                    <span className="text-muted-foreground">/hora</span>
+                    {lowestPrice ? (
+                      <>
+                        <span className="text-xs text-muted-foreground">A partir de</span>
+                        <div>
+                          <span className="text-3xl font-bold text-foreground">R$ {lowestPrice}</span>
+                          <span className="text-muted-foreground">/hora</span>
+                        </div>
+                      </>
+                    ) : (
+                      <span className="text-muted-foreground">Consulte os serviços</span>
+                    )}
                   </div>
                   <div className="space-y-4 mb-6">
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
@@ -230,7 +258,6 @@ const CaregiverProfile = () => {
                     Pagamento seguro pela plataforma
                   </p>
 
-                  {/* Anti-bypass notice */}
                   <div className="mt-4 p-3 rounded-xl bg-muted/30 border border-border">
                     <p className="text-xs text-muted-foreground text-center">
                       🔒 Contatos do cuidador são compartilhados apenas após confirmação do pagamento, para sua segurança.

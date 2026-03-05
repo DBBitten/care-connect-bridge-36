@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -14,13 +14,11 @@ import { useLegal } from "@/contexts/LegalContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useServices } from "@/contexts/ServiceContext";
 import { usePayments } from "@/contexts/PaymentContext";
+import { useCaregivers } from "@/contexts/CaregiverContext";
 
-// Mock caregiver data
-const caregiver = {
-  id: 1,
-  name: "Maria Santos",
-  hourlyRate: 45,
-};
+function formatDuration(minutes: number) {
+  return minutes >= 60 ? `${minutes / 60}h` : `${minutes}min`;
+}
 
 const BookingPage = () => {
   const { id } = useParams();
@@ -30,25 +28,33 @@ const BookingPage = () => {
   const { hasAccepted, acceptDocument } = useLegal();
   const { getActiveServices, getServiceById } = useServices();
   const { createAppointment } = usePayments();
+  const { getProfileById } = useCaregivers();
+
+  const caregiverProfile = getProfileById(id || "");
+  const caregiverName = caregiverProfile
+    ? `${caregiverProfile.firstName} ${caregiverProfile.lastInitial}.`
+    : "Cuidador";
 
   const serviceIdParam = searchParams.get("serviceId");
-  const activeServices = getActiveServices();
+
+  // Only show services the caregiver offers
+  const availableServices = useMemo(() => {
+    if (!caregiverProfile) return [];
+    return caregiverProfile.serviceOffers
+      .map(offer => {
+        const svc = getServiceById(offer.serviceId);
+        return svc ? { service: svc, offer } : null;
+      })
+      .filter(Boolean) as { service: NonNullable<ReturnType<typeof getServiceById>>; offer: typeof caregiverProfile.serviceOffers[0] }[];
+  }, [caregiverProfile, getServiceById]);
 
   const [selectedServiceId, setSelectedServiceId] = useState(serviceIdParam || "");
-  const selectedService = selectedServiceId ? getServiceById(selectedServiceId) : undefined;
+  const selectedEntry = availableServices.find(e => e.service.id === selectedServiceId);
+  const effectiveRate = selectedEntry?.offer.pricePerHour ?? 0;
 
-  const effectiveRate = selectedService?.pricePerHour ?? caregiver.hourlyRate;
-
-  // Build duration options from selected service or fallback
-  const durationOptions = selectedService
-    ? selectedService.allowedDurationsMinutes.map((m) => ({ value: String(m / 60), label: `${m / 60} horas` }))
-    : [
-        { value: "2", label: "2 horas" },
-        { value: "4", label: "4 horas" },
-        { value: "6", label: "6 horas" },
-        { value: "8", label: "8 horas" },
-        { value: "12", label: "12 horas" },
-      ];
+  const durationOptions = selectedEntry
+    ? selectedEntry.offer.availableDurations.map(m => ({ value: String(m / 60), label: formatDuration(m) }))
+    : [];
 
   const [date, setDate] = useState<Date | undefined>();
   const [startTime, setStartTime] = useState("");
@@ -59,7 +65,7 @@ const BookingPage = () => {
   const totalValue = duration ? parseFloat(duration) * effectiveRate : 0;
 
   const handleBooking = () => {
-    if (!date || !startTime || !duration || !selectedService) {
+    if (!date || !startTime || !duration || !selectedEntry) {
       toast.error("Por favor, preencha todos os campos");
       return;
     }
@@ -76,9 +82,9 @@ const BookingPage = () => {
     setIsLoading(true);
     const appt = createAppointment({
       clientEmail: user?.email || "guest@cuidare.com.br",
-      caregiverName: caregiver.name,
-      serviceId: selectedService.id,
-      serviceName: selectedService.name,
+      caregiverName,
+      serviceId: selectedEntry.service.id,
+      serviceName: selectedEntry.service.name,
       date: date.toISOString().split("T")[0],
       startTime,
       durationHours: parseFloat(duration),
@@ -107,7 +113,7 @@ const BookingPage = () => {
                 Agendar atendimento
               </h1>
               <p className="text-muted-foreground">
-                com {caregiver.name}
+                com {caregiverName}
               </p>
             </div>
 
@@ -128,9 +134,9 @@ const BookingPage = () => {
                         <SelectValue placeholder="Selecione o serviço" />
                       </SelectTrigger>
                       <SelectContent>
-                        {activeServices.map((svc) => (
-                          <SelectItem key={svc.id} value={svc.id}>
-                            {svc.name} — R$ {svc.pricePerHour}/h
+                        {availableServices.map(({ service, offer }) => (
+                          <SelectItem key={service.id} value={service.id}>
+                            {service.name} — R$ {offer.pricePerHour}/h
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -171,10 +177,10 @@ const BookingPage = () => {
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Duração
                     </label>
-                    <Select value={duration} onValueChange={setDuration}>
+                    <Select value={duration} onValueChange={setDuration} disabled={durationOptions.length === 0}>
                       <SelectTrigger>
                         <Clock className="w-4 h-4 text-muted-foreground mr-2" />
-                        <SelectValue placeholder="Selecione a duração" />
+                        <SelectValue placeholder={durationOptions.length === 0 ? "Selecione um serviço primeiro" : "Selecione a duração"} />
                       </SelectTrigger>
                       <SelectContent>
                         {durationOptions.map((opt) => (
@@ -195,13 +201,13 @@ const BookingPage = () => {
                   <CardContent className="space-y-4">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Cuidador</span>
-                      <span className="font-medium text-foreground">{caregiver.name}</span>
+                      <span className="font-medium text-foreground">{caregiverName}</span>
                     </div>
 
-                    {selectedService && (
+                    {selectedEntry && (
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Serviço</span>
-                        <span className="font-medium text-foreground">{selectedService.name}</span>
+                        <span className="font-medium text-foreground">{selectedEntry.service.name}</span>
                       </div>
                     )}
                     
