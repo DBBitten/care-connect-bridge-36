@@ -13,11 +13,11 @@ import { useCaregivers } from "@/contexts/CaregiverContext";
 import { useServices } from "@/contexts/ServiceContext";
 
 const neighborhoods = [
-  "Moinhos de Vento", "Bom Fim", "Cidade Baixa", "Petrópolis", "Bela Vista",
-  "Menino Deus", "Azenha", "Santana", "Rio Branco", "Floresta",
-  "Independência", "Mont'Serrat", "Auxiliadora", "Passo d'Areia", "Higienópolis",
-  "Centro Histórico", "Praia de Belas", "Cristal", "Tristeza", "Ipanema",
-];
+"Moinhos de Vento", "Bom Fim", "Cidade Baixa", "Petrópolis", "Bela Vista",
+"Menino Deus", "Azenha", "Santana", "Rio Branco", "Floresta",
+"Independência", "Mont'Serrat", "Auxiliadora", "Passo d'Areia", "Higienópolis",
+"Centro Histórico", "Praia de Belas", "Cristal", "Tristeza", "Ipanema"];
+
 
 type SortKey = "recommended" | "rating" | "experience" | "price_asc";
 
@@ -37,46 +37,46 @@ const SearchCaregivers = () => {
 
   const allCerts = useMemo(() => {
     const set = new Set<string>();
-    approvedProfiles.forEach(p => p.certifications.forEach(c => set.add(c)));
+    approvedProfiles.forEach((p) => p.certifications.forEach((c) => set.add(c)));
     return [...set].sort();
   }, [approvedProfiles]);
 
   const toggleCert = (c: string) => {
-    setCertFilter(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
+    setCertFilter((prev) => prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]);
   };
 
   const getLowestPrice = (profile: typeof approvedProfiles[0], serviceId?: string) => {
-    const offers = serviceId
-      ? profile.serviceOffers.filter(o => o.serviceId === serviceId)
-      : profile.serviceOffers;
+    const offers = serviceId ?
+    profile.serviceOffers.filter((o) => o.serviceId === serviceId) :
+    profile.serviceOffers;
     if (offers.length === 0) return null;
-    return Math.min(...offers.map(o => o.pricePerHour));
+    return Math.min(...offers.map((o) => o.pricePerHour));
   };
 
   const results = useMemo(() => {
-    let list = approvedProfiles.map(p => ({
+    let list = approvedProfiles.map((p) => ({
       profile: p,
-      stats: getStatsForCaregiver(p.id),
+      stats: getStatsForCaregiver(p.id)
     }));
 
     if (searchTerm) {
       const q = searchTerm.toLowerCase();
-      list = list.filter(({ profile }) => 
-        profile.firstName.toLowerCase().includes(q) || profile.bio.toLowerCase().includes(q)
+      list = list.filter(({ profile }) =>
+      profile.firstName.toLowerCase().includes(q) || profile.bio.toLowerCase().includes(q)
       );
     }
     if (neighborhoodFilter && neighborhoodFilter !== "all") {
       list = list.filter(({ profile }) => profile.neighborhood === neighborhoodFilter);
     }
     if (serviceFilter && serviceFilter !== "all") {
-      list = list.filter(({ profile }) => profile.serviceOffers.some(o => o.serviceId === serviceFilter));
+      list = list.filter(({ profile }) => profile.serviceOffers.some((o) => o.serviceId === serviceFilter));
     }
     if (minRating && minRating !== "all") {
       const min = parseFloat(minRating);
       list = list.filter(({ stats }) => (stats?.avgRating || 0) >= min);
     }
     if (certFilter.length > 0) {
-      list = list.filter(({ profile }) => certFilter.every(c => profile.certifications.includes(c)));
+      list = list.filter(({ profile }) => certFilter.every((c) => profile.certifications.includes(c)));
     }
 
     list.sort((a, b) => {
@@ -95,8 +95,8 @@ const SearchCaregivers = () => {
   }, [approvedProfiles, getStatsForCaregiver, searchTerm, neighborhoodFilter, serviceFilter, minRating, certFilter, sortBy]);
 
   const clearFilters = () => {
-    setSearchTerm(""); setNeighborhoodFilter(""); setServiceFilter("");
-    setMinRating(""); setCertFilter([]); setSortBy("recommended");
+    setSearchTerm("");setNeighborhoodFilter("");setServiceFilter("");
+    setMinRating("");setCertFilter([]);setSortBy("recommended");
   };
 
   const activeServiceFilter = serviceFilter && serviceFilter !== "all" ? serviceFilter : undefined;
@@ -111,8 +111,8 @@ const SearchCaregivers = () => {
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
               Encontre o cuidador ideal
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Cuidadores verificados e certificados em Porto Alegre, prontos para ajudar sua família.
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Cuidadores verificados e certificados em sua Cidade, prontos para ajudar sua família.
+
             </p>
             <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-success/10 text-success rounded-full text-sm font-medium">
               <ShieldCheck className="w-4 h-4" />
@@ -127,20 +127,20 @@ const SearchCaregivers = () => {
                 <div className="md:col-span-2 relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input placeholder="Buscar por nome ou especialidade..." className="pl-10"
-                    value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                  value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
                 <Select value={neighborhoodFilter} onValueChange={setNeighborhoodFilter}>
                   <SelectTrigger><MapPin className="w-4 h-4 text-muted-foreground mr-2" /><SelectValue placeholder="Bairro" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos os bairros</SelectItem>
-                    {neighborhoods.map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+                    {neighborhoods.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <Select value={serviceFilter} onValueChange={setServiceFilter}>
                   <SelectTrigger><Clock className="w-4 h-4 text-muted-foreground mr-2" /><SelectValue placeholder="Serviço" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos os serviços</SelectItem>
-                    {activeServices.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                    {activeServices.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -157,17 +157,17 @@ const SearchCaregivers = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                {allCerts.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-2">
+                {allCerts.length > 0 &&
+                <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm text-muted-foreground">Certificações:</span>
-                    {allCerts.map(c => (
-                      <label key={c} className="flex items-center gap-1.5 cursor-pointer">
+                    {allCerts.map((c) =>
+                  <label key={c} className="flex items-center gap-1.5 cursor-pointer">
                         <Checkbox checked={certFilter.includes(c)} onCheckedChange={() => toggleCert(c)} className="h-4 w-4" />
                         <span className="text-xs">{c}</span>
                       </label>
-                    ))}
+                  )}
                   </div>
-                )}
+                }
               </div>
             </CardContent>
           </Card>
@@ -179,7 +179,7 @@ const SearchCaregivers = () => {
             </p>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Ordenar:</span>
-              <Select value={sortBy} onValueChange={v => setSortBy(v as SortKey)}>
+              <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortKey)}>
                 <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="recommended">Recomendados</SelectItem>
@@ -196,17 +196,17 @@ const SearchCaregivers = () => {
             {results.map(({ profile, stats }) => {
               const lowestPrice = getLowestPrice(profile, activeServiceFilter);
               return (
-              <Card key={profile.id} variant="feature">
+                <Card key={profile.id} variant="feature">
                 <CardContent className="p-6">
                   <div className="flex gap-4">
                     <div className="w-20 h-20 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
-                      {profile.profilePhotoUrl ? (
-                        <img src={profile.profilePhotoUrl} alt="" className="w-full h-full object-cover rounded-2xl" />
-                      ) : (
+                      {profile.profilePhotoUrl ?
+                        <img src={profile.profilePhotoUrl} alt="" className="w-full h-full object-cover rounded-2xl" /> :
+
                         <span className="text-2xl font-bold text-secondary-foreground">
                           {profile.firstName[0]}{profile.lastInitial}
                         </span>
-                      )}
+                        }
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
@@ -225,40 +225,40 @@ const SearchCaregivers = () => {
 
                       <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mt-1">
                         <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{profile.neighborhood}</span>
-                        {profile.yearsExperience && (
+                        {profile.yearsExperience &&
                           <><span>•</span><span>{profile.yearsExperience} anos exp.</span></>
-                        )}
-                        {stats && stats.completedAppointmentsCount > 0 && (
+                          }
+                        {stats && stats.completedAppointmentsCount > 0 &&
                           <><span>•</span><span className="flex items-center gap-1"><CheckCircle className="w-3 h-3 text-success" />{stats.completedAppointmentsCount} atendimentos</span></>
-                        )}
+                          }
                       </div>
 
                       <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{profile.bio}</p>
 
                       <div className="flex flex-wrap gap-1 mt-3">
-                        {profile.certifications.slice(0, 3).map((cert, i) => (
+                        {profile.certifications.slice(0, 3).map((cert, i) =>
                           <Badge key={i} variant="secondary" className="text-xs">
                             <GraduationCap className="w-3 h-3 mr-1" />{cert}
                           </Badge>
-                        ))}
-                        {profile.certifications.length > 3 && (
+                          )}
+                        {profile.certifications.length > 3 &&
                           <Badge variant="secondary" className="text-xs">+{profile.certifications.length - 3}</Badge>
-                        )}
+                          }
                       </div>
 
                       <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
                         <div>
-                          {lowestPrice ? (
+                          {lowestPrice ?
                             <>
                               <span className="text-xs text-muted-foreground">A partir de</span>
                               <div>
                                 <span className="text-lg font-bold text-foreground">R$ {lowestPrice}</span>
                                 <span className="text-sm text-muted-foreground">/hora</span>
                               </div>
-                            </>
-                          ) : (
+                            </> :
+
                             <span className="text-sm text-muted-foreground">Consulte o perfil</span>
-                          )}
+                            }
                         </div>
                         <div className="flex gap-2">
                           <Button variant="outline" size="sm" asChild>
@@ -274,22 +274,22 @@ const SearchCaregivers = () => {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-              );
+              </Card>);
+
             })}
           </div>
 
-          {results.length === 0 && (
-            <div className="text-center py-16">
+          {results.length === 0 &&
+          <div className="text-center py-16">
               <p className="text-lg text-muted-foreground">Nenhum cuidador encontrado com os filtros selecionados.</p>
               <Button variant="outline" className="mt-4" onClick={clearFilters}>Limpar filtros</Button>
             </div>
-          )}
+          }
         </div>
       </main>
       <Footer />
-    </div>
-  );
+    </div>);
+
 };
 
 export default SearchCaregivers;
