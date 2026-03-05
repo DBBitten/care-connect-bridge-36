@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Search, MapPin, Star, GraduationCap, Clock, ShieldCheck, CheckCircle, Calendar } from "lucide-react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useCaregivers } from "@/contexts/CaregiverContext";
 import { useServices } from "@/contexts/ServiceContext";
 
@@ -22,6 +22,7 @@ const neighborhoods = [
 type SortKey = "recommended" | "rating" | "experience" | "price_asc";
 
 const SearchCaregivers = () => {
+  const navigate = useNavigate();
   const { getApprovedProfiles, getStatsForCaregiver } = useCaregivers();
   const { getActiveServices } = useServices();
   const [searchParams] = useSearchParams();
@@ -196,7 +197,7 @@ const SearchCaregivers = () => {
             {results.map(({ profile, stats }) => {
               const lowestPrice = getLowestPrice(profile, activeServiceFilter);
               return (
-                <Card key={profile.id} variant="feature">
+                <Card key={profile.id} variant="feature" className="cursor-pointer" onClick={() => navigate(`/cuidador/${profile.id}`)}>
                 <CardContent className="p-6">
                   <div className="flex gap-4">
                     <div className="w-20 h-20 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
@@ -260,7 +261,7 @@ const SearchCaregivers = () => {
                             <span className="text-sm text-muted-foreground">Consulte o perfil</span>
                             }
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                           <Button variant="outline" size="sm" asChild>
                             <Link to={`/cuidador/${profile.id}`}>Ver perfil</Link>
                           </Button>

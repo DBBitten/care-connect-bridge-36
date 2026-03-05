@@ -1,21 +1,25 @@
 
 
-## Plano: Card do cuidador como link clicável
+## Plano: Gerar nova imagem hero na paleta Cuidare
 
-Envolver todo o `<Card>` do cuidador em um `<Link>` para `/cuidador/{id}`, tornando o card inteiro clicável. Os botões internos ("Ver perfil" e "Agendar") continuam funcionando normalmente com `e.stopPropagation` implícito do `<a>` aninhado.
+### Resumo
 
-### Alteração
+Usar a API de geração de imagem (Gemini) para criar uma nova imagem hero que combine com a paleta Terracota & Creme da Cuidare — tons quentes, acolhedores, com cena de cuidado humano — e substituir o asset atual.
+
+### Alterações
 
 | Arquivo | Ação |
 |---------|------|
-| `src/pages/SearchCaregivers.tsx` | Envolver o `<Card>` (linha 199) em `<Link to={/cuidador/${profile.id}}>` com `className="block"` e adicionar `cursor-pointer` ao card. Manter os botões internos como `<Link>` (já são `<a>`, links aninhados em links não é válido — alternativa: usar `onClick` + `navigate` no card wrapper via `<div onClick>` em vez de `<Link>`) |
+| `src/assets/hero-eldercare.jpg` | Substituir pela nova imagem gerada via AI |
+| `src/components/landing/HeroSection.tsx` | Atualizar o import para o novo nome de arquivo (ex: `hero-cuidare.png`) e ajustar o overlay gradient para complementar a nova paleta |
 
-### Abordagem técnica
+### Detalhes
 
-Como HTML não permite `<a>` dentro de `<a>`, a melhor abordagem é:
-1. Adicionar `onClick={() => navigate(/cuidador/${profile.id})}` e `cursor-pointer` no `<Card>`
-2. Nos botões internos, adicionar `onClick={(e) => e.stopPropagation()}` para evitar dupla navegação
-3. Importar `useNavigate` do react-router-dom
+1. **Gerar imagem** via `google/gemini-2.5-flash-image` com prompt descrevendo: cena acolhedora de cuidadora com idoso, tons quentes terracota (#B5472A), creme (#FBF4EC), iluminação suave, estilo fotográfico profissional.
 
-Isso torna todo o card clicável sem invalidar o HTML semântico.
+2. **Salvar** como `src/assets/hero-cuidare.png`.
+
+3. **Ajustar overlay** no HeroSection: trocar o gradient escuro (`from-foreground/90`) por um gradient em tons de terracota/marrom quente que harmonize com a imagem e mantenha legibilidade do texto branco.
+
+4. **Atualizar import** de `hero-eldercare.jpg` para `hero-cuidare.png`.
 
