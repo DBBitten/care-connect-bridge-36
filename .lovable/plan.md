@@ -1,25 +1,44 @@
 
 
-## Plano: Gerar nova imagem hero na paleta Cuidare
+## Plano: Substituir "duração" por "horário de início e término"
 
 ### Resumo
 
-Usar a API de geração de imagem (Gemini) para criar uma nova imagem hero que combine com a paleta Terracota & Creme da Cuidare — tons quentes, acolhedores, com cena de cuidado humano — e substituir o asset atual.
+Remover o conceito de "duração fixa" (availableDurations) e substituir por seleção de **horário de início** e **horário de término**. A duração é calculada automaticamente como a diferença entre os dois. O cuidador define apenas o preço por hora por serviço — não mais as durações permitidas.
 
-### Alterações
+### Modelo de dados
+
+**CaregiverServiceOffer (simplificado)**
+- Remover `availableDurations: number[]`
+- Manter apenas `serviceId` e `pricePerHour`
+
+**Appointment (atualizado)**
+- Remover `durationHours`
+- Trocar `startTime: string` por `startTime: string` + `endTime: string`
+- Calcular horas como `(endTime - startTime)` para o cálculo de preço
+
+### Arquivos alterados
 
 | Arquivo | Ação |
 |---------|------|
-| `src/assets/hero-eldercare.jpg` | Substituir pela nova imagem gerada via AI |
-| `src/components/landing/HeroSection.tsx` | Atualizar o import para o novo nome de arquivo (ex: `hero-cuidare.png`) e ajustar o overlay gradient para complementar a nova paleta |
+| `src/types/service.ts` | Remover `availableDurations` do `CaregiverServiceOffer` |
+| `src/types/payment.ts` | Remover `durationHours`, adicionar `endTime: string` no `Appointment` |
+| `src/pages/BookingPage.tsx` | Remover select de duração; adicionar select de "Horário de término" (filtrando apenas horários após o início); calcular horas automaticamente; atualizar resumo |
+| `src/contexts/PaymentContext.tsx` | Atualizar `CreateAppointmentData` e cálculo de `totalPrice` para usar `endTime - startTime` |
+| `src/contexts/CaregiverContext.tsx` | Remover `availableDurations` dos seeds dos perfis mock |
+| `src/pages/caregiver/CaregiverProfileEdit.tsx` | Remover checkboxes de durações; manter apenas seleção de serviço + preço/h |
+| `src/pages/CheckoutPage.tsx` | Exibir horário início–término em vez de duração |
+| `src/pages/client/ClientCalendar.tsx` | Ajustar exibição para `startTime–endTime` |
+| `src/pages/client/ClientDashboard.tsx` | Ajustar exibição |
+| `src/pages/caregiver/CaregiverDashboard.tsx` | Ajustar exibição |
+| `src/pages/client/ClientPayments.tsx` | Ajustar exibição |
+| `src/pages/admin/AdminMetrics.tsx` | Ajustar referências a `durationHours` |
 
-### Detalhes
+### Detalhamento
 
-1. **Gerar imagem** via `google/gemini-2.5-flash-image` com prompt descrevendo: cena acolhedora de cuidadora com idoso, tons quentes terracota (#B5472A), creme (#FBF4EC), iluminação suave, estilo fotográfico profissional.
+**Booking**: Dois selects — "Horário de início" (06:00–18:00) e "Horário de término" (dinâmico, só mostra opções após o horário de início selecionado, até 22:00). O total é calculado como `dias × horas × preço/h` onde `horas = endTime - startTime`.
 
-2. **Salvar** como `src/assets/hero-cuidare.png`.
+**Perfil do cuidador**: Ao selecionar um serviço, o cuidador define apenas o preço por hora. Sem restrição de durações — o cliente escolhe livremente o intervalo.
 
-3. **Ajustar overlay** no HeroSection: trocar o gradient escuro (`from-foreground/90`) por um gradient em tons de terracota/marrom quente que harmonize com a imagem e mantenha legibilidade do texto branco.
-
-4. **Atualizar import** de `hero-eldercare.jpg` para `hero-cuidare.png`.
+**Resumo/Checkout**: Mostra "08:00 – 14:00 (6h)" em vez de apenas "6h".
 
