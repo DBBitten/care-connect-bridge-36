@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { CaregiverLayout } from "@/components/caregiver/CaregiverLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,12 +14,22 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCaregivers } from "@/contexts/CaregiverContext";
 import { useServices } from "@/contexts/ServiceContext";
 import { CaregiverProfileData } from "@/types/caregiver";
+import { CaregiverServiceOffer } from "@/types/service";
 
 const neighborhoods = [
   "Moinhos de Vento", "Bom Fim", "Cidade Baixa", "Petrópolis", "Bela Vista",
   "Menino Deus", "Azenha", "Santana", "Rio Branco", "Floresta",
   "Independência", "Mont'Serrat", "Auxiliadora", "Passo d'Areia", "Higienópolis",
   "Centro Histórico", "Praia de Belas", "Cristal", "Tristeza", "Ipanema",
+];
+
+const DURATION_OPTIONS = [
+  { value: 60, label: "1h" },
+  { value: 120, label: "2h" },
+  { value: 240, label: "4h" },
+  { value: 360, label: "6h" },
+  { value: 480, label: "8h" },
+  { value: 720, label: "12h" },
 ];
 
 export default function CaregiverProfileEdit() {
@@ -36,18 +46,41 @@ export default function CaregiverProfileEdit() {
   const [languages, setLanguages] = useState(existing?.languages?.join(", ") || "Português");
   const [neighborhood, setNeighborhood] = useState(existing?.neighborhood || "");
   const [maxDistanceKm, setMaxDistanceKm] = useState(existing?.maxDistanceKm?.toString() || "");
-  const [hourlyRate, setHourlyRate] = useState(existing?.hourlyRate?.toString() || "35");
-  const [selectedServices, setSelectedServices] = useState<string[]>(existing?.serviceTags || []);
+  const [serviceOffers, setServiceOffers] = useState<CaregiverServiceOffer[]>(existing?.serviceOffers || []);
   const [availabilityText, setAvailabilityText] = useState(existing?.availability?.join("\n") || "");
 
-  const toggleService = (id: string) => {
-    setSelectedServices(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
+  const isServiceSelected = (serviceId: string) => serviceOffers.some(o => o.serviceId === serviceId);
+
+  const getOffer = (serviceId: string) => serviceOffers.find(o => o.serviceId === serviceId);
+
+  const toggleService = (serviceId: string) => {
+    if (isServiceSelected(serviceId)) {
+      setServiceOffers(prev => prev.filter(o => o.serviceId !== serviceId));
+    } else {
+      setServiceOffers(prev => [...prev, { serviceId, pricePerHour: 35, availableDurations: [120] }]);
+    }
+  };
+
+  const updateOfferPrice = (serviceId: string, price: number) => {
+    setServiceOffers(prev => prev.map(o => o.serviceId === serviceId ? { ...o, pricePerHour: price } : o));
+  };
+
+  const toggleOfferDuration = (serviceId: string, duration: number) => {
+    setServiceOffers(prev => prev.map(o => {
+      if (o.serviceId !== serviceId) return o;
+      const has = o.availableDurations.includes(duration);
+      const updated = has
+        ? o.availableDurations.filter(d => d !== duration)
+        : [...o.availableDurations, duration].sort((a, b) => a - b);
+      return { ...o, availableDurations: updated.length > 0 ? updated : [duration] };
+    }));
   };
 
   const handleSave = () => {
     if (!bio.trim()) { toast.error("Preencha sua bio."); return; }
     if (!neighborhood) { toast.error("Selecione seu bairro."); return; }
-    if (selectedServices.length === 0) { toast.error("Selecione ao menos um serviço."); return; }
+    if (serviceOffers.length === 0) { toast.error("Selecione ao menos um serviço."); return; }
+    if (serviceOffers.some(o => o.pricePerHour <= 0)) { toast.error("Defina um preço válido para todos os serviços."); return; }
 
     const email = user?.email || "";
     const profile: CaregiverProfileData = {
@@ -59,7 +92,7 @@ export default function CaregiverProfileEdit() {
       yearsExperience: yearsExperience ? parseInt(yearsExperience) : undefined,
       specialties: specialties.split(",").map(s => s.trim()).filter(Boolean),
       languages: languages.split(",").map(s => s.trim()).filter(Boolean),
-      serviceTags: selectedServices,
+      serviceOffers,
       certifications: existing?.certifications || [],
       neighborhood,
       city: existing?.city || "Porto Alegre",
@@ -67,7 +100,6 @@ export default function CaregiverProfileEdit() {
       maxDistanceKm: maxDistanceKm ? parseInt(maxDistanceKm) : undefined,
       profilePhotoUrl: existing?.profilePhotoUrl,
       availability: availabilityText.split("\n").map(s => s.trim()).filter(Boolean),
-      hourlyRate: parseFloat(hourlyRate) || 35,
       kycStatus: existing?.kycStatus || "PENDING",
       isSuspended: existing?.isSuspended || false,
       createdAt: existing?.createdAt || new Date().toISOString(),
@@ -118,11 +150,6 @@ export default function CaregiverProfileEdit() {
                 <Input id="years" type="number" min="0" max="50" value={yearsExperience}
                   onChange={e => setYearsExperience(e.target.value)} placeholder="Ex: 5" className="mt-1" />
               </div>
-              <div>
-                <Label htmlFor="rate">Valor por hora (R$)</Label>
-                <Input id="rate" type="number" min="20" max="200" value={hourlyRate}
-                  onChange={e => setHourlyRate(e.target.value)} placeholder="Ex: 45" className="mt-1" />
-              </div>
             </div>
             <div>
               <Label htmlFor="specialties">Especialidades (separadas por vírgula)</Label>
@@ -158,22 +185,62 @@ export default function CaregiverProfileEdit() {
           </CardContent>
         </Card>
 
-        {/* Services */}
+        {/* Services with price & durations */}
         <Card>
-          <CardHeader><CardTitle className="text-base flex items-center gap-2"><GraduationCap className="w-4 h-4" />Serviços que Aceito</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <GraduationCap className="w-4 h-4" />Serviços que Ofereço
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {activeServices.map(svc => (
-                <div key={svc.id} className="flex items-start gap-3 p-3 rounded-xl bg-muted/50">
-                  <Checkbox id={svc.id} checked={selectedServices.includes(svc.id)}
-                    onCheckedChange={() => toggleService(svc.id)} />
-                  <Label htmlFor={svc.id} className="cursor-pointer flex-1">
-                    <span className="font-medium">{svc.name}</span>
-                    <p className="text-xs text-muted-foreground mt-0.5">{svc.description}</p>
-                  </Label>
-                  <Badge variant="secondary" className="text-xs">R$ {svc.pricePerHour}/h</Badge>
-                </div>
-              ))}
+            <p className="text-sm text-muted-foreground mb-4">
+              Selecione os serviços e defina seu preço por hora e as durações que aceita para cada um.
+            </p>
+            <div className="space-y-4">
+              {activeServices.map(svc => {
+                const selected = isServiceSelected(svc.id);
+                const offer = getOffer(svc.id);
+                return (
+                  <div key={svc.id} className={`p-4 rounded-xl border transition-colors ${selected ? 'border-primary bg-primary/5' : 'border-border bg-muted/30'}`}>
+                    <div className="flex items-start gap-3">
+                      <Checkbox id={svc.id} checked={selected}
+                        onCheckedChange={() => toggleService(svc.id)} className="mt-0.5" />
+                      <Label htmlFor={svc.id} className="cursor-pointer flex-1">
+                        <span className="font-medium">{svc.name}</span>
+                        <p className="text-xs text-muted-foreground mt-0.5">{svc.description}</p>
+                      </Label>
+                    </div>
+                    {selected && offer && (
+                      <div className="mt-4 ml-7 space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Label className="text-sm whitespace-nowrap">Preço/hora (R$):</Label>
+                          <Input
+                            type="number" min={1} max={500}
+                            value={offer.pricePerHour || ""}
+                            onChange={e => updateOfferPrice(svc.id, Number(e.target.value))}
+                            className="w-28"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-sm">Durações aceitas:</Label>
+                          <div className="flex flex-wrap gap-3 mt-2">
+                            {DURATION_OPTIONS.map(opt => (
+                              <label key={opt.value} className="flex items-center gap-1.5 cursor-pointer">
+                                <Checkbox
+                                  checked={offer.availableDurations.includes(opt.value)}
+                                  onCheckedChange={() => toggleOfferDuration(svc.id, opt.value)}
+                                  className="h-4 w-4"
+                                />
+                                <span className="text-sm">{opt.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
