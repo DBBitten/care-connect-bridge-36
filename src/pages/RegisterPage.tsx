@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ShieldCheck, ArrowLeft, Users, UserCheck, Mail, Lock, User, Phone, MapPin, Calendar, FileText, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { Navbar } from "@/components/layout/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLegal } from "@/contexts/LegalContext";
 
@@ -80,7 +81,9 @@ const RegisterPage = () => {
 
   if (!userType) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <>
+      <Navbar />
+      <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-20">
         <div className="w-full max-w-md">
           <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8">
             <ArrowLeft className="w-4 h-4" />
@@ -137,13 +140,16 @@ const RegisterPage = () => {
               Entrar
             </Link>
           </p>
-        </div>
       </div>
+    </div>
+    </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background py-12 px-4">
+    <>
+    <Navbar />
+    <div className="min-h-screen bg-background py-12 px-4 pt-20">
       <div className="w-full max-w-lg mx-auto">
         <button
           onClick={() => setUserType(null)}
@@ -390,6 +396,7 @@ const RegisterPage = () => {
         </Card>
       </div>
     </div>
+    </>
   );
 };
 
