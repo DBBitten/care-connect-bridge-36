@@ -12,7 +12,7 @@ const cardVariants = cva(
         outline: "border-2",
         ghost: "border-transparent shadow-none",
         warm: "bg-secondary border-secondary",
-        feature: "shadow-card hover:shadow-xl hover:-translate-y-1",
+        feature: "shadow-card",
       },
     },
     defaultVariants: {
