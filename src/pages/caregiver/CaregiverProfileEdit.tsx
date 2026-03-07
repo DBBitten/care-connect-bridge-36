@@ -52,7 +52,6 @@ export default function CaregiverProfileEdit() {
       setServiceOffers(prev => [...prev, { serviceId, pricePerHour: 35 }]);
     }
   };
-  };
   const updateOfferPrice = (serviceId: string, price: number) => {
     setServiceOffers(prev => prev.map(o => o.serviceId === serviceId ? { ...o, pricePerHour: price } : o));
   };
