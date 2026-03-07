@@ -1,25 +1,16 @@
 
 
-## Plano: Gerar nova imagem hero na paleta Cuidare
+## Correção: Erro de sintaxe em CaregiverProfileEdit.tsx
 
-### Resumo
+As páginas estão em branco porque há um erro de build no arquivo `src/pages/caregiver/CaregiverProfileEdit.tsx`.
 
-Usar a API de geração de imagem (Gemini) para criar uma nova imagem hero que combine com a paleta Terracota & Creme da Cuidare — tons quentes, acolhedores, com cena de cuidado humano — e substituir o asset atual.
+**Problema**: Linha 55 tem um `};` extra depois da função `toggleService` (linhas 48-54 já fecham a função corretamente, e a linha 55 adiciona um fechamento duplicado que quebra o parsing do TypeScript).
 
-### Alterações
+### Alteração
 
 | Arquivo | Ação |
 |---------|------|
-| `src/assets/hero-eldercare.jpg` | Substituir pela nova imagem gerada via AI |
-| `src/components/landing/HeroSection.tsx` | Atualizar o import para o novo nome de arquivo (ex: `hero-cuidare.png`) e ajustar o overlay gradient para complementar a nova paleta |
+| `src/pages/caregiver/CaregiverProfileEdit.tsx` | Remover a linha 55 (`};` extra) |
 
-### Detalhes
-
-1. **Gerar imagem** via `google/gemini-2.5-flash-image` com prompt descrevendo: cena acolhedora de cuidadora com idoso, tons quentes terracota (#B5472A), creme (#FBF4EC), iluminação suave, estilo fotográfico profissional.
-
-2. **Salvar** como `src/assets/hero-cuidare.png`.
-
-3. **Ajustar overlay** no HeroSection: trocar o gradient escuro (`from-foreground/90`) por um gradient em tons de terracota/marrom quente que harmonize com a imagem e mantenha legibilidade do texto branco.
-
-4. **Atualizar import** de `hero-eldercare.jpg` para `hero-cuidare.png`.
+Isso resolve o erro de build e todas as páginas voltarão a funcionar.
 
