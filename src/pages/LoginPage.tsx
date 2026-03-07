@@ -155,13 +155,10 @@ const LoginPage = () => {
     <Navbar />
     <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-20">
       <div className="w-full max-w-md">
-        <button
-          onClick={() => setUserType(null)}
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8"
-        >
+        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8">
           <ArrowLeft className="w-4 h-4" />
-          Voltar
-        </button>
+          Voltar ao início
+        </Link>
 
         <Card variant="elevated">
           <CardHeader className="text-center">
