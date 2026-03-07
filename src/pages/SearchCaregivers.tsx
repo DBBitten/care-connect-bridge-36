@@ -197,7 +197,7 @@ const SearchCaregivers = () => {
             {results.map(({ profile, stats }) => {
               const lowestPrice = getLowestPrice(profile, activeServiceFilter);
               return (
-                <Card key={profile.id} variant="feature" className="cursor-pointer" onClick={() => navigate(`/cuidador/${profile.id}`)}>
+                <Card key={profile.id} variant="interactive" className="cursor-pointer" onClick={() => navigate(`/cuidador/${profile.id}`)}>
                 <CardContent className="p-6">
                   <div className="flex gap-4">
                     <div className="w-20 h-20 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
