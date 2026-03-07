@@ -39,7 +39,6 @@ export function HeroSection() {
               <Link to="/cadastro?tipo=necessitado">
                 <Users className="w-5 h-5" />
                 Preciso de um cuidador
-                <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>
             <Button size="xl" variant="hero-outline" asChild>
