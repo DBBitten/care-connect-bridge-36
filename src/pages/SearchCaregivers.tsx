@@ -278,9 +278,7 @@ const SearchCaregivers = () => {
             </div>
           }
         </div>
-      </main>
-      <Footer />
-    </div>);
+    </ClientLayout>);
 
 };
 
