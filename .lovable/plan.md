@@ -1,22 +1,25 @@
 
 
-## Plano: Corrigir filtro CSS do logo
+## Plano: Gerar nova imagem hero na paleta Cuidare
 
-### Problema
+### Resumo
 
-O filtro `brightness-0 invert` no `<img>` transforma pixels semi-transparentes em brancos sólidos, criando um quadrado branco ao redor do símbolo.
+Usar a API de geração de imagem (Gemini) para criar uma nova imagem hero que combine com a paleta Terracota & Creme da Cuidare — tons quentes, acolhedores, com cena de cuidado humano — e substituir o asset atual.
 
-### Solução
+### Alterações
 
-No `src/components/CuidareLogo.tsx`, trocar `brightness-0 invert` por apenas `invert`, que inverte preto para branco preservando a transparência original da imagem.
+| Arquivo | Ação |
+|---------|------|
+| `src/assets/hero-eldercare.jpg` | Substituir pela nova imagem gerada via AI |
+| `src/components/landing/HeroSection.tsx` | Atualizar o import para o novo nome de arquivo (ex: `hero-cuidare.png`) e ajustar o overlay gradient para complementar a nova paleta |
 
-Linha 27:
-```tsx
-// De:
-className={cn("object-contain brightness-0 invert", imgSizeMap[size])}
-// Para:
-className={cn("object-contain invert", imgSizeMap[size])}
-```
+### Detalhes
 
-Uma única alteração em um único arquivo.
+1. **Gerar imagem** via `google/gemini-2.5-flash-image` com prompt descrevendo: cena acolhedora de cuidadora com idoso, tons quentes terracota (#B5472A), creme (#FBF4EC), iluminação suave, estilo fotográfico profissional.
+
+2. **Salvar** como `src/assets/hero-cuidare.png`.
+
+3. **Ajustar overlay** no HeroSection: trocar o gradient escuro (`from-foreground/90`) por um gradient em tons de terracota/marrom quente que harmonize com a imagem e mantenha legibilidade do texto branco.
+
+4. **Atualizar import** de `hero-eldercare.jpg` para `hero-cuidare.png`.
 
