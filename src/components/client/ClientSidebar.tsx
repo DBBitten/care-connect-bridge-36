@@ -26,7 +26,7 @@ export function ClientSidebar() {
       <div className="p-6 border-b border-border">
         <Link to="/" className="flex items-center gap-3">
           <CuidareLogo size="md" />
-          <span className="text-xl font-bold text-foreground">Cuidare</span>
+          <span className="text-xl font-bold text-primary">Cuidare</span>
         </Link>
       </div>
 
