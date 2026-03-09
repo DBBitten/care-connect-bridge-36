@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { ShieldCheck, LayoutDashboard, Calendar, CreditCard, Star, User, LogOut, Settings, Search, Bell } from "lucide-react";
+import { LayoutDashboard, Calendar, CreditCard, Star, User, LogOut, Settings, Search, Bell } from "lucide-react";
+import { CuidareLogo } from "@/components/CuidareLogo";
 import { cn } from "@/lib/utils";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { Badge } from "@/components/ui/badge";
