@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 const upcomingAppointments = [
   {
     id: 1,
+    caregiverId: "cg-1",
     caregiverName: "Maria Silva",
     date: "Hoje",
     time: "14:00 - 18:00",
@@ -16,6 +17,7 @@ const upcomingAppointments = [
   },
   {
     id: 2,
+    caregiverId: "cg-2",
     caregiverName: "Ana Santos",
     date: "Amanhã",
     time: "08:00 - 12:00",
@@ -25,6 +27,7 @@ const upcomingAppointments = [
   },
   {
     id: 3,
+    caregiverId: "cg-4",
     caregiverName: "Carla Mendes",
     date: "Sex, 24 Jan",
     time: "09:00 - 17:00",
@@ -35,12 +38,12 @@ const upcomingAppointments = [
 ];
 
 const recentCaregivers = [
-  { id: 1, name: "Maria Silva", rating: 4.9, specialty: "Cuidado diário", avatar: "MS" },
-  { id: 2, name: "Ana Santos", rating: 4.8, specialty: "Companhia", avatar: "AS" },
+  { id: 1, caregiverId: "cg-1", name: "Maria Silva", rating: 4.9, specialty: "Cuidado diário", avatar: "MS" },
+  { id: 2, caregiverId: "cg-2", name: "Ana Santos", rating: 4.8, specialty: "Companhia", avatar: "AS" },
 ];
 
 const pendingReviews = [
-  { id: 1, caregiverName: "Carla Mendes", date: "20 Jan 2025", type: "Cuidado integral" },
+  { id: 1, caregiverId: "cg-4", caregiverName: "Carla Mendes", date: "20 Jan 2025", type: "Cuidado integral" },
 ];
 
 const ClientDashboard = () => {
@@ -145,7 +148,7 @@ const ClientDashboard = () => {
                     <span className="text-sm font-semibold text-primary">{appointment.avatar}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-foreground">{appointment.caregiverName}</p>
+                    <Link to={`/cuidador/${appointment.caregiverId}`} className="font-semibold text-primary hover:underline cursor-pointer">{appointment.caregiverName}</Link>
                     <p className="text-sm text-muted-foreground">{appointment.type}</p>
                   </div>
                   <div className="text-right">
@@ -180,7 +183,7 @@ const ClientDashboard = () => {
                     <span className="text-sm font-medium text-secondary-foreground">{caregiver.avatar}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-foreground">{caregiver.name}</p>
+                    <Link to={`/cuidador/${caregiver.caregiverId}`} className="font-medium text-primary hover:underline cursor-pointer">{caregiver.name}</Link>
                     <p className="text-xs text-muted-foreground">{caregiver.specialty}</p>
                   </div>
                   <div className="flex items-center gap-1">
@@ -201,7 +204,7 @@ const ClientDashboard = () => {
               <CardContent className="space-y-4">
                 {pendingReviews.map((review) => (
                   <div key={review.id} className="p-4 rounded-xl bg-muted/50">
-                    <p className="font-medium text-foreground">{review.caregiverName}</p>
+                    <Link to={`/cuidador/${review.caregiverId}`} className="font-medium text-primary hover:underline cursor-pointer">{review.caregiverName}</Link>
                     <p className="text-sm text-muted-foreground mb-3">{review.date} - {review.type}</p>
                     <Button size="sm" className="w-full" asChild>
                       <Link to={`/cliente/avaliacoes?pendente=${review.id}`}>
