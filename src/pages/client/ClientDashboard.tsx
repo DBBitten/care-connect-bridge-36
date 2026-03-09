@@ -276,8 +276,7 @@ const ClientDashboard = () => {
                     )}
                   </div>
                 ))}
-                  </div>
-                ))}
+
               </CardContent>
             </Card>
           )}
