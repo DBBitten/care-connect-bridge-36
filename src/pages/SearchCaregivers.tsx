@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { ClientLayout } from "@/components/client/ClientLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -103,22 +102,11 @@ const SearchCaregivers = () => {
   const activeServiceFilter = serviceFilter && serviceFilter !== "all" ? serviceFilter : undefined;
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Encontre o cuidador ideal
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Cuidadores verificados e certificados em sua Cidade, prontos para ajudar sua família.
-
-            </p>
-            <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-success/10 text-success rounded-full text-sm font-medium">Todos verificados
-              <ShieldCheck className="w-4 h-4" />
-              Todos verificados via KYC — Pagamento seguro pela plataforma
-            </div>
+    <ClientLayout title="Encontre o cuidador ideal" subtitle="Cuidadores verificados e certificados em sua Cidade, prontos para ajudar sua família.">
+        <div>
+          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-success/10 text-success rounded-full text-sm font-medium">
+            <ShieldCheck className="w-4 h-4" />
+            Todos verificados via KYC — Pagamento seguro pela plataforma
           </div>
 
           {/* Filters */}
@@ -287,9 +275,7 @@ const SearchCaregivers = () => {
             </div>
           }
         </div>
-      </main>
-      <Footer />
-    </div>);
+    </ClientLayout>);
 
 };
 
