@@ -38,8 +38,8 @@ const upcomingAppointments = [
 ];
 
 const recentCaregivers = [
-  { id: 1, name: "Maria Silva", rating: 4.9, specialty: "Cuidado diário", avatar: "MS" },
-  { id: 2, name: "Ana Santos", rating: 4.8, specialty: "Companhia", avatar: "AS" },
+  { id: 1, caregiverId: "cg-1", name: "Maria Silva", rating: 4.9, specialty: "Cuidado diário", avatar: "MS" },
+  { id: 2, caregiverId: "cg-2", name: "Ana Santos", rating: 4.8, specialty: "Companhia", avatar: "AS" },
 ];
 
 const pendingReviews = [
