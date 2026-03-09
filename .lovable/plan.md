@@ -1,25 +1,17 @@
 
 
-## Plano: Gerar nova imagem hero na paleta Cuidare
+## Plano: Avaliação inline no Dashboard do Cliente
 
-### Resumo
+Em vez de redirecionar para outra página, o botão "Avaliar atendimento" na seção de "Avaliações Pendentes" do dashboard vai expandir um formulário de avaliação inline (estrelas + comentário + botão enviar), similar ao que já existe em `ClientReviews.tsx`.
 
-Usar a API de geração de imagem (Gemini) para criar uma nova imagem hero que combine com a paleta Terracota & Creme da Cuidare — tons quentes, acolhedores, com cena de cuidado humano — e substituir o asset atual.
+### Alterações em `src/pages/client/ClientDashboard.tsx`
 
-### Alterações
+1. **Adicionar estado local** para controlar qual review está ativa (`reviewingId`), a nota (`rating`) e o comentário (`comment`)
+2. **Importar** `Textarea`, `useState`, `useToast`
+3. **Substituir o botão `<Link>`** na seção de pendingReviews por lógica condicional:
+   - Se `reviewingId !== review.id`: mostra o botão "Avaliar atendimento" que seta o `reviewingId`
+   - Se `reviewingId === review.id`: mostra o formulário inline com estrelas interativas, textarea e botões "Enviar" / "Cancelar"
+4. **Ao submeter**: exibir toast de sucesso e limpar o estado (reutilizando o padrão já implementado em `ClientReviews.tsx`)
 
-| Arquivo | Ação |
-|---------|------|
-| `src/assets/hero-eldercare.jpg` | Substituir pela nova imagem gerada via AI |
-| `src/components/landing/HeroSection.tsx` | Atualizar o import para o novo nome de arquivo (ex: `hero-cuidare.png`) e ajustar o overlay gradient para complementar a nova paleta |
-
-### Detalhes
-
-1. **Gerar imagem** via `google/gemini-2.5-flash-image` com prompt descrevendo: cena acolhedora de cuidadora com idoso, tons quentes terracota (#B5472A), creme (#FBF4EC), iluminação suave, estilo fotográfico profissional.
-
-2. **Salvar** como `src/assets/hero-cuidare.png`.
-
-3. **Ajustar overlay** no HeroSection: trocar o gradient escuro (`from-foreground/90`) por um gradient em tons de terracota/marrom quente que harmonize com a imagem e mantenha legibilidade do texto branco.
-
-4. **Atualizar import** de `hero-eldercare.jpg` para `hero-cuidare.png`.
+A experiência será idêntica à que já existe na página de avaliações, mas embutida diretamente no card do dashboard.
 
