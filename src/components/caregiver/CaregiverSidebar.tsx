@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { ShieldCheck as ShieldCheckIcon, LayoutDashboard, GraduationCap, Calendar, User, LogOut, Settings, ShieldCheck, Bell } from "lucide-react";
+import { LayoutDashboard, GraduationCap, Calendar, User, LogOut, Settings, ShieldCheck, Bell } from "lucide-react";
+import { CuidareLogo } from "@/components/CuidareLogo";
 import { cn } from "@/lib/utils";
 import { useKyc } from "@/contexts/KycContext";
 import { useNotifications } from "@/contexts/NotificationContext";
@@ -39,9 +40,7 @@ export function CaregiverSidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-border">
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-            <ShieldCheckIcon className="w-5 h-5 text-primary-foreground" />
-          </div>
+          <CuidareLogo size="md" />
           <span className="text-xl font-bold text-foreground">Cuidare</span>
         </Link>
       </div>

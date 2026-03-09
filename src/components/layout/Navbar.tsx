@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Menu, X, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
+import { CuidareLogo } from "@/components/CuidareLogo";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
@@ -24,9 +25,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <CuidareLogo size="md" />
             <span className="text-xl font-bold text-foreground">Cuidare</span>
           </Link>
 

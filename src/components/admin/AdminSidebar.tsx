@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { ShieldCheck as ShieldCheckLogo, LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck, FileText, Package, CreditCard, BarChart3, Bell, Map } from "lucide-react";
+import { LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck, FileText, Package, CreditCard, BarChart3, Bell, Map } from "lucide-react";
+import { CuidareLogo } from "@/components/CuidareLogo";
 import { cn } from "@/lib/utils";
 import { useKyc } from "@/contexts/KycContext";
 import { useNotifications } from "@/contexts/NotificationContext";
@@ -30,9 +31,7 @@ export function AdminSidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-foreground/20">
         <Link to="/admin" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-            <ShieldCheckLogo className="w-5 h-5 text-primary-foreground" />
-          </div>
+          <CuidareLogo size="md" />
           <div>
             <span className="text-xl font-bold text-background">Cuidare</span>
             <p className="text-xs text-background/60">Admin</p>

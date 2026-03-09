@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ShieldCheck, ArrowLeft, Users, UserCheck, Mail, Lock, Shield } from "lucide-react";
+import { ArrowLeft, Users, UserCheck, Mail, Lock, Shield } from "lucide-react";
+import { CuidareLogo } from "@/components/CuidareLogo";
 import { toast } from "sonner";
 import { Navbar } from "@/components/layout/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
@@ -80,9 +81,7 @@ const LoginPage = () => {
 
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-                <ShieldCheck className="w-6 h-6 text-primary-foreground" />
-              </div>
+              <CuidareLogo size="md" />
             </Link>
             <h1 className="text-2xl font-bold text-foreground">Bem-vindo de volta</h1>
             <p className="text-muted-foreground">Como você quer entrar?</p>
@@ -162,9 +161,7 @@ const LoginPage = () => {
 
         <Card variant="elevated">
           <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 rounded-xl bg-primary flex items-center justify-center mb-4">
-              <ShieldCheck className="w-6 h-6 text-primary-foreground" />
-            </div>
+            <CuidareLogo size="md" className="mx-auto mb-4" />
             <CardTitle>Entrar como {userType === "admin" ? "Administrador" : userType === "cuidador" ? "Cuidador" : "Familiar"}</CardTitle>
             <CardDescription>
               Digite seus dados para acessar sua conta
