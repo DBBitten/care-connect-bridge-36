@@ -204,7 +204,7 @@ const ClientDashboard = () => {
               <CardContent className="space-y-4">
                 {pendingReviews.map((review) => (
                   <div key={review.id} className="p-4 rounded-xl bg-muted/50">
-                    <p className="font-medium text-foreground">{review.caregiverName}</p>
+                    <Link to={`/cuidador/${review.caregiverId}`} className="font-medium text-primary hover:underline cursor-pointer">{review.caregiverName}</Link>
                     <p className="text-sm text-muted-foreground mb-3">{review.date} - {review.type}</p>
                     <Button size="sm" className="w-full" asChild>
                       <Link to={`/cliente/avaliacoes?pendente=${review.id}`}>
