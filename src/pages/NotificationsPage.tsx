@@ -1,5 +1,3 @@
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { Button } from "@/components/ui/button";
 import { Bell, Calendar, CreditCard, ShieldCheck, CheckCircle } from "lucide-react";
@@ -7,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { NotificationType } from "@/types/notification";
+import { ClientLayout } from "@/components/client/ClientLayout";
 
 const iconMap: Record<string, typeof Bell> = {
   APPOINTMENT_REQUESTED: Calendar,
@@ -30,17 +29,18 @@ const NotificationsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="container mx-auto px-4 pt-24 pb-16 max-w-2xl">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-foreground">Notificações</h1>
-          {unreadCount > 0 && (
+    <ClientLayout
+      title="Notificações"
+      subtitle={unreadCount > 0 ? `${unreadCount} não lida${unreadCount > 1 ? "s" : ""}` : undefined}
+    >
+      <div className="max-w-2xl">
+        {unreadCount > 0 && (
+          <div className="flex justify-end mb-4">
             <Button variant="outline" size="sm" onClick={markAllAsRead}>
               Marcar todas como lidas
             </Button>
-          )}
-        </div>
+          </div>
+        )}
 
         {userNotifications.length === 0 ? (
           <div className="text-center py-16">
@@ -75,9 +75,8 @@ const NotificationsPage = () => {
             })}
           </div>
         )}
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </ClientLayout>
   );
 };
 
