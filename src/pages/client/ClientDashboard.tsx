@@ -43,7 +43,7 @@ const recentCaregivers = [
 ];
 
 const pendingReviews = [
-  { id: 1, caregiverName: "Carla Mendes", date: "20 Jan 2025", type: "Cuidado integral" },
+  { id: 1, caregiverId: "cg-4", caregiverName: "Carla Mendes", date: "20 Jan 2025", type: "Cuidado integral" },
 ];
 
 const ClientDashboard = () => {
