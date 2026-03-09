@@ -230,12 +230,52 @@ const ClientDashboard = () => {
                   <div key={review.id} className="p-4 rounded-xl bg-muted/50">
                     <Link to={`/cuidador/${review.caregiverId}`} className="font-medium text-primary hover:underline cursor-pointer">{review.caregiverName}</Link>
                     <p className="text-sm text-muted-foreground mb-3">{review.date} - {review.type}</p>
-                    <Button size="sm" className="w-full" asChild>
-                      <Link to={`/cliente/avaliacoes?pendente=${review.id}`}>
+                    
+                    {reviewingId === review.id ? (
+                      <div className="space-y-3">
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setRating(star)}
+                              onMouseEnter={() => setHoverRating(star)}
+                              onMouseLeave={() => setHoverRating(0)}
+                              className="p-0.5"
+                            >
+                              <Star
+                                className={`w-6 h-6 transition-colors ${
+                                  star <= (hoverRating || rating)
+                                    ? "text-warning fill-warning"
+                                    : "text-muted-foreground"
+                                }`}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                        <Textarea
+                          placeholder="Como foi o atendimento?"
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                          className="min-h-[60px] text-sm"
+                        />
+                        <div className="flex gap-2">
+                          <Button size="sm" className="flex-1" onClick={() => handleSubmitReview(review.id)} disabled={rating === 0}>
+                            Enviar
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={handleCancelReview}>
+                            Cancelar
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button size="sm" className="w-full" onClick={() => setReviewingId(review.id)}>
                         <Star className="w-4 h-4 mr-2" />
                         Avaliar atendimento
-                      </Link>
-                    </Button>
+                      </Button>
+                    )}
+                  </div>
+                ))}
                   </div>
                 ))}
               </CardContent>
