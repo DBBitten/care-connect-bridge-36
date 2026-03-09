@@ -1,25 +1,18 @@
 
 
-## Plano: Gerar nova imagem hero na paleta Cuidare
+## Plano: Nomes dos cuidadores como links para o perfil
 
-### Resumo
+Transformar os nomes dos cuidadores exibidos no dashboard do cliente em links clicáveis que levam ao perfil completo.
 
-Usar a API de geração de imagem (Gemini) para criar uma nova imagem hero que combine com a paleta Terracota & Creme da Cuidare — tons quentes, acolhedores, com cena de cuidado humano — e substituir o asset atual.
+### Mapeamento de dados
 
-### Alterações
+Os dados são hardcoded. Vamos adicionar um campo `caregiverId` a cada item para gerar a URL `/cuidador/:id`:
+- Maria Silva → `cg-1`
+- Ana Santos → `cg-2`
+- Carla Mendes → `cg-4`
 
-| Arquivo | Ação |
-|---------|------|
-| `src/assets/hero-eldercare.jpg` | Substituir pela nova imagem gerada via AI |
-| `src/components/landing/HeroSection.tsx` | Atualizar o import para o novo nome de arquivo (ex: `hero-cuidare.png`) e ajustar o overlay gradient para complementar a nova paleta |
+### Alterações em `src/pages/client/ClientDashboard.tsx`
 
-### Detalhes
-
-1. **Gerar imagem** via `google/gemini-2.5-flash-image` com prompt descrevendo: cena acolhedora de cuidadora com idoso, tons quentes terracota (#B5472A), creme (#FBF4EC), iluminação suave, estilo fotográfico profissional.
-
-2. **Salvar** como `src/assets/hero-cuidare.png`.
-
-3. **Ajustar overlay** no HeroSection: trocar o gradient escuro (`from-foreground/90`) por um gradient em tons de terracota/marrom quente que harmonize com a imagem e mantenha legibilidade do texto branco.
-
-4. **Atualizar import** de `hero-eldercare.jpg` para `hero-cuidare.png`.
+1. Adicionar `caregiverId` aos arrays `upcomingAppointments`, `recentCaregivers` e `pendingReviews`
+2. Nos 3 locais onde o nome do cuidador aparece (linhas 148, 183, 204), envolver o nome em `<Link to={/cuidador/${id}}>` com estilo `hover:underline text-primary cursor-pointer`
 
