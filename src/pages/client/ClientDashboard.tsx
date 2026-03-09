@@ -148,7 +148,7 @@ const ClientDashboard = () => {
                     <span className="text-sm font-semibold text-primary">{appointment.avatar}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-foreground">{appointment.caregiverName}</p>
+                    <Link to={`/cuidador/${appointment.caregiverId}`} className="font-semibold text-primary hover:underline cursor-pointer">{appointment.caregiverName}</Link>
                     <p className="text-sm text-muted-foreground">{appointment.type}</p>
                   </div>
                   <div className="text-right">
