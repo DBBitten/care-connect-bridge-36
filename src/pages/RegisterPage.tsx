@@ -157,13 +157,7 @@ const RegisterPage = () => {
 
         <Card variant="elevated">
           <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 rounded-xl bg-primary flex items-center justify-center mb-4">
-              {userType === "cuidador" ? (
-                <UserCheck className="w-6 h-6 text-primary-foreground" />
-              ) : (
-                <Users className="w-6 h-6 text-primary-foreground" />
-              )}
-            </div>
+            <CuidareLogo size="md" className="mx-auto mb-4" />
             <CardTitle>
               Cadastro de {userType === "cuidador" ? "Cuidador" : "Familiar"}
             </CardTitle>
