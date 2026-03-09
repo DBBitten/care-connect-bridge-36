@@ -24,7 +24,7 @@ export function CuidareLogo({ size = "md", className }: CuidareLogoProps) {
       <img
         src={logo}
         alt="Cuidare"
-        className={cn("object-contain brightness-0 invert", imgSizeMap[size])}
+        className={cn("object-contain invert", imgSizeMap[size])}
       />
     </div>
   );
