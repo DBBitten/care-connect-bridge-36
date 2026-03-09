@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { ClientLayout } from "@/components/client/ClientLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Calendar, Clock, Star, Users, MapPin, ArrowRight, Search } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const upcomingAppointments = [
   {
