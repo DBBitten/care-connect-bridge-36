@@ -102,16 +102,8 @@ const SearchCaregivers = () => {
   const activeServiceFilter = serviceFilter && serviceFilter !== "all" ? serviceFilter : undefined;
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Encontre o cuidador ideal
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Cuidadores verificados e certificados em sua Cidade, prontos para ajudar sua família.
+    <ClientLayout title="Encontre o cuidador ideal" subtitle="Cuidadores verificados e certificados em sua Cidade, prontos para ajudar sua família.">
+        <div>
 
             </p>
             <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-success/10 text-success rounded-full text-sm font-medium">Todos verificados
