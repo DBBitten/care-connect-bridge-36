@@ -1,25 +1,20 @@
 
 
-## Plano: Gerar nova imagem hero na paleta Cuidare
+## Plano: Adicionar abas na página de perfil do cliente
 
-### Resumo
+### O que muda
 
-Usar a API de geração de imagem (Gemini) para criar uma nova imagem hero que combine com a paleta Terracota & Creme da Cuidare — tons quentes, acolhedores, com cena de cuidado humano — e substituir o asset atual.
+Após o bloco do cabeçalho (foto, nome, botão editar), os dois cards ("Informações Pessoais" e "Informações do Idoso") serão agrupados dentro de um único Card com abas (Tabs). O usuário clica nas abas para alternar entre as seções.
 
-### Alterações
+### Alteração em `src/pages/client/ClientProfile.tsx`
 
-| Arquivo | Ação |
-|---------|------|
-| `src/assets/hero-eldercare.jpg` | Substituir pela nova imagem gerada via AI |
-| `src/components/landing/HeroSection.tsx` | Atualizar o import para o novo nome de arquivo (ex: `hero-cuidare.png`) e ajustar o overlay gradient para complementar a nova paleta |
+- Importar `Tabs, TabsList, TabsTrigger, TabsContent` de `@/components/ui/tabs`
+- Substituir os dois Cards separados (linhas 70-178) por um único `Card` contendo:
+  - `Tabs` com `defaultValue="pessoais"`
+  - `TabsList` com duas abas: "Informações Pessoais" e "Informações do Idoso"
+  - `TabsContent value="pessoais"` com o conteúdo atual do primeiro card (campos nome, email, telefone, emergência, endereço)
+  - `TabsContent value="idoso"` com o conteúdo do segundo card (nome do idoso, necessidades)
+- Os `CardHeader`/`CardTitle` individuais são removidos pois as abas já servem como título de cada seção
 
-### Detalhes
-
-1. **Gerar imagem** via `google/gemini-2.5-flash-image` com prompt descrevendo: cena acolhedora de cuidadora com idoso, tons quentes terracota (#B5472A), creme (#FBF4EC), iluminação suave, estilo fotográfico profissional.
-
-2. **Salvar** como `src/assets/hero-cuidare.png`.
-
-3. **Ajustar overlay** no HeroSection: trocar o gradient escuro (`from-foreground/90`) por um gradient em tons de terracota/marrom quente que harmonize com a imagem e mantenha legibilidade do texto branco.
-
-4. **Atualizar import** de `hero-eldercare.jpg` para `hero-cuidare.png`.
+Um único arquivo alterado.
 
