@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 const upcomingAppointments = [
   {
     id: 1,
+    caregiverId: "cg-1",
     caregiverName: "Maria Silva",
     date: "Hoje",
     time: "14:00 - 18:00",
@@ -16,6 +17,7 @@ const upcomingAppointments = [
   },
   {
     id: 2,
+    caregiverId: "cg-2",
     caregiverName: "Ana Santos",
     date: "Amanhã",
     time: "08:00 - 12:00",
@@ -25,6 +27,7 @@ const upcomingAppointments = [
   },
   {
     id: 3,
+    caregiverId: "cg-4",
     caregiverName: "Carla Mendes",
     date: "Sex, 24 Jan",
     time: "09:00 - 17:00",
