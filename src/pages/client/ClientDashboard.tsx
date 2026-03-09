@@ -50,6 +50,27 @@ const pendingReviews = [
 ];
 
 const ClientDashboard = () => {
+  const [reviewingId, setReviewingId] = useState<number | null>(null);
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const { toast } = useToast();
+
+  const handleSubmitReview = (reviewId: number) => {
+    if (rating === 0) return;
+    toast({ title: "Avaliação enviada!", description: "Obrigado pelo seu feedback." });
+    setReviewingId(null);
+    setRating(0);
+    setComment("");
+  };
+
+  const handleCancelReview = () => {
+    setReviewingId(null);
+    setRating(0);
+    setHoverRating(0);
+    setComment("");
+  };
+
   return (
     <ClientLayout title="Dashboard" subtitle="Bem-vindo de volta, João!">
       {/* Stats */}
