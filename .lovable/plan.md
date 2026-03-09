@@ -1,25 +1,20 @@
 
 
-## Plano: Gerar nova imagem hero na paleta Cuidare
+## Plano: Substituir PNG por SVG inline no componente do logo
 
-### Resumo
+### Problema
 
-Usar a API de geração de imagem (Gemini) para criar uma nova imagem hero que combine com a paleta Terracota & Creme da Cuidare — tons quentes, acolhedores, com cena de cuidado humano — e substituir o asset atual.
+O arquivo `cuidare-logo-white.png` gerado é provavelmente inválido ou vazio (a geração de binários PNG não é confiável). O símbolo não aparece, apenas o container terracota.
 
-### Alterações
+### Solução
 
-| Arquivo | Ação |
-|---------|------|
-| `src/assets/hero-eldercare.jpg` | Substituir pela nova imagem gerada via AI |
-| `src/components/landing/HeroSection.tsx` | Atualizar o import para o novo nome de arquivo (ex: `hero-cuidare.png`) e ajustar o overlay gradient para complementar a nova paleta |
+Substituir a dependência de arquivo PNG por um SVG inline diretamente no componente `CuidareLogo.tsx`. O SVG desenhará o símbolo espiral em branco, garantindo que sempre renderize corretamente sem depender de assets binários.
 
-### Detalhes
+**Arquivo: `src/components/CuidareLogo.tsx`**
 
-1. **Gerar imagem** via `google/gemini-2.5-flash-image` com prompt descrevendo: cena acolhedora de cuidadora com idoso, tons quentes terracota (#B5472A), creme (#FBF4EC), iluminação suave, estilo fotográfico profissional.
+- Remover o import do PNG
+- Substituir o `<img>` por um `<svg>` inline com o desenho do espiral em branco (`stroke="white"`, sem fill)
+- O SVG será um espiral simples usando arcos (`path` com comandos `A`), centralizado no container `bg-primary rounded-xl`
 
-2. **Salvar** como `src/assets/hero-cuidare.png`.
-
-3. **Ajustar overlay** no HeroSection: trocar o gradient escuro (`from-foreground/90`) por um gradient em tons de terracota/marrom quente que harmonize com a imagem e mantenha legibilidade do texto branco.
-
-4. **Atualizar import** de `hero-eldercare.jpg` para `hero-cuidare.png`.
+Apenas um arquivo será alterado.
 
