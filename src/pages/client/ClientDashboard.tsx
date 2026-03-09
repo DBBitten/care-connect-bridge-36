@@ -183,7 +183,7 @@ const ClientDashboard = () => {
                     <span className="text-sm font-medium text-secondary-foreground">{caregiver.avatar}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-foreground">{caregiver.name}</p>
+                    <Link to={`/cuidador/${caregiver.caregiverId}`} className="font-medium text-primary hover:underline cursor-pointer">{caregiver.name}</Link>
                     <p className="text-xs text-muted-foreground">{caregiver.specialty}</p>
                   </div>
                   <div className="flex items-center gap-1">
