@@ -1,28 +1,25 @@
 
 
-## Plano: Sidebar colapsável com botão de toggle
+## Plano: Gerar nova imagem hero na paleta Cuidare
 
-### O que muda
+### Resumo
 
-A sidebar do cliente será refatorada para usar o componente `Sidebar` do Shadcn (já disponível em `ui/sidebar.tsx`), que tem suporte nativo a colapsar/expandir com animação. Quando colapsada, mostra apenas os ícones. Um botão de toggle fica visível no topo da área de conteúdo.
+Usar a API de geração de imagem (Gemini) para criar uma nova imagem hero que combine com a paleta Terracota & Creme da Cuidare — tons quentes, acolhedores, com cena de cuidado humano — e substituir o asset atual.
 
-### Arquivos alterados
+### Alterações
 
-**1. `src/components/client/ClientSidebar.tsx`** — Reescrever usando os componentes Shadcn:
-- `Sidebar` com `collapsible="icon"`
-- `SidebarHeader` com logo (quando colapsado, mostra só o ícone)
-- `SidebarContent` > `SidebarMenu` com `SidebarMenuItem` + `SidebarMenuButton` para cada nav item, usando `tooltip` para mostrar label quando colapsado
-- `SidebarFooter` com seção do usuário e botão sair
-- Manter highlight do item ativo e badge de notificações
+| Arquivo | Ação |
+|---------|------|
+| `src/assets/hero-eldercare.jpg` | Substituir pela nova imagem gerada via AI |
+| `src/components/landing/HeroSection.tsx` | Atualizar o import para o novo nome de arquivo (ex: `hero-cuidare.png`) e ajustar o overlay gradient para complementar a nova paleta |
 
-**2. `src/components/client/ClientLayout.tsx`** — Adaptar o layout:
-- Envolver tudo com `SidebarProvider`
-- Usar `SidebarInset` em vez de `<main className="ml-64">`
-- Adicionar `SidebarTrigger` no header da área de conteúdo (sempre visível)
-- O layout se ajusta automaticamente quando a sidebar colapsa/expande
+### Detalhes
 
-### Comportamento
-- Desktop: sidebar começa expandida (16rem), ao clicar no trigger colapsa para modo ícone (3rem) mostrando apenas ícones com tooltips
-- Mobile: sidebar abre como Sheet (overlay), com trigger sempre visível
-- Atalho de teclado Ctrl+B funciona automaticamente
+1. **Gerar imagem** via `google/gemini-2.5-flash-image` com prompt descrevendo: cena acolhedora de cuidadora com idoso, tons quentes terracota (#B5472A), creme (#FBF4EC), iluminação suave, estilo fotográfico profissional.
+
+2. **Salvar** como `src/assets/hero-cuidare.png`.
+
+3. **Ajustar overlay** no HeroSection: trocar o gradient escuro (`from-foreground/90`) por um gradient em tons de terracota/marrom quente que harmonize com a imagem e mantenha legibilidade do texto branco.
+
+4. **Atualizar import** de `hero-eldercare.jpg` para `hero-cuidare.png`.
 

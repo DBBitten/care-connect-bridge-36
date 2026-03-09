@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { ClientSidebar } from "./ClientSidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 
 interface ClientLayoutProps {
   children: ReactNode;
@@ -9,15 +10,22 @@ interface ClientLayoutProps {
 
 export function ClientLayout({ children, title, subtitle }: ClientLayoutProps) {
   return (
-    <div className="min-h-screen bg-background">
-      <ClientSidebar />
-      <main className="ml-64 p-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground">{title}</h1>
-          {subtitle && <p className="text-muted-foreground mt-1">{subtitle}</p>}
-        </div>
-        {children}
-      </main>
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <ClientSidebar />
+        <SidebarInset>
+          <header className="h-14 flex items-center gap-4 border-b border-border px-6">
+            <SidebarTrigger className="-ml-2" />
+            <div>
+              <h1 className="text-lg font-bold text-foreground leading-tight">{title}</h1>
+              {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+            </div>
+          </header>
+          <main className="p-6">
+            {children}
+          </main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }
