@@ -26,7 +26,7 @@ export function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <CuidareLogo size="md" />
-            <span className="text-xl font-bold text-foreground">Cuidare</span>
+            <span className="text-xl font-bold text-primary">Cuidare</span>
           </Link>
 
           {/* Desktop Navigation */}
