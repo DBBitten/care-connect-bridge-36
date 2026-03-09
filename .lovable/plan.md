@@ -1,25 +1,29 @@
 
 
-## Plano: Gerar nova imagem hero na paleta Cuidare
+## Plano: Corrigir logo (quadrado preto) e cor do nome "Cuidare"
 
-### Resumo
+### Problema
 
-Usar a API de geração de imagem (Gemini) para criar uma nova imagem hero que combine com a paleta Terracota & Creme da Cuidare — tons quentes, acolhedores, com cena de cuidado humano — e substituir o asset atual.
+1. A imagem PNG tem fundo branco (não transparente) entre as linhas do espiral. O filtro `invert` inverte esse branco para preto, criando o quadrado preto.
+2. O texto "Cuidare" usa `text-foreground` (cinza escuro) em vez da cor da marca (terracota).
 
-### Alterações
+### Solução
 
-| Arquivo | Ação |
-|---------|------|
-| `src/assets/hero-eldercare.jpg` | Substituir pela nova imagem gerada via AI |
-| `src/components/landing/HeroSection.tsx` | Atualizar o import para o novo nome de arquivo (ex: `hero-cuidare.png`) e ajustar o overlay gradient para complementar a nova paleta |
+**1. Gerar versão branca do logo com fundo transparente**
 
-### Detalhes
+Usar a API de geração de imagem (Gemini) para criar uma versão limpa do símbolo espiral em branco sobre fundo transparente. Salvar como `src/assets/cuidare-logo-white.png`.
 
-1. **Gerar imagem** via `google/gemini-2.5-flash-image` com prompt descrevendo: cena acolhedora de cuidadora com idoso, tons quentes terracota (#B5472A), creme (#FBF4EC), iluminação suave, estilo fotográfico profissional.
+**2. Atualizar `src/components/CuidareLogo.tsx`**
 
-2. **Salvar** como `src/assets/hero-cuidare.png`.
+- Remover o filtro CSS `invert` completamente
+- Usar a nova imagem branca diretamente sobre o container `bg-primary`
 
-3. **Ajustar overlay** no HeroSection: trocar o gradient escuro (`from-foreground/90`) por um gradient em tons de terracota/marrom quente que harmonize com a imagem e mantenha legibilidade do texto branco.
+**3. Corrigir cor do nome "Cuidare"**
 
-4. **Atualizar import** de `hero-eldercare.jpg` para `hero-cuidare.png`.
+Em todos os locais onde aparece `<span>Cuidare</span>`, trocar `text-foreground` por `text-primary`:
+
+- `src/components/layout/Navbar.tsx` (linha 29)
+- `src/components/caregiver/CaregiverSidebar.tsx`
+- `src/components/client/ClientSidebar.tsx`
+- `src/components/admin/AdminSidebar.tsx`
 
