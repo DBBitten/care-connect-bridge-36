@@ -1,9 +1,35 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Calendar, CreditCard, Star, User, LogOut, Settings, Search, Bell } from "lucide-react";
+import {
+  LayoutDashboard,
+  Calendar,
+  CreditCard,
+  Star,
+  User,
+  LogOut,
+  Settings,
+  Search,
+  Bell,
+} from "lucide-react";
 import { CuidareLogo } from "@/components/CuidareLogo";
-import { cn } from "@/lib/utils";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { Badge } from "@/components/ui/badge";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarGroup,
+  SidebarGroupContent,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/cliente/dashboard" },
@@ -19,61 +45,84 @@ const navItems = [
 export function ClientSidebar() {
   const location = useLocation();
   const { unreadCount } = useNotifications();
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-card border-r border-border flex flex-col">
+    <Sidebar collapsible="icon">
       {/* Logo */}
-      <div className="p-6 border-b border-border">
+      <SidebarHeader className="border-b border-border p-4">
         <Link to="/" className="flex items-center gap-3">
           <CuidareLogo size="md" />
-          <span className="text-xl font-bold text-primary">Cuidare</span>
+          {!collapsed && (
+            <span className="text-xl font-bold text-primary">Cuidare</span>
+          )}
         </Link>
-      </div>
+      </SidebarHeader>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
-                isActive
-                  ? "bg-primary text-primary-foreground shadow-soft"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              )}
-            >
-              <item.icon className="w-5 h-5" />
-              <span className="font-medium">{item.label}</span>
-              {(item as any).showBadge && unreadCount > 0 && !isActive && (
-                <Badge className="ml-auto text-xs">{unreadCount}</Badge>
-              )}
-            </Link>
-          );
-        })}
-      </nav>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.href;
+                const button = (
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive}
+                    tooltip={item.label}
+                  >
+                    <Link to={item.href}>
+                      <item.icon className="h-5 w-5" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                );
+
+                return (
+                  <SidebarMenuItem key={item.href} className="relative">
+                    {button}
+                    {item.showBadge && unreadCount > 0 && !isActive && !collapsed && (
+                      <Badge className="absolute right-2 top-1/2 -translate-y-1/2 text-xs pointer-events-none">
+                        {unreadCount}
+                      </Badge>
+                    )}
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
 
       {/* User section */}
-      <div className="p-4 border-t border-border">
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-muted mb-2">
-          <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-            <User className="w-5 h-5 text-secondary-foreground" />
+      <SidebarFooter className="border-t border-border">
+        {!collapsed && (
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-muted mb-2">
+            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center shrink-0">
+              <User className="w-5 h-5 text-secondary-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">João Oliveira</p>
+              <p className="text-xs text-muted-foreground">Familiar</p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">João Oliveira</p>
-            <p className="text-xs text-muted-foreground">Familiar</p>
-          </div>
-        </div>
-        <Link
-          to="/login"
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="font-medium">Sair</span>
-        </Link>
-      </div>
-    </aside>
+        )}
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Sair">
+              <Link
+                to="/login"
+                className="text-muted-foreground hover:text-destructive"
+              >
+                <LogOut className="h-5 w-5" />
+                <span>Sair</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </Sidebar>
   );
 }
