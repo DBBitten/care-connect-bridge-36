@@ -104,12 +104,9 @@ const SearchCaregivers = () => {
   return (
     <ClientLayout title="Encontre o cuidador ideal" subtitle="Cuidadores verificados e certificados em sua Cidade, prontos para ajudar sua família.">
         <div>
-
-            </p>
-            <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-success/10 text-success rounded-full text-sm font-medium">Todos verificados
-              <ShieldCheck className="w-4 h-4" />
-              Todos verificados via KYC — Pagamento seguro pela plataforma
-            </div>
+          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-success/10 text-success rounded-full text-sm font-medium">
+            <ShieldCheck className="w-4 h-4" />
+            Todos verificados via KYC — Pagamento seguro pela plataforma
           </div>
 
           {/* Filters */}
