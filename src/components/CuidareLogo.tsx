@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import logo from "@/assets/cuidare-logo.png";
+import logoWhite from "@/assets/cuidare-logo-white.png";
 
 const sizeMap = {
   sm: "w-8 h-8",
@@ -22,9 +22,9 @@ export function CuidareLogo({ size = "md", className }: CuidareLogoProps) {
   return (
     <div className={cn("rounded-xl bg-primary flex items-center justify-center", sizeMap[size], className)}>
       <img
-        src={logo}
+        src={logoWhite}
         alt="Cuidare"
-        className={cn("object-contain invert", imgSizeMap[size])}
+        className={cn("object-contain", imgSizeMap[size])}
       />
     </div>
   );

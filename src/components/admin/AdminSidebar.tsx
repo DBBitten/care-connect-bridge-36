@@ -33,7 +33,7 @@ export function AdminSidebar() {
         <Link to="/admin" className="flex items-center gap-3">
           <CuidareLogo size="md" />
           <div>
-            <span className="text-xl font-bold text-background">Cuidare</span>
+            <span className="text-xl font-bold text-primary">Cuidare</span>
             <p className="text-xs text-background/60">Admin</p>
           </div>
         </Link>
