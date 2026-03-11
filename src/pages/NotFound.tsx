@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { CuidareLogo } from "@/components/CuidareLogo";
+import { CuramiLogo } from "@/components/CuramiLogo";
 import { Button } from "@/components/ui/button";
 
 const NotFound = () => {
