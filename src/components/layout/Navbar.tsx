@@ -25,8 +25,8 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <CuidareLogo size="md" />
-            <span className="text-xl font-bold text-primary">Cuidare</span>
+            <CuramiLogo size="md" />
+            <span className="text-xl font-bold text-primary">Curami</span>
           </Link>
 
           {/* Desktop Navigation */}

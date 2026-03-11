@@ -65,7 +65,7 @@ export function RequireLegalAcceptance({
   
   const getModalDescription = () => {
     if (stage === 'registration') {
-      return 'Para usar a Cuidare, você precisa aceitar nossos termos.';
+      return 'Para usar a Curami, você precisa aceitar nossos termos.';
     }
     if (stage === 'kyc') {
       return 'Para iniciar sua verificação como cuidador, aceite os termos específicos.';

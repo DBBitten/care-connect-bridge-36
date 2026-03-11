@@ -84,7 +84,7 @@ const BookingPage = () => {
 
     setIsLoading(true);
     const appt = createAppointment({
-      clientEmail: user?.email || "guest@cuidare.com.br",
+      clientEmail: user?.email || "guest@curami.com.br",
       caregiverName,
       serviceId: selectedEntry.service.id,
       serviceName: selectedEntry.service.name,

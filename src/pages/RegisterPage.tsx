@@ -157,7 +157,7 @@ const RegisterPage = () => {
 
         <Card variant="elevated">
           <CardHeader className="text-center">
-            <CuidareLogo size="md" className="mx-auto mb-4" />
+            <CuramiLogo size="md" className="mx-auto mb-4" />
             <CardTitle>
               Cadastro de {userType === "cuidador" ? "Cuidador" : "Familiar"}
             </CardTitle>

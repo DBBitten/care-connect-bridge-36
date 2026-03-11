@@ -79,7 +79,7 @@ export function AdminSidebar() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-background truncate">Administrador</p>
-            <p className="text-xs text-background/60">admin@cuidare.com.br</p>
+            <p className="text-xs text-background/60">admin@curami.com.br</p>
           </div>
         </div>
         <Link

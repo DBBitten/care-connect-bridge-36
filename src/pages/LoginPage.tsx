@@ -225,7 +225,7 @@ const LoginPage = () => {
           open={showLegalModal}
           onAccepted={handleLegalAccepted}
           title="Termos de Uso"
-          description="Para continuar usando a Cuidare, aceite nossos termos."
+          description="Para continuar usando a Curami, aceite nossos termos."
           requiredDocuments={['TERMS_OF_USE', 'PRIVACY_POLICY']}
         />
       </div>
