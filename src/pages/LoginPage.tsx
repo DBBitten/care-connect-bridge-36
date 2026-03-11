@@ -161,7 +161,7 @@ const LoginPage = () => {
 
         <Card variant="elevated">
           <CardHeader className="text-center">
-            <CuidareLogo size="md" className="mx-auto mb-4" />
+            <CuramiLogo size="md" className="mx-auto mb-4" />
             <CardTitle>Entrar como {userType === "admin" ? "Administrador" : userType === "cuidador" ? "Cuidador" : "Familiar"}</CardTitle>
             <CardDescription>
               Digite seus dados para acessar sua conta
