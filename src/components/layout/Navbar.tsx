@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
-import { CuidareLogo } from "@/components/CuidareLogo";
+import { CuramiLogo } from "@/components/CuramiLogo";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
@@ -25,8 +25,8 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <CuidareLogo size="md" />
-            <span className="text-xl font-bold text-primary">Cuidare</span>
+            <CuramiLogo size="md" />
+            <span className="text-xl font-bold text-primary">Curami</span>
           </Link>
 
           {/* Desktop Navigation */}

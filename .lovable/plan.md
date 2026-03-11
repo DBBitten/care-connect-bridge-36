@@ -1,39 +1,25 @@
 
 
-## Plano: Renomear "Cuidare" para "Curami"
+## Plano: Gerar nova imagem hero na paleta Cuidare
 
-### Escopo
+### Resumo
 
-Substituição global do nome "Cuidare" → "Curami" e "cuidare" → "curami" em todos os arquivos do projeto (20 arquivos, ~300 ocorrências).
+Usar a API de geração de imagem (Gemini) para criar uma nova imagem hero que combine com a paleta Terracota & Creme da Cuidare — tons quentes, acolhedores, com cena de cuidado humano — e substituir o asset atual.
 
-### Arquivos afetados
+### Alterações
 
-| Arquivo | Tipo de alteração |
-|---|---|
-| `index.html` | Title, meta tags, twitter site |
-| `src/components/layout/Navbar.tsx` | Texto do logo |
-| `src/components/layout/Footer.tsx` | Texto do logo, descrição |
-| `src/components/client/ClientSidebar.tsx` | Texto do logo |
-| `src/components/caregiver/CaregiverSidebar.tsx` | Texto do logo |
-| `src/components/admin/AdminSidebar.tsx` | Texto do logo, email admin |
-| `src/components/CuidareLogo.tsx` | Renomear componente para `CuramiLogo` |
-| `src/components/landing/HeroSection.tsx` | Import do asset (nome do arquivo mantido) |
-| `src/components/landing/CTASection.tsx` | Textos |
-| `src/components/landing/HowItWorksSection.tsx` | Textos |
-| `src/components/landing/TrustSection.tsx` | Textos |
-| `src/data/legalDocuments.ts` | Todas menções a "Cuidare", emails `@cuidare.com.br` → `@curami.com.br` |
-| `src/types/legal.ts` | Descrição |
-| `src/pages/LoginPage.tsx` | Textos |
-| `src/pages/RegisterPage.tsx` | Textos |
-| `src/pages/LandingPage.tsx` | Textos |
-| `src/pages/BookingPage.tsx` | Email |
-| `src/contexts/PaymentContext.tsx` | Email |
-| `src/components/kyc/*` | Textos se houver |
-| `src/components/legal/*` | Textos se houver |
+| Arquivo | Ação |
+|---------|------|
+| `src/assets/hero-eldercare.jpg` | Substituir pela nova imagem gerada via AI |
+| `src/components/landing/HeroSection.tsx` | Atualizar o import para o novo nome de arquivo (ex: `hero-cuidare.png`) e ajustar o overlay gradient para complementar a nova paleta |
 
 ### Detalhes
-- `CuidareLogo` componente será renomeado para `CuramiLogo` e todos os imports atualizados
-- O arquivo de asset `cuidare-logo.png` / `cuidare-logo-white.png` / `hero-cuidare.png` serão mantidos (não é possível renomear assets), mas os imports continuarão funcionando
-- Emails `@cuidare.com.br` → `@curami.com.br`
-- Twitter `@Cuidare` → `@Curami`
+
+1. **Gerar imagem** via `google/gemini-2.5-flash-image` com prompt descrevendo: cena acolhedora de cuidadora com idoso, tons quentes terracota (#B5472A), creme (#FBF4EC), iluminação suave, estilo fotográfico profissional.
+
+2. **Salvar** como `src/assets/hero-cuidare.png`.
+
+3. **Ajustar overlay** no HeroSection: trocar o gradient escuro (`from-foreground/90`) por um gradient em tons de terracota/marrom quente que harmonize com a imagem e mantenha legibilidade do texto branco.
+
+4. **Atualizar import** de `hero-eldercare.jpg` para `hero-cuidare.png`.
 

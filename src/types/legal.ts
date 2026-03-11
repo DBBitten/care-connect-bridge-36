@@ -60,7 +60,7 @@ export const LEGAL_DOCUMENT_INFO: LegalDocumentInfo[] = [
     title: 'Termos de Uso',
     shortTitle: 'Termos',
     route: '/termos',
-    description: 'Termos gerais de uso da plataforma Cuidare',
+    description: 'Termos gerais de uso da plataforma Curami',
     requiredFor: ['all'],
     requiredAtStage: 'registration',
   },

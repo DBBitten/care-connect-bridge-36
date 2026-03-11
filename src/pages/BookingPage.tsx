@@ -84,7 +84,7 @@ const BookingPage = () => {
 
     setIsLoading(true);
     const appt = createAppointment({
-      clientEmail: user?.email || "guest@cuidare.com.br",
+      clientEmail: user?.email || "guest@curami.com.br",
       caregiverName,
       serviceId: selectedEntry.service.id,
       serviceName: selectedEntry.service.name,
@@ -280,7 +280,7 @@ const BookingPage = () => {
                     <ul className="text-sm text-muted-foreground space-y-1 mb-4">
                       <li>• Cancelamentos com menos de 24h podem ter cobrança</li>
                       <li>• Pagamentos são processados pela plataforma</li>
-                      <li>• Não é permitido negociar fora da Cuidare</li>
+                      <li>• Não é permitido negociar fora da Curami</li>
                     </ul>
                     <div className="flex items-start gap-3">
                       <Checkbox

@@ -12,7 +12,7 @@ export function Footer() {
               <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
                 <ShieldCheck className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">Cuidare</span>
+              <span className="text-xl font-bold">Curami</span>
             </Link>
             <p className="text-background/70 max-w-md">
               Conectando quem precisa de cuidado com quem sabe cuidar. 
@@ -71,7 +71,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-background/20 mt-8 pt-8 text-center text-background/50">
-          <p>&copy; {new Date().getFullYear()} Cuidare. Todos os direitos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} Curami. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

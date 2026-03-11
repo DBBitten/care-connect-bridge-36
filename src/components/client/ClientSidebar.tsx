@@ -10,7 +10,7 @@ import {
   Search,
   Bell,
 } from "lucide-react";
-import { CuidareLogo } from "@/components/CuidareLogo";
+import { CuramiLogo } from "@/components/CuramiLogo";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -53,9 +53,9 @@ export function ClientSidebar() {
       {/* Logo */}
       <SidebarHeader className="border-b border-border p-4">
         <Link to="/" className="flex items-center gap-3">
-          <CuidareLogo size="md" />
+          <CuramiLogo size="md" />
           {!collapsed && (
-            <span className="text-xl font-bold text-primary">Cuidare</span>
+            <span className="text-xl font-bold text-primary">Curami</span>
           )}
         </Link>
       </SidebarHeader>

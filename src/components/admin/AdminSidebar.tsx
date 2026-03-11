@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { LayoutDashboard, Users, Calendar, Star, Settings, LogOut, Shield, ShieldCheck, FileText, Package, CreditCard, BarChart3, Bell, Map } from "lucide-react";
-import { CuidareLogo } from "@/components/CuidareLogo";
+import { CuramiLogo } from "@/components/CuramiLogo";
 import { cn } from "@/lib/utils";
 import { useKyc } from "@/contexts/KycContext";
 import { useNotifications } from "@/contexts/NotificationContext";
@@ -31,9 +31,9 @@ export function AdminSidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-foreground/20">
         <Link to="/admin" className="flex items-center gap-3">
-          <CuidareLogo size="md" />
+          <CuramiLogo size="md" />
           <div>
-            <span className="text-xl font-bold text-primary">Cuidare</span>
+            <span className="text-xl font-bold text-primary">Curami</span>
             <p className="text-xs text-background/60">Admin</p>
           </div>
         </Link>
@@ -79,7 +79,7 @@ export function AdminSidebar() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-background truncate">Administrador</p>
-            <p className="text-xs text-background/60">admin@cuidare.com.br</p>
+            <p className="text-xs text-background/60">admin@curami.com.br</p>
           </div>
         </div>
         <Link

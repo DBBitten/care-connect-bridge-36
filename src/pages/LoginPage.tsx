@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Users, UserCheck, Mail, Lock, Shield } from "lucide-react";
-import { CuidareLogo } from "@/components/CuidareLogo";
+import { CuramiLogo } from "@/components/CuramiLogo";
 import { toast } from "sonner";
 import { Navbar } from "@/components/layout/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
@@ -81,7 +81,7 @@ const LoginPage = () => {
 
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-4">
-              <CuidareLogo size="md" />
+              <CuramiLogo size="md" />
             </Link>
             <h1 className="text-2xl font-bold text-foreground">Bem-vindo de volta</h1>
             <p className="text-muted-foreground">Como você quer entrar?</p>
@@ -161,7 +161,7 @@ const LoginPage = () => {
 
         <Card variant="elevated">
           <CardHeader className="text-center">
-            <CuidareLogo size="md" className="mx-auto mb-4" />
+            <CuramiLogo size="md" className="mx-auto mb-4" />
             <CardTitle>Entrar como {userType === "admin" ? "Administrador" : userType === "cuidador" ? "Cuidador" : "Familiar"}</CardTitle>
             <CardDescription>
               Digite seus dados para acessar sua conta
@@ -225,7 +225,7 @@ const LoginPage = () => {
           open={showLegalModal}
           onAccepted={handleLegalAccepted}
           title="Termos de Uso"
-          description="Para continuar usando a Cuidare, aceite nossos termos."
+          description="Para continuar usando a Curami, aceite nossos termos."
           requiredDocuments={['TERMS_OF_USE', 'PRIVACY_POLICY']}
         />
       </div>

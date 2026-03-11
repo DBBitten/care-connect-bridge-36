@@ -6,12 +6,12 @@ const sizeMap = {
   lg: "w-16 h-16",
 };
 
-interface CuidareLogoProps {
+interface CuramiLogoProps {
   size?: "sm" | "md" | "lg";
   className?: string;
 }
 
-export function CuidareLogo({ size = "md", className }: CuidareLogoProps) {
+export function CuramiLogo({ size = "md", className }: CuramiLogoProps) {
   return (
     <div className={cn("rounded-xl bg-primary flex items-center justify-center", sizeMap[size], className)}>
       <svg
