@@ -10,7 +10,7 @@ import {
   Search,
   Bell,
 } from "lucide-react";
-import { CuidareLogo } from "@/components/CuidareLogo";
+import { CuramiLogo } from "@/components/CuramiLogo";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { Badge } from "@/components/ui/badge";
 import {
