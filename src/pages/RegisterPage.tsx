@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Users, UserCheck, Mail, Lock, User, Phone, MapPin, Calendar, FileText, ExternalLink } from "lucide-react";
-import { CuidareLogo } from "@/components/CuidareLogo";
+import { CuramiLogo } from "@/components/CuramiLogo";
 import { toast } from "sonner";
 import { Navbar } from "@/components/layout/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
