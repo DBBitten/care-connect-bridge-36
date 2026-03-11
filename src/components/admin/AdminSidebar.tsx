@@ -31,9 +31,9 @@ export function AdminSidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-foreground/20">
         <Link to="/admin" className="flex items-center gap-3">
-          <CuidareLogo size="md" />
+          <CuramiLogo size="md" />
           <div>
-            <span className="text-xl font-bold text-primary">Cuidare</span>
+            <span className="text-xl font-bold text-primary">Curami</span>
             <p className="text-xs text-background/60">Admin</p>
           </div>
         </Link>
