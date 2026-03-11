@@ -81,7 +81,7 @@ const LoginPage = () => {
 
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-4">
-              <CuidareLogo size="md" />
+              <CuramiLogo size="md" />
             </Link>
             <h1 className="text-2xl font-bold text-foreground">Bem-vindo de volta</h1>
             <p className="text-muted-foreground">Como você quer entrar?</p>
