@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Users, UserCheck, Mail, Lock, Shield } from "lucide-react";
-import { CuidareLogo } from "@/components/CuidareLogo";
+import { CuramiLogo } from "@/components/CuramiLogo";
 import { toast } from "sonner";
 import { Navbar } from "@/components/layout/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
