@@ -5,7 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Calendar as CalendarIcon, Clock, MapPin, User, Phone, MessageSquare } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
+// TODO: substituir por dados reais de usePayments() e useAuth() quando houver integração com backend
 const appointments = [
   {
     id: 1,
@@ -140,15 +142,18 @@ const ClientCalendar = () => {
                         </div>
 
                         <div className="flex items-center gap-2 mt-4">
-                          <Button variant="outline" size="sm">
+                          {/* TODO: implementar funcionalidade */}
+                          <Button variant="outline" size="sm" onClick={() => {}}>
                             <Phone className="w-4 h-4 mr-1" />
                             Ligar
                           </Button>
-                          <Button variant="outline" size="sm">
+                          {/* TODO: implementar funcionalidade */}
+                          <Button variant="outline" size="sm" onClick={() => {}}>
                             <MessageSquare className="w-4 h-4 mr-1" />
                             Mensagem
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                          {/* TODO: implementar funcionalidade */}
+                          <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => {}}>
                             Cancelar
                           </Button>
                         </div>
@@ -166,7 +171,7 @@ const ClientCalendar = () => {
                     }
                   </p>
                   <Button className="mt-4" asChild>
-                    <a href="/buscar-cuidadores">Buscar cuidadores</a>
+                    <Link to="/buscar-cuidadores">Buscar cuidadores</Link>
                   </Button>
                 </div>
               )}

@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { DollarSign, TrendingUp, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { usePayments } from "@/contexts/PaymentContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -15,6 +15,11 @@ const AdminPayments = () => {
   const { payments, appointments, refunds, adminRefund } = usePayments();
   const [refundPaymentId, setRefundPaymentId] = useState<string | null>(null);
   const [refundReason, setRefundReason] = useState("");
+
+  const appointmentMap = useMemo(() =>
+    Object.fromEntries(appointments.map(a => [a.id, a])),
+    [appointments]
+  );
 
   const totalReceived = payments.filter(p => p.status === "PAID").reduce((s, p) => s + p.amountTotal, 0);
   const totalFees = payments.filter(p => p.status === "PAID").reduce((s, p) => s + p.platformFee, 0);
@@ -28,7 +33,7 @@ const AdminPayments = () => {
     setRefundReason("");
   };
 
-  const getAppointmentForPayment = (appointmentId: string) => appointments.find(a => a.id === appointmentId);
+  
 
   const statusLabel: Record<string, string> = {
     PAID: "Pago", REFUNDED: "Reembolsado", INITIATED: "Iniciado", FAILED: "Falhou", CANCELED: "Cancelado",
@@ -99,7 +104,7 @@ const AdminPayments = () => {
               </TableHeader>
               <TableBody>
                 {payments.map(p => {
-                  const appt = getAppointmentForPayment(p.appointmentId);
+                  const appt = appointmentMap[p.appointmentId];
                   return (
                     <TableRow key={p.id}>
                       <TableCell className="font-mono text-xs">{p.id.slice(0, 12)}</TableCell>

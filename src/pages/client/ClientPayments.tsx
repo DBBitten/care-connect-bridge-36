@@ -11,6 +11,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
+import type { Appointment } from "@/types/payment";
+
+const getCancelInfo = (appt: Appointment) => {
+  const apptDate = new Date(`${appt.dates[0]}T${appt.startTime}:00`);
+  const hoursUntil = (apptDate.getTime() - Date.now()) / (1000 * 60 * 60);
+  if (hoursUntil > 24) return { text: "Reembolso integral", rate: "100%" };
+  return { text: "Reembolso parcial (50%)", rate: "50%" };
+};
+
 const ClientPayments = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -25,13 +34,6 @@ const ClientPayments = () => {
     cancelAppointment(appointmentId);
     toast({ title: "Agendamento cancelado", description: "O reembolso será processado conforme a política de cancelamento." });
     setCancelId(null);
-  };
-
-  const getCancelInfo = (appt: typeof appointments[0]) => {
-    const apptDate = new Date(`${appt.dates[0]}T${appt.startTime}:00`);
-    const hoursUntil = (apptDate.getTime() - Date.now()) / (1000 * 60 * 60);
-    if (hoursUntil > 24) return { text: "Reembolso integral", rate: "100%" };
-    return { text: "Reembolso parcial (50%)", rate: "50%" };
   };
 
   const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive"; icon: typeof CheckCircle }> = {
