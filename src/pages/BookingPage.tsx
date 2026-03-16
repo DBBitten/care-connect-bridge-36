@@ -15,10 +15,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useServices } from "@/contexts/ServiceContext";
 import { usePayments } from "@/contexts/PaymentContext";
 import { useCaregivers } from "@/contexts/CaregiverContext";
-
-function calcHours(start: string, end: string) {
-  return parseInt(end) - parseInt(start);
-}
+import { calcHours } from "@/utils/timeUtils";
 
 const BookingPage = () => {
   const { id } = useParams();
