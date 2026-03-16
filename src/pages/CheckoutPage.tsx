@@ -111,7 +111,7 @@ const CheckoutPage = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Horário</span>
-                  <span className="font-medium text-foreground">{appointment.startTime} – {appointment.endTime} ({parseInt(appointment.endTime) - parseInt(appointment.startTime)}h)</span>
+                  <span className="font-medium text-foreground">{appointment.startTime} – {appointment.endTime} ({calcHours(appointment.startTime, appointment.endTime)}h)</span>
                 </div>
               </CardContent>
             </Card>
