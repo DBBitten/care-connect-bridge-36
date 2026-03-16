@@ -54,13 +54,6 @@ const SearchCaregivers = () => {
     setCertFilter((prev) => prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]);
   };
 
-  const getLowestPrice = (profile: typeof approvedProfiles[0], serviceId?: string) => {
-    const offers = serviceId ?
-    profile.serviceOffers.filter((o) => o.serviceId === serviceId) :
-    profile.serviceOffers;
-    if (offers.length === 0) return null;
-    return Math.min(...offers.map((o) => o.pricePerHour));
-  };
 
   const results = useMemo(() => {
     let list = approvedProfiles.map((p) => ({

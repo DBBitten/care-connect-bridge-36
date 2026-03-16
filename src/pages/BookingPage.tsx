@@ -94,7 +94,6 @@ const BookingPage = () => {
     });
     toast.success("Agendamento criado! Finalize o pagamento.");
     navigate(`/checkout/${appt.id}`);
-    setIsLoading(false);
   };
 
   return (
