@@ -33,7 +33,7 @@ const AdminPayments = () => {
     setRefundReason("");
   };
 
-  const getAppointmentForPayment = (appointmentId: string) => appointments.find(a => a.id === appointmentId);
+  
 
   const statusLabel: Record<string, string> = {
     PAID: "Pago", REFUNDED: "Reembolsado", INITIATED: "Iniciado", FAILED: "Falhou", CANCELED: "Cancelado",
