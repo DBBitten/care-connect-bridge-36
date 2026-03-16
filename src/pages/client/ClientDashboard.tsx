@@ -6,7 +6,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar, Clock, Star, Users, MapPin, ArrowRight, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useCaregivers } from "@/contexts/CaregiverContext";
+import { useAuth } from "@/contexts/AuthContext";
 
+// TODO: substituir por dados reais de usePayments() e useCaregivers() quando houver integração com backend
 const upcomingAppointments = [
   {
     id: 1,
@@ -40,11 +43,13 @@ const upcomingAppointments = [
   },
 ];
 
+// TODO: substituir por dados reais de usePayments() e useCaregivers() quando houver integração com backend
 const recentCaregivers = [
   { id: 1, caregiverId: "cg-1", name: "Maria Silva", rating: 4.9, specialty: "Cuidado diário", avatar: "MS" },
   { id: 2, caregiverId: "cg-2", name: "Ana Santos", rating: 4.8, specialty: "Companhia", avatar: "AS" },
 ];
 
+// TODO: substituir por dados reais de usePayments() e useCaregivers() quando houver integração com backend
 const pendingReviews = [
   { id: 1, caregiverId: "cg-4", caregiverName: "Carla Mendes", date: "20 Jan 2025", type: "Cuidado integral" },
 ];
@@ -55,9 +60,21 @@ const ClientDashboard = () => {
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
   const { toast } = useToast();
+  const { addReview } = useCaregivers();
+  const { user } = useAuth();
 
   const handleSubmitReview = (reviewId: number) => {
     if (rating === 0) return;
+    const reviewItem = pendingReviews.find(r => r.id === reviewId);
+    if (reviewItem) {
+      addReview({
+        caregiverId: reviewItem.caregiverId,
+        clientEmail: user?.email || "guest@curami.com.br",
+        clientName: user?.name || "Cliente",
+        rating,
+        comment,
+      });
+    }
     toast({ title: "Avaliação enviada!", description: "Obrigado pelo seu feedback." });
     setReviewingId(null);
     setRating(0);
@@ -74,6 +91,7 @@ const ClientDashboard = () => {
   return (
     <ClientLayout title="Dashboard" subtitle="Bem-vindo de volta, João!">
       {/* Stats */}
+      {/* TODO: substituir por valores calculados a partir dos contextos reais */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card variant="elevated">
           <CardContent className="p-6">

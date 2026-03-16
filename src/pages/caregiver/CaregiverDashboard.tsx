@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Star, DollarSign, GraduationCap, MapPin, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// TODO: substituir por dados reais de usePayments() quando houver integração com backend
 const upcomingAppointments = [
   {
     id: 1,
@@ -31,6 +32,7 @@ const upcomingAppointments = [
   },
 ];
 
+// TODO: substituir por dados reais de useCaregivers() quando houver integração com backend
 const pendingCourses = [
   { id: 1, name: "Primeiros Socorros", progress: 60 },
   { id: 2, name: "Cuidados com Mobilidade", progress: 0 },
@@ -40,6 +42,7 @@ const CaregiverDashboard = () => {
   return (
     <CaregiverLayout title="Dashboard" subtitle="Bem-vinda de volta, Maria!">
       {/* Stats */}
+      {/* TODO: substituir por valores calculados a partir dos contextos reais */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card variant="elevated">
           <CardContent className="p-6">

@@ -1,4 +1,5 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { calcHours } from "@/utils/timeUtils";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,10 +68,10 @@ const CheckoutPage = () => {
       <Navbar />
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
-          <Link to={`/agendar/1`} className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8">
+          <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8">
             <ArrowLeft className="w-4 h-4" />
             Voltar
-          </Link>
+          </button>
 
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="text-center mb-8">
@@ -110,7 +111,7 @@ const CheckoutPage = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Horário</span>
-                  <span className="font-medium text-foreground">{appointment.startTime} – {appointment.endTime} ({parseInt(appointment.endTime) - parseInt(appointment.startTime)}h)</span>
+                  <span className="font-medium text-foreground">{appointment.startTime} – {appointment.endTime} ({calcHours(appointment.startTime, appointment.endTime)}h)</span>
                 </div>
               </CardContent>
             </Card>
@@ -122,7 +123,7 @@ const CheckoutPage = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Valor do serviço ({appointment.dates.length} dia{appointment.dates.length > 1 ? "s" : ""} × {parseInt(appointment.endTime) - parseInt(appointment.startTime)}h × R$ {appointment.pricePerHour.toFixed(2)})</span>
+                  <span className="text-muted-foreground">Valor do serviço ({appointment.dates.length} dia{appointment.dates.length > 1 ? "s" : ""} × {calcHours(appointment.startTime, appointment.endTime)}h × R$ {appointment.pricePerHour.toFixed(2)})</span>
                   <span className="text-foreground">R$ {appointment.totalPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
