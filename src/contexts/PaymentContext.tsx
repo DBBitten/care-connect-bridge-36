@@ -3,7 +3,7 @@ import {
   Appointment, AppointmentStatus, Payment, PaymentStatus, Refund, PlatformSettings, PaymentMethod,
 } from "@/types/payment";
 import { useNotifications } from "@/contexts/NotificationContext";
-
+import { calcHours } from "@/utils/timeUtils";
 const KEYS = {
   appointments: "eldercare_appointments",
   payments: "eldercare_payments",
