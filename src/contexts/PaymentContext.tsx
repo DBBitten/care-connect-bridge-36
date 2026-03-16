@@ -203,7 +203,7 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
       processPayment, cancelAppointment, adminRefund,
       getPayments,
       getPaymentByAppointment,
-      getRefunds: () => refunds,
+      getRefunds,
       updatePlatformFeeRate,
     }}>
       {children}
