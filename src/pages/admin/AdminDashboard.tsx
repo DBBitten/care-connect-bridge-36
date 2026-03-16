@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Users, UserCheck, Calendar, Star, DollarSign, TrendingUp, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { usePayments } from "@/contexts/PaymentContext";
 
+// TODO: substituir por dados reais de contexto ou API quando houver integração com backend
 const recentUsers = [
   { id: 1, name: "João Silva", type: "necessitado", status: "active", date: "Hoje" },
   { id: 2, name: "Maria Santos", type: "cuidador", status: "pending", date: "Hoje" },
@@ -12,6 +14,7 @@ const recentUsers = [
   { id: 4, name: "Pedro Lima", type: "necessitado", status: "active", date: "Ontem" },
 ];
 
+// TODO: substituir por dados reais de contexto ou API quando houver integração com backend
 const recentAppointments = [
   { id: 1, caregiver: "Maria Santos", patient: "João Silva", date: "25 Jan", status: "scheduled" },
   { id: 2, caregiver: "Ana Costa", patient: "Roberto Dias", date: "24 Jan", status: "completed" },
@@ -19,6 +22,9 @@ const recentAppointments = [
 ];
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const { settings } = usePayments();
+
   return (
     <AdminLayout title="Dashboard" subtitle="Visão geral da plataforma">
       {/* Stats */}
