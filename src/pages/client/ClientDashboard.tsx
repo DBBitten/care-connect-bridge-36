@@ -60,9 +60,21 @@ const ClientDashboard = () => {
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
   const { toast } = useToast();
+  const { addReview } = useCaregivers();
+  const { user } = useAuth();
 
   const handleSubmitReview = (reviewId: number) => {
     if (rating === 0) return;
+    const reviewItem = pendingReviews.find(r => r.id === reviewId);
+    if (reviewItem) {
+      addReview({
+        caregiverId: reviewItem.caregiverId,
+        clientEmail: user?.email || "guest@curami.com.br",
+        clientName: user?.name || "Cliente",
+        rating,
+        comment,
+      });
+    }
     toast({ title: "Avaliação enviada!", description: "Obrigado pelo seu feedback." });
     setReviewingId(null);
     setRating(0);
