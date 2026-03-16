@@ -21,6 +21,14 @@ const neighborhoods = [
 
 type SortKey = "recommended" | "rating" | "experience" | "price_asc";
 
+function getLowestPrice(profile: CaregiverProfileData, serviceId?: string): number | null {
+  const offers = serviceId
+    ? profile.serviceOffers.filter((o) => o.serviceId === serviceId)
+    : profile.serviceOffers;
+  if (offers.length === 0) return null;
+  return Math.min(...offers.map((o) => o.pricePerHour));
+}
+
 const SearchCaregivers = () => {
   const navigate = useNavigate();
   const { getApprovedProfiles, getStatsForCaregiver } = useCaregivers();
