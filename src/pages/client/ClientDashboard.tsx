@@ -91,6 +91,7 @@ const ClientDashboard = () => {
   return (
     <ClientLayout title="Dashboard" subtitle="Bem-vindo de volta, João!">
       {/* Stats */}
+      {/* TODO: substituir por valores calculados a partir dos contextos reais */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card variant="elevated">
           <CardContent className="p-6">
