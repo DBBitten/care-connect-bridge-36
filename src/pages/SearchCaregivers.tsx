@@ -34,8 +34,8 @@ const SearchCaregivers = () => {
   const { getApprovedProfiles, getStatsForCaregiver } = useCaregivers();
   const { getActiveServices } = useServices();
   const [searchParams] = useSearchParams();
-  const activeServices = getActiveServices();
-  const approvedProfiles = getApprovedProfiles();
+  const activeServices = useMemo(() => getActiveServices(), [getActiveServices]);
+  const approvedProfiles = useMemo(() => getApprovedProfiles(), [getApprovedProfiles]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [neighborhoodFilter, setNeighborhoodFilter] = useState("");
