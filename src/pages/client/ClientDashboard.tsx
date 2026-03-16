@@ -49,6 +49,7 @@ const recentCaregivers = [
   { id: 2, caregiverId: "cg-2", name: "Ana Santos", rating: 4.8, specialty: "Companhia", avatar: "AS" },
 ];
 
+// TODO: substituir por dados reais de usePayments() e useCaregivers() quando houver integração com backend
 const pendingReviews = [
   { id: 1, caregiverId: "cg-4", caregiverName: "Carla Mendes", date: "20 Jan 2025", type: "Cuidado integral" },
 ];
