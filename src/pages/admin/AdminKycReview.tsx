@@ -57,7 +57,7 @@ const AdminKycReview = () => {
       });
       setDocVerification(initial);
     }
-  }, [submission?.documents]);
+  }, [submissionId]);
 
   if (!submission) {
     return (
