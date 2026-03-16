@@ -189,6 +189,7 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
 
   const getPayments = useCallback(() => payments, [payments]);
   const getPaymentByAppointment = useCallback((aid: string) => payments.find(p => p.appointmentId === aid), [payments]);
+  const getRefunds = useCallback(() => refunds, [refunds]);
 
   const updatePlatformFeeRate = useCallback((rate: number) => {
     const updated = { ...settings, platformFeeRate: rate, updatedAt: new Date().toISOString() };
