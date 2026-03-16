@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useCaregivers } from "@/contexts/CaregiverContext";
 import { useAuth } from "@/contexts/AuthContext";
 
+// TODO: substituir por dados reais de usePayments() e useCaregivers() quando houver integração com backend
 const upcomingAppointments = [
   {
     id: 1,
