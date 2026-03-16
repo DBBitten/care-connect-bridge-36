@@ -1,56 +1,8 @@
 import { createContext, useContext, useState, ReactNode, useCallback } from "react";
 import { Service } from "@/types/service";
+import { seedServices } from "@/data/serviceSeed";
 
 const STORAGE_KEY = "eldercare_services";
-
-const seedServices: Service[] = [
-  {
-    id: "svc-1",
-    name: "Companhia e supervisão",
-    description: "Acompanhamento presencial com supervisão contínua, conversas e atividades leves para o bem-estar do idoso.",
-    isActive: true,
-    sortOrder: 1,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "svc-2",
-    name: "Apoio em mobilidade leve",
-    description: "Auxílio em deslocamentos internos, transferências e caminhadas assistidas com segurança.",
-    requiresCertificationTag: "BASIC_MOBILITY",
-    isActive: true,
-    sortOrder: 2,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "svc-3",
-    name: "Apoio em alimentação/hidratação",
-    description: "Preparo e auxílio na alimentação e hidratação, garantindo nutrição adequada e segura.",
-    isActive: true,
-    sortOrder: 3,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "svc-4",
-    name: "Higiene não invasiva",
-    description: "Auxílio em higiene pessoal básica, como banho assistido e troca de roupas, com respeito e dignidade.",
-    isActive: true,
-    sortOrder: 4,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "svc-5",
-    name: "Acompanhamento em consulta (logística)",
-    description: "Acompanhamento em consultas médicas, exames e procedimentos, incluindo transporte e suporte logístico.",
-    isActive: true,
-    sortOrder: 5,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
 
 function loadServices(): Service[] {
   try {
