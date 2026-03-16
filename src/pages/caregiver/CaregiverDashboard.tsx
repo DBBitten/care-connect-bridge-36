@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Star, DollarSign, GraduationCap, MapPin, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// TODO: substituir por dados reais de usePayments() quando houver integração com backend
 const upcomingAppointments = [
   {
     id: 1,
