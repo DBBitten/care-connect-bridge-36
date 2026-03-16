@@ -42,6 +42,7 @@ const CaregiverDashboard = () => {
   return (
     <CaregiverLayout title="Dashboard" subtitle="Bem-vinda de volta, Maria!">
       {/* Stats */}
+      {/* TODO: substituir por valores calculados a partir dos contextos reais */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card variant="elevated">
           <CardContent className="p-6">

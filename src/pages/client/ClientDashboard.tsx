@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar, Clock, Star, Users, MapPin, ArrowRight, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useCaregivers } from "@/contexts/CaregiverContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const upcomingAppointments = [
   {
