@@ -15,10 +15,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useServices } from "@/contexts/ServiceContext";
 import { usePayments } from "@/contexts/PaymentContext";
 import { useCaregivers } from "@/contexts/CaregiverContext";
-
-function calcHours(start: string, end: string) {
-  return parseInt(end) - parseInt(start);
-}
+import { calcHours } from "@/utils/timeUtils";
 
 const BookingPage = () => {
   const { id } = useParams();
@@ -92,11 +89,11 @@ const BookingPage = () => {
       startTime,
       endTime,
       pricePerHour: effectiveRate,
+      // TODO: substituir por campo de endereço no formulário
       address: "Rua das Flores, 123 — Pinheiros, São Paulo/SP",
     });
     toast.success("Agendamento criado! Finalize o pagamento.");
     navigate(`/checkout/${appt.id}`);
-    setIsLoading(false);
   };
 
   return (

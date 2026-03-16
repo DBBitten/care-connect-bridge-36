@@ -10,6 +10,7 @@ import { Search, MapPin, Star, GraduationCap, Clock, ShieldCheck, CheckCircle, C
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useCaregivers } from "@/contexts/CaregiverContext";
 import { useServices } from "@/contexts/ServiceContext";
+import { CaregiverProfileData } from "@/types/caregiver";
 
 const neighborhoods = [
 "Moinhos de Vento", "Bom Fim", "Cidade Baixa", "Petrópolis", "Bela Vista",
@@ -20,13 +21,21 @@ const neighborhoods = [
 
 type SortKey = "recommended" | "rating" | "experience" | "price_asc";
 
+function getLowestPrice(profile: CaregiverProfileData, serviceId?: string): number | null {
+  const offers = serviceId
+    ? profile.serviceOffers.filter((o) => o.serviceId === serviceId)
+    : profile.serviceOffers;
+  if (offers.length === 0) return null;
+  return Math.min(...offers.map((o) => o.pricePerHour));
+}
+
 const SearchCaregivers = () => {
   const navigate = useNavigate();
   const { getApprovedProfiles, getStatsForCaregiver } = useCaregivers();
   const { getActiveServices } = useServices();
   const [searchParams] = useSearchParams();
-  const activeServices = getActiveServices();
-  const approvedProfiles = getApprovedProfiles();
+  const activeServices = useMemo(() => getActiveServices(), [getActiveServices]);
+  const approvedProfiles = useMemo(() => getApprovedProfiles(), [getApprovedProfiles]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [neighborhoodFilter, setNeighborhoodFilter] = useState("");
@@ -45,13 +54,6 @@ const SearchCaregivers = () => {
     setCertFilter((prev) => prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]);
   };
 
-  const getLowestPrice = (profile: typeof approvedProfiles[0], serviceId?: string) => {
-    const offers = serviceId ?
-    profile.serviceOffers.filter((o) => o.serviceId === serviceId) :
-    profile.serviceOffers;
-    if (offers.length === 0) return null;
-    return Math.min(...offers.map((o) => o.pricePerHour));
-  };
 
   const results = useMemo(() => {
     let list = approvedProfiles.map((p) => ({

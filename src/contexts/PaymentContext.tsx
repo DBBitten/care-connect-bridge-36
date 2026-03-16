@@ -3,6 +3,7 @@ import {
   Appointment, AppointmentStatus, Payment, PaymentStatus, Refund, PlatformSettings, PaymentMethod,
 } from "@/types/payment";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { calcHours } from "@/utils/timeUtils";
 
 const KEYS = {
   appointments: "eldercare_appointments",
@@ -38,11 +39,6 @@ function save(key: string, data: unknown) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-function calcHours(startTime: string, endTime: string): number {
-  const [sh, sm] = startTime.split(":").map(Number);
-  const [eh, em] = endTime.split(":").map(Number);
-  return (eh + em / 60) - (sh + sm / 60);
-}
 
 function calcRefundRate(hoursUntil: number): number {
   return hoursUntil > 24 ? 1 : 0.5;
