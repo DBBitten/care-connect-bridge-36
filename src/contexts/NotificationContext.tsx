@@ -108,7 +108,8 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
         for (const check of checks) {
           if (hoursUntil < check.min || hoursUntil > check.max) continue;
-          const users = [appt.clientEmail, appt.caregiverName]; // caregiverName used as userId proxy
+          // TODO: substituir caregiverName por caregiverId real quando houver integração com backend
+          const users = [appt.clientEmail, appt.caregiverName];
           for (const uid of users) {
             const exists = current.some(
               (n) => n.type === check.type && n.userId === uid && n.body.includes(appt.id)
