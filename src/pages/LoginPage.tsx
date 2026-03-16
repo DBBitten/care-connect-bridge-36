@@ -36,7 +36,7 @@ const LoginPage = () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Call login from context
-    login(email, userType!);
+    login(email, userType!, email.split("@")[0]);
     
     toast.success("Login realizado com sucesso!");
     

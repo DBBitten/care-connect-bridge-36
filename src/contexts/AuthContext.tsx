@@ -3,14 +3,17 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 type UserType = "cuidador" | "necessitado" | "admin";
 
 interface AuthUser {
+  id: string;
   email: string;
+  name: string;
+  avatarUrl?: string;
 }
 
 interface AuthContextType {
   user: AuthUser | null;
   userType: UserType | null;
   isAuthenticated: boolean;
-  login: (email: string, userType: UserType) => void;
+  login: (email: string, userType: UserType, name: string) => void;
   logout: () => void;
 }
 
@@ -41,8 +44,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = (email: string, type: UserType) => {
-    const newUser = { email };
+  /**
+   * ⚠️ AUTENTICAÇÃO SIMULADA
+   * Esta função de login é apenas para fins de desenvolvimento/protótipo.
+   * Em produção, substitua por uma integração real com um serviço de
+   * autenticação como Supabase Auth, Firebase Auth ou similar.
+   * O id gerado com crypto.randomUUID() não persiste entre sessões reais.
+   */
+  const login = (email: string, type: UserType, name: string) => {
+    const newUser: AuthUser = {
+      id: crypto.randomUUID(),
+      email,
+      name,
+    };
     setUser(newUser);
     setUserType(type);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ user: newUser, userType: type }));
