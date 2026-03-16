@@ -27,6 +27,7 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout title="Dashboard" subtitle="Visão geral da plataforma">
+      {/* TODO: substituir por valores calculados a partir dos contextos reais */}
       {/* Stats */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card>
