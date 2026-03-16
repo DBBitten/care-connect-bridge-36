@@ -7,6 +7,7 @@ import { Calendar as CalendarIcon, Clock, MapPin, User, Phone, MessageSquare } f
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+// TODO: substituir por dados reais de usePayments() e useAuth() quando houver integração com backend
 const appointments = [
   {
     id: 1,
