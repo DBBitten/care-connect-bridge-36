@@ -104,7 +104,7 @@ const AdminPayments = () => {
               </TableHeader>
               <TableBody>
                 {payments.map(p => {
-                  const appt = getAppointmentForPayment(p.appointmentId);
+                  const appt = appointmentMap[p.appointmentId];
                   return (
                     <TableRow key={p.id}>
                       <TableCell className="font-mono text-xs">{p.id.slice(0, 12)}</TableCell>

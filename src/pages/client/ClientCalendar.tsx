@@ -171,7 +171,7 @@ const ClientCalendar = () => {
                     }
                   </p>
                   <Button className="mt-4" asChild>
-                    <a href="/buscar-cuidadores">Buscar cuidadores</a>
+                    <Link to="/buscar-cuidadores">Buscar cuidadores</Link>
                   </Button>
                 </div>
               )}
