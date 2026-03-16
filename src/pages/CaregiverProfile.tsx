@@ -9,9 +9,6 @@ import { ArrowLeft, Star, MapPin, Clock, GraduationCap, Calendar, CheckCircle, S
 import { useCaregivers } from "@/contexts/CaregiverContext";
 import { useServices } from "@/contexts/ServiceContext";
 
-function formatDuration(minutes: number) {
-  return minutes >= 60 ? `${minutes / 60}h` : `${minutes}min`;
-}
 
 const REVIEWS_PER_PAGE = 5;
 

@@ -101,10 +101,10 @@ const AdminDashboard = () => {
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-4xl font-bold">15%</p>
-                <p className="text-sm text-primary-foreground/60">por transação</p>
+                <p className="text-4xl font-bold">{(settings.platformFeeRate * 100).toFixed(0)}%</p>
+                <p className="text-sm text-primary-foreground/60">taxa atual da plataforma</p>
               </div>
-              <Button variant="hero-outline" size="sm">
+              <Button variant="hero-outline" size="sm" onClick={() => navigate("/admin/settings")}>
                 Editar
               </Button>
             </div>

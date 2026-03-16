@@ -8,22 +8,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { User, Mail, Phone, MapPin, Save, Camera } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ClientProfile = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: "João Oliveira",
-    email: "joao.oliveira@email.com",
-    phone: "(11) 99999-8888",
-    address: "Rua das Flores, 123 - Pinheiros, São Paulo - SP",
-    careRecipient: "Maria Oliveira (mãe)",
-    careNeeds: "Cuidados diários com mobilidade reduzida. Necessita auxílio para atividades básicas como alimentação e higiene.",
-    emergencyContact: "Ana Oliveira - (11) 98888-7777",
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: "",
+    address: "",
+    careRecipient: "",
+    careNeeds: "",
+    emergencyContact: "",
   });
 
   const handleSave = () => {
     setIsEditing(false);
+    // TODO: persistir alterações do perfil via AuthContext ou backend
     toast({
       title: "Perfil atualizado",
       description: "Suas informações foram salvas com sucesso.",
