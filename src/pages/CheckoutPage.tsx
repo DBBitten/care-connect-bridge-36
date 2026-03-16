@@ -68,10 +68,10 @@ const CheckoutPage = () => {
       <Navbar />
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
-          <Link to={`/agendar/1`} className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8">
+          <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8">
             <ArrowLeft className="w-4 h-4" />
             Voltar
-          </Link>
+          </button>
 
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="text-center mb-8">
