@@ -16,6 +16,11 @@ const AdminPayments = () => {
   const [refundPaymentId, setRefundPaymentId] = useState<string | null>(null);
   const [refundReason, setRefundReason] = useState("");
 
+  const appointmentMap = useMemo(() =>
+    Object.fromEntries(appointments.map(a => [a.id, a])),
+    [appointments]
+  );
+
   const totalReceived = payments.filter(p => p.status === "PAID").reduce((s, p) => s + p.amountTotal, 0);
   const totalFees = payments.filter(p => p.status === "PAID").reduce((s, p) => s + p.platformFee, 0);
   const totalRefunded = refunds.reduce((s, r) => s + r.amount, 0);
