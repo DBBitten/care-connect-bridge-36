@@ -123,7 +123,7 @@ const CheckoutPage = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Valor do serviço ({appointment.dates.length} dia{appointment.dates.length > 1 ? "s" : ""} × {parseInt(appointment.endTime) - parseInt(appointment.startTime)}h × R$ {appointment.pricePerHour.toFixed(2)})</span>
+                  <span className="text-muted-foreground">Valor do serviço ({appointment.dates.length} dia{appointment.dates.length > 1 ? "s" : ""} × {calcHours(appointment.startTime, appointment.endTime)}h × R$ {appointment.pricePerHour.toFixed(2)})</span>
                   <span className="text-foreground">R$ {appointment.totalPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
