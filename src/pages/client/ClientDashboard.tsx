@@ -43,6 +43,7 @@ const upcomingAppointments = [
   },
 ];
 
+// TODO: substituir por dados reais de usePayments() e useCaregivers() quando houver integração com backend
 const recentCaregivers = [
   { id: 1, caregiverId: "cg-1", name: "Maria Silva", rating: 4.9, specialty: "Cuidado diário", avatar: "MS" },
   { id: 2, caregiverId: "cg-2", name: "Ana Santos", rating: 4.8, specialty: "Companhia", avatar: "AS" },
