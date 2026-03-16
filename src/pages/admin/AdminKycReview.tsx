@@ -57,7 +57,7 @@ const AdminKycReview = () => {
       });
       setDocVerification(initial);
     }
-  }, [submission?.documents]);
+  }, [submissionId]);
 
   if (!submission) {
     return (
@@ -76,6 +76,7 @@ const AdminKycReview = () => {
 
   const handleApprove = () => {
     // Save all doc verifications
+    // TODO: substituir por uma única chamada updateAllDocuments() no KycContext para evitar múltiplas escritas no localStorage
     Object.entries(docVerification).forEach(([docId, data]) => {
       updateDocumentVerification(submission.id, docId, data.verified, data.comment);
     });

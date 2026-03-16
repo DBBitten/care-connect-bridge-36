@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Users, UserCheck, Calendar, Star, DollarSign, TrendingUp, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { usePayments } from "@/contexts/PaymentContext";
 
+// TODO: substituir por dados reais de contexto ou API quando houver integração com backend
 const recentUsers = [
   { id: 1, name: "João Silva", type: "necessitado", status: "active", date: "Hoje" },
   { id: 2, name: "Maria Santos", type: "cuidador", status: "pending", date: "Hoje" },
@@ -12,6 +14,7 @@ const recentUsers = [
   { id: 4, name: "Pedro Lima", type: "necessitado", status: "active", date: "Ontem" },
 ];
 
+// TODO: substituir por dados reais de contexto ou API quando houver integração com backend
 const recentAppointments = [
   { id: 1, caregiver: "Maria Santos", patient: "João Silva", date: "25 Jan", status: "scheduled" },
   { id: 2, caregiver: "Ana Costa", patient: "Roberto Dias", date: "24 Jan", status: "completed" },
@@ -19,8 +22,12 @@ const recentAppointments = [
 ];
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const { settings } = usePayments();
+
   return (
     <AdminLayout title="Dashboard" subtitle="Visão geral da plataforma">
+      {/* TODO: substituir por valores calculados a partir dos contextos reais */}
       {/* Stats */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card>
@@ -94,10 +101,10 @@ const AdminDashboard = () => {
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-4xl font-bold">15%</p>
-                <p className="text-sm text-primary-foreground/60">por transação</p>
+                <p className="text-4xl font-bold">{(settings.platformFeeRate * 100).toFixed(0)}%</p>
+                <p className="text-sm text-primary-foreground/60">taxa atual da plataforma</p>
               </div>
-              <Button variant="hero-outline" size="sm">
+              <Button variant="hero-outline" size="sm" onClick={() => navigate("/admin/settings")}>
                 Editar
               </Button>
             </div>
