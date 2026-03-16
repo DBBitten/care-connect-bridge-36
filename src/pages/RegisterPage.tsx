@@ -66,7 +66,7 @@ const RegisterPage = () => {
     acceptMultipleDocuments(['TERMS_OF_USE', 'PRIVACY_POLICY']);
 
     // Log in the user
-    login(formData.email, userType!);
+    login(formData.email, userType!, formData.name);
 
     toast.success("Cadastro realizado com sucesso!");
     
