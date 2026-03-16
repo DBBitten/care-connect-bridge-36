@@ -142,15 +142,18 @@ const ClientCalendar = () => {
                         </div>
 
                         <div className="flex items-center gap-2 mt-4">
-                          <Button variant="outline" size="sm">
+                          {/* TODO: implementar funcionalidade */}
+                          <Button variant="outline" size="sm" onClick={() => {}}>
                             <Phone className="w-4 h-4 mr-1" />
                             Ligar
                           </Button>
-                          <Button variant="outline" size="sm">
+                          {/* TODO: implementar funcionalidade */}
+                          <Button variant="outline" size="sm" onClick={() => {}}>
                             <MessageSquare className="w-4 h-4 mr-1" />
                             Mensagem
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                          {/* TODO: implementar funcionalidade */}
+                          <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => {}}>
                             Cancelar
                           </Button>
                         </div>
