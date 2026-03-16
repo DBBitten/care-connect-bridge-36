@@ -94,7 +94,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       if (!raw) return 0;
       const appointments: Appointment[] = JSON.parse(raw);
       const now = Date.now();
-      const current = load(); // fresh read
+      const current = [...notifications];
 
       for (const appt of appointments) {
         if (appt.status !== "PAID") continue;
