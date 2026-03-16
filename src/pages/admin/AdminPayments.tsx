@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { DollarSign, TrendingUp, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { usePayments } from "@/contexts/PaymentContext";
 import { useToast } from "@/hooks/use-toast";
 
