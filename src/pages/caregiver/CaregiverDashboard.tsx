@@ -32,6 +32,7 @@ const upcomingAppointments = [
   },
 ];
 
+// TODO: substituir por dados reais de useCaregivers() quando houver integração com backend
 const pendingCourses = [
   { id: 1, name: "Primeiros Socorros", progress: 60 },
   { id: 2, name: "Cuidados com Mobilidade", progress: 0 },
