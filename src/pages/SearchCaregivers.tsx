@@ -10,6 +10,7 @@ import { Search, MapPin, Star, GraduationCap, Clock, ShieldCheck, CheckCircle, C
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useCaregivers } from "@/contexts/CaregiverContext";
 import { useServices } from "@/contexts/ServiceContext";
+import { CaregiverProfileData } from "@/types/caregiver";
 
 const neighborhoods = [
 "Moinhos de Vento", "Bom Fim", "Cidade Baixa", "Petrópolis", "Bela Vista",
