@@ -38,6 +38,16 @@ function save(key: string, data: unknown) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
+function calcHours(startTime: string, endTime: string): number {
+  const [sh, sm] = startTime.split(":").map(Number);
+  const [eh, em] = endTime.split(":").map(Number);
+  return (eh + em / 60) - (sh + sm / 60);
+}
+
+function calcRefundRate(hoursUntil: number): number {
+  return hoursUntil > 24 ? 1 : 0.5;
+}
+
 interface CreateAppointmentData {
   clientEmail: string;
   caregiverName: string;
@@ -82,7 +92,7 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
   const persistSettings = useCallback((s: PlatformSettings) => { setSettings(s); save(KEYS.settings, s); }, []);
 
   const createAppointment = useCallback((data: CreateAppointmentData): Appointment => {
-    const hours = parseInt(data.endTime) - parseInt(data.startTime);
+    const hours = calcHours(data.startTime, data.endTime);
     const totalPrice = data.dates.length * hours * data.pricePerHour;
     const platformFee = Math.round(totalPrice * settings.platformFeeRate * 100) / 100;
     const caregiverPayout = Math.round((totalPrice - platformFee) * 100) / 100;
@@ -138,7 +148,7 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
 
     const apptDate = new Date(`${appt.dates[0]}T${appt.startTime}:00`);
     const hoursUntil = (apptDate.getTime() - Date.now()) / (1000 * 60 * 60);
-    const refundRate = hoursUntil > 24 ? 1 : 0.5;
+    const refundRate = calcRefundRate(hoursUntil);
     const refundAmount = Math.round(appt.totalPrice * refundRate * 100) / 100;
 
     const now = new Date().toISOString();
@@ -177,6 +187,9 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
     persistAppointments(appointments.map(a => a.id === payment.appointmentId ? { ...a, status: "CANCELED" as AppointmentStatus } : a));
   }, [appointments, payments, refunds, persistAppointments, persistPayments, persistRefunds]);
 
+  const getPayments = useCallback(() => payments, [payments]);
+  const getPaymentByAppointment = useCallback((aid: string) => payments.find(p => p.appointmentId === aid), [payments]);
+
   const updatePlatformFeeRate = useCallback((rate: number) => {
     const updated = { ...settings, platformFeeRate: rate, updatedAt: new Date().toISOString() };
     persistSettings(updated);
@@ -187,8 +200,8 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
       appointments, payments, refunds, settings,
       createAppointment, getAppointmentById, getAppointmentsByClient,
       processPayment, cancelAppointment, adminRefund,
-      getPayments: () => payments,
-      getPaymentByAppointment: (aid) => payments.find(p => p.appointmentId === aid),
+      getPayments,
+      getPaymentByAppointment,
       getRefunds: () => refunds,
       updatePlatformFeeRate,
     }}>
