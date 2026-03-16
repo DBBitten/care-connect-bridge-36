@@ -89,6 +89,7 @@ const BookingPage = () => {
       startTime,
       endTime,
       pricePerHour: effectiveRate,
+      // TODO: substituir por campo de endereço no formulário
       address: "Rua das Flores, 123 — Pinheiros, São Paulo/SP",
     });
     toast.success("Agendamento criado! Finalize o pagamento.");
