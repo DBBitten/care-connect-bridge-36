@@ -194,7 +194,7 @@ const AdminLegalDocuments = () => {
                         <Badge variant="outline">v{acceptance.documentVersion}</Badge>
                       </TableCell>
                       <TableCell>
-                        {acceptance.acceptedAt.toLocaleDateString('pt-BR', {
+                        {new Date(acceptance.acceptedAt).toLocaleDateString('pt-BR', {
                           day: 'numeric',
                           month: 'short',
                           hour: '2-digit',

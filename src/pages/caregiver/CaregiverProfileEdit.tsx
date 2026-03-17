@@ -28,7 +28,7 @@ export default function CaregiverProfileEdit() {
   const { user } = useAuth();
   const { getProfileByEmail, saveProfile } = useCaregivers();
   const { getActiveServices } = useServices();
-  const activeServices = getActiveServices();
+  const activeServices = useMemo(() => getActiveServices(), [getActiveServices]);
 
   const existing = getProfileByEmail(user?.email || "");
 

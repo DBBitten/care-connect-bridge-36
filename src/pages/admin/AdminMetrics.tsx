@@ -102,6 +102,7 @@ export default function AdminMetrics() {
     filteredPayments
       .filter(p => p.status === "PAID" && p.paidAt)
       .forEach(p => {
+        // Usa appointments global (não filtrado por período) para garantir que o appointment seja encontrado mesmo se estiver fora do intervalo selecionado
         const appt = appointments.find(a => a.id === p.appointmentId);
         if (appt) {
           const diff = differenceInMinutes(new Date(p.paidAt!), new Date(appt.createdAt));

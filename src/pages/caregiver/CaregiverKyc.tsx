@@ -69,7 +69,8 @@ const CaregiverKyc = () => {
   // Form state for step 3
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
-  // Update form when submission changes
+  // Sincroniza o formulário quando currentSubmission é atualizado pelo contexto.
+  // Aceitável para MVP — pode ser refatorado para inicialização lazy do useState em versões futuras.
   useEffect(() => {
     if (currentSubmission?.profile) {
       setCpf(currentSubmission.profile.cpf);
