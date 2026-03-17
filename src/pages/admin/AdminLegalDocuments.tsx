@@ -127,11 +127,11 @@ const AdminLegalDocuments = () => {
                     <Badge variant="outline">v{activeDoc?.version || 1}</Badge>
                   </TableCell>
                   <TableCell>
-                    {activeDoc?.createdAt.toLocaleDateString('pt-BR', {
+                    {activeDoc ? new Date(activeDoc.createdAt).toLocaleDateString('pt-BR', {
                       day: 'numeric',
                       month: 'short',
                       year: 'numeric',
-                    })}
+                    }) : '—'}
                   </TableCell>
                   <TableCell>
                     <span className="font-medium">{acceptanceCount}</span>
@@ -194,7 +194,7 @@ const AdminLegalDocuments = () => {
                         <Badge variant="outline">v{acceptance.documentVersion}</Badge>
                       </TableCell>
                       <TableCell>
-                        {acceptance.acceptedAt.toLocaleDateString('pt-BR', {
+                        {new Date(acceptance.acceptedAt).toLocaleDateString('pt-BR', {
                           day: 'numeric',
                           month: 'short',
                           hour: '2-digit',

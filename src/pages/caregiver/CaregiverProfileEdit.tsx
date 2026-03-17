@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { CaregiverLayout } from "@/components/caregiver/CaregiverLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ export default function CaregiverProfileEdit() {
   const { user } = useAuth();
   const { getProfileByEmail, saveProfile } = useCaregivers();
   const { getActiveServices } = useServices();
-  const activeServices = getActiveServices();
+  const activeServices = useMemo(() => getActiveServices(), [getActiveServices]);
 
   const existing = getProfileByEmail(user?.email || "");
 
